@@ -272,16 +272,25 @@ public class SuperStructure extends Subsystem {
         queue(queue);
     }
 
-    public void prepareForShotState(boolean Override){
+    public void intakeState(boolean Override){
         RequestList request = new RequestList(Arrays.asList(
-            logCurrentRequest("preparing"),
-            intake.stateRequest(State.Intaking),
-            indexer.hasPieceRequest()
+            logCurrentRequest("Intaking"),
+            intake.stateRequest(Intake.State.Intaking),
+            intake.hasPieceRequest()
         ), true);
+        RequestList queue = new RequestList(Arrays.asList(
+            logCurrentRequest("Transfering"),
+            intake.hasPieceRequest(),
+            intake.stateRequest(Intake.State.Feeding),
+            indexer.stateRequest(Indexer.State.Recieving),
+            indexer.hasPieceRequest()
+        ), false);
+
         if(Override)
-            request(request);
+            request(request,queue);
         else
             queue(request);
+            queue(queue);
     }
 
     public void waitForTrajectoryState(double PercentageToRun) {

@@ -42,9 +42,9 @@ public class Intake extends Subsystem {
   }
 
   public enum State {
-    Intaking(.5),
-    Waiting(1),
-    Ejecting(1),
+    Recieving(.5),
+    Intaking(1),
+    Feeding(1),
     Holding(0),
     Off(0);
 
@@ -109,18 +109,18 @@ public class Intake extends Subsystem {
   public void update() {
     double currentTime = Timer.getFPGATimestamp();
     switch (currentState) {
-      case Waiting:
+      case Intaking:
         if (stateChanged) {
           setRamp(.5);
           driverHaptics = false;
           hasPiece = false;
         }
         if (getStatorCurrent() < 20) {
-          conformToState(State.Intaking);
+          conformToState(State.Recieving);
         }
 
         break;
-      case Intaking:
+      case Recieving:
         if (stateChanged) {
           driverHaptics = true;
           hasPiece = true;
@@ -132,7 +132,7 @@ public class Intake extends Subsystem {
       case Off:
         driverHaptics = false;
         break;
-      case Ejecting:
+      case Feeding:
         if (stateChanged) {
           setRamp(0);
           hasPiece = false;
@@ -156,6 +156,15 @@ public class Intake extends Subsystem {
 
     }
 
+  }
+
+  public Request hasPieceRequest(){
+    return new Request() {
+      @Override
+        public boolean isFinished() {
+            return !stateChanged && hasPiece;
+        }
+    };
   }
 
   public double getStatorCurrent() {

@@ -11,11 +11,16 @@ import com.wcp.frc.Ports;
 import com.wcp.frc.subsystems.Requests.Request;
 import com.wcp.lib.TalonDefaultConfig;
 
+import edu.wpi.first.wpilibj.Timer;
 
 public class Indexer extends Subsystem {
-  PeriodicIO mPeriodicIO = new PeriodicIO();
-  TalonFX indexerMotor = new TalonFX(Ports.intake);
-  TalonFXConfiguration indexConfig = new TalonFXConfiguration();
+  private PeriodicIO mPeriodicIO = new PeriodicIO();
+  private TalonFX indexerMotor = new TalonFX(Ports.intake);
+  private TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
+  private State currentState;
+  private boolean stateChanged;
+  private boolean hasPiece;
+  private double timeEnteredState = 0;
 
   public static Indexer instance = null;
 
@@ -28,18 +33,63 @@ public class Indexer extends Subsystem {
   /** Creates a new intake. */
   public Indexer() {
     configMotors();
+
+    currentState = State.Off;
+    stateChanged = false;
+    hasPiece = false;
+  }
+
+  public enum State {
+    Recieving(.5),
+    Feeding(1),
+    Holding(0),
+    Off(0);
+
+    double output = 0;
+
+    State(double output) {
+      this.output = output;
+    }
+  }
+
+  public void setRamp(double rampTime) {
+    indexerMotor.getConfigurator().refresh(intakeConfig);
+    intakeConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = rampTime;
+    indexerMotor.getConfigurator().apply(intakeConfig);
   }
 
   public void configMotors() {
-    indexConfig = TalonDefaultConfig.driveConfigs();
-    indexerMotor.getConfigurator().apply(indexConfig);
+    intakeConfig = TalonDefaultConfig.driveConfigs();
+    indexerMotor.getConfigurator().apply(intakeConfig);
   }
 
   public void intakePercent(double Percentage) {
     mPeriodicIO.driveDemand = Percentage;
   }
 
-  public Request setIndexPercentRequest(double percentage) {
+  public void setState(State state) {
+    if (state != currentState)
+      stateChanged = true;
+    currentState = state;
+    timeEnteredState = Timer.getFPGATimestamp();
+  }
+
+  public void conformToState(State state) {
+    setState(state);
+    setIntakePercentRequest(state.output);
+  }
+
+  public Request stateRequest(State state) {
+    return new Request() {
+
+      @Override
+      public void act() {
+        conformToState(state);
+      }
+    };
+  }
+
+  public Request setIntakePercentRequest(double percentage) {
     return new Request() {
 
       @Override
@@ -50,6 +100,60 @@ public class Indexer extends Subsystem {
 
     };
 
+  }
+
+  @Override
+  public void update() {
+    double currentTime = Timer.getFPGATimestamp();
+    switch (currentState) {
+      case Recieving:
+        if (stateChanged) {
+          hasPiece = false;
+        }
+        if (currentTime - timeEnteredState > .3) {//TODO && BeamBreak = true;
+          setState(State.Holding);
+        }
+        break;
+      case Off:
+        setState(State.Off);
+        break;
+      case Feeding:
+        if (stateChanged) {
+          setRamp(0);
+          hasPiece = false;
+        }
+        if (currentTime - timeEnteredState > .3) {
+          stop();
+          setRamp(.5);
+          hasPiece = false;
+        }
+        break;
+      case Holding:
+        hasPiece = true;
+        break;
+
+    }
+
+  }
+
+  public Request hasPieceRequest(){
+    return new Request() {
+      @Override
+        public boolean isFinished() {
+            return !stateChanged && hasPiece;
+        }
+    };
+  }
+
+  public double getStatorCurrent() {
+    return mPeriodicIO.statorCurrent;
+  }
+
+  @Override
+  public void writePeriodicOutputs() {
+    mPeriodicIO.drivePosition = indexerMotor.getPosition().getValueAsDouble();
+    mPeriodicIO.velocity = indexerMotor.getVelocity().getValueAsDouble();
+    mPeriodicIO.statorCurrent = indexerMotor.getStatorCurrent().getValueAsDouble();
   }
 
   @Override
@@ -64,13 +168,13 @@ public class Indexer extends Subsystem {
 
   @Override
   public void stop() {
-    setIndexPercentRequest(0);
+    setIntakePercentRequest(0);
   }
 
   public static class PeriodicIO {// data
-    double rotationPosition = 0;
     double drivePosition = 0;
     double velocity = 0;
+    double statorCurrent = 0;
 
     double rotationDemand = 0.0;
     double driveDemand = 0.0;
