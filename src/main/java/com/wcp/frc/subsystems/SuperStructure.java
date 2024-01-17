@@ -276,7 +276,7 @@ public class SuperStructure extends Subsystem {
         RequestList request = new RequestList(Arrays.asList(
             logCurrentRequest("preparing"),
             intake.stateRequest(State.Intaking),
-            indexer.hasPieceRequest(),
+            indexer.hasPieceRequest()
         ), true);
         if(Override)
             request(request);
