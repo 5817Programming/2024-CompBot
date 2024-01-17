@@ -12,6 +12,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.wcp.frc.Constants;
+import com.wcp.frc.subsystems.Intake.State;
 import com.wcp.frc.subsystems.Requests.Request;
 import com.wcp.frc.subsystems.Requests.RequestList;
 import com.wcp.lib.geometry.Translation2d;
@@ -23,6 +24,7 @@ public class SuperStructure extends Subsystem {
     public Intake intake;
     public Vision vision;
     public Logger logger;
+    public Indexer indexer;
 
     private ArrayList<RequestList> queuedRequests;
 
@@ -30,6 +32,7 @@ public class SuperStructure extends Subsystem {
         swerve = Swerve.getInstance();
         vision = Vision.getInstance();
         intake = Intake.getInstance();
+        indexer = Indexer.getInstance();
         idleState();
         queuedRequests = new ArrayList<>();
 
@@ -267,6 +270,18 @@ public class SuperStructure extends Subsystem {
                 swerve.startPathRequest(true)), false);
         queue(request);
         queue(queue);
+    }
+
+    public void prepareForShotState(boolean Override){
+        RequestList request = new RequestList(Arrays.asList(
+            logCurrentRequest("preparing"),
+            intake.stateRequest(State.Intaking),
+            indexer.hasPieceRequest(),
+        ), true);
+        if(Override)
+            request(request);
+        else
+            queue(request);
     }
 
     public void waitForTrajectoryState(double PercentageToRun) {

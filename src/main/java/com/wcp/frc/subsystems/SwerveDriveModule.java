@@ -10,7 +10,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.wcp.frc.Constants;
 import com.wcp.frc.Options;
@@ -102,7 +101,7 @@ public class SwerveDriveModule extends Subsystem {
     }
 
     public enum ControlMode{
-        Percent,
+        percentOuput,
         MotionMagic,
       }
 
@@ -256,14 +255,14 @@ public class SwerveDriveModule extends Subsystem {
       @Override
   public void readPeriodicInputs() {
     switch (mPeriodicIO.driveControlMode) {
-      case Percent:
+      case percentOuput:
           runPercentOutput(mPeriodicIO.driveDemand, driveMotor);
         break;
       case MotionMagic:
           runMotionMagic(mPeriodicIO.driveDemand, driveMotor);
     }
     switch (mPeriodicIO.rotationControlMode) {
-      case Percent:
+      case percentOuput:
           runPercentOutput(mPeriodicIO.rotationDemand, rotationMotor);
         break;
       case MotionMagic:
@@ -301,7 +300,7 @@ public class SwerveDriveModule extends Subsystem {
         double velocity = 0;
 
         ControlMode rotationControlMode = ControlMode.MotionMagic;
-        ControlMode driveControlMode = ControlMode.Percent;
+        ControlMode driveControlMode = ControlMode.percentOuput;
         double rotationDemand = 0.0;
         double driveDemand = 0.0;
     }

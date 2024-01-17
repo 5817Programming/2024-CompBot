@@ -35,6 +35,7 @@ public class TalonDefaultConfig {
         driveConfigs.Slot1.kP = 0;
         driveConfigs.Slot1.kI = 0.0;
         driveConfigs.Slot1.kD = 0;
+        driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 
 
         driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
         driveConfigs.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));

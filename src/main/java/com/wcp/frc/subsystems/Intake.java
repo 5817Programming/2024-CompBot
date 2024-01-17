@@ -11,11 +11,14 @@ import com.wcp.frc.Ports;
 import com.wcp.frc.subsystems.Requests.Request;
 import com.wcp.lib.TalonDefaultConfig;
 
-
 public class Intake extends Subsystem {
   PeriodicIO mPeriodicIO = new PeriodicIO();
   TalonFX intakeMotor = new TalonFX(Ports.intake);
   TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
+  State currentState;
+  boolean stateChanged;
+  boolean driverHaptics;
+  boolean hasPiece;
 
   public static Intake instance = null;
 
@@ -28,6 +31,24 @@ public class Intake extends Subsystem {
   /** Creates a new intake. */
   public Intake() {
     configMotors();
+
+    currentState = State.Off;
+    stateChanged = false;
+    driverHaptics = false;
+    hasPiece = false;
+  }
+
+  public enum State {
+    Intaking(1),
+    Waiting(.5),
+    Ejecting(-.7),
+    Off(0);
+
+    double output = 0;
+
+    State(double output) {
+      this.output = output;
+    }
   }
 
   public void configMotors() {
@@ -37,6 +58,24 @@ public class Intake extends Subsystem {
 
   public void intakePercent(double Percentage) {
     mPeriodicIO.driveDemand = Percentage;
+  }
+
+  public void setState() {
+
+  }
+
+  public void conformToState(State state) {
+    currentState = state;
+  }
+
+  public Request stateRequest(State state) {
+    return new Request() {
+
+      @Override
+      public void act() {
+        conformToState(state);
+      }
+    };
   }
 
   public Request setIntakePercentRequest(double percentage) {
@@ -49,6 +88,33 @@ public class Intake extends Subsystem {
       }
 
     };
+
+  }
+
+  @Override
+  public void update() {
+    switch (currentState) {
+      case Waiting:
+        if (stateChanged) {
+          driverHaptics = false;
+          hasPiece = false;
+        }
+        if(getSensor)
+          setState(State.Intaking);
+        break;
+      case Intaking:
+          if(stateChanged){
+            driverHaptics = true;
+            hasPiece = true;
+          }
+        break;
+      case Off:
+
+        break;
+      case Ejecting:
+
+        break;
+    }
 
   }
 
