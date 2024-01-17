@@ -30,7 +30,6 @@ public class SuperStructure extends Subsystem {
         swerve = Swerve.getInstance();
         vision = Vision.getInstance();
         intake = Intake.getInstance();
-        logger = Logger.getInstance();
         idleState();
         queuedRequests = new ArrayList<>();
 
