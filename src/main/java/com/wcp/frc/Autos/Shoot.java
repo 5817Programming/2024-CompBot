@@ -19,7 +19,5 @@ public class Shoot extends AutoBase{
 
     @Override
     public void auto() {
-        swerve.setTrajectory(path);
-        swerve.startPath(false);
     }
 }

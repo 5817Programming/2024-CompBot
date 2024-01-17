@@ -258,12 +258,12 @@ public class SuperStructure extends Subsystem {
         queue(request);
     }
 
-    public void trajectoryState(PathPlannerTrajectory trajectory) {
+    public void trajectoryState(PathPlannerTrajectory trajectory, double nodes) {
         RequestList request = new RequestList(Arrays.asList(
                 logCurrentRequest("trajectory")
         ), true);
         RequestList queue = new RequestList(Arrays.asList(
-                swerve.setTrajectoryRequest(trajectory),
+                swerve.setTrajectoryRequest(trajectory, nodes),
                 swerve.startPathRequest(true)), false);
         queue(request);
         queue(queue);
@@ -284,6 +284,10 @@ public class SuperStructure extends Subsystem {
                 currentRequestLog = newLog;
             }
         };
+    }
+
+    public void waitState(double waitTime){
+        queue(waitRequest(waitTime));
     }
 
     public Request waitRequest(double waitTime) {

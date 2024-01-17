@@ -19,6 +19,7 @@ public class NS5 extends AutoBase{
 
     @Override
     public void auto() {
-        s.trajectoryState(path);
+        s.trajectoryState(path,5);
+        s.waitState(5);
     }
 }

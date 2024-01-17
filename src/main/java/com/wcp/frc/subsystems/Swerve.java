@@ -138,9 +138,9 @@ public class Swerve extends Subsystem {
 
     }
 
-    public void setTrajectory(PathPlannerTrajectory trajectory) {
+    public void setTrajectory(PathPlannerTrajectory trajectory, double nodes) {
         trajectoryFinished = false;
-        pathFollower.setTrajectory(trajectory);
+        pathFollower.setTrajectory(trajectory, nodes);
         pose = pathFollower.getInitial(trajectory);
         Pose2d newpose = (pathFollower.getInitial(trajectory));
         modules.forEach((m) -> m.resetPose(new Pose2d(newpose.getTranslation(), new Rotation2d())));
@@ -669,12 +669,12 @@ public class Swerve extends Subsystem {
 
     // }
 
-    public Request setTrajectoryRequest(PathPlannerTrajectory trajectory) {
+    public Request setTrajectoryRequest(PathPlannerTrajectory trajectory, double nodes) {
         return new Request() {
 
             @Override
             public void act() {
-                setTrajectory(trajectory);
+                setTrajectory(trajectory, nodes);
             }
 
         };

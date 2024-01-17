@@ -19,7 +19,7 @@ public class NS3 extends AutoBase{
 
     @Override
     public void auto() {
-        swerve.setTrajectory(path);
+        swerve.setTrajectory(path,5);
         swerve.startPath(false);
     }
 }

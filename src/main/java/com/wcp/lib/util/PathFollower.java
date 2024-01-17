@@ -29,6 +29,7 @@ public class PathFollower{
 
   double desiredRotation = 0;
   double speed = 1;
+  private double nodes = 0;
   Pose2d currentPose;
   boolean useEvents = false;
   boolean ran = false;
@@ -49,7 +50,7 @@ public class PathFollower{
     this.timer.start();
   }
 
-  public void setTrajectory(PathPlannerTrajectory trajectory) {
+  public void setTrajectory(PathPlannerTrajectory trajectory, double nodes) {
     resetTimer();
     this.transformedTrajectory = trajectory;
   }
@@ -103,12 +104,12 @@ public class PathFollower{
 
   public boolean isFinished() {
 
-    return this.timer.hasElapsed(transformedTrajectory.getTotalTimeSeconds()/.5 + .2);
+    return this.timer.hasElapsed(transformedTrajectory.getTotalTimeSeconds()+ .2);
 
   }
 
   public double percentageDone() {
-    return this.timer.get() / (transformedTrajectory.getTotalTimeSeconds() + .2);
+    return (this.timer.get() / (transformedTrajectory.getTotalTimeSeconds())*nodes + .2);
   }
 
   public boolean hasElapsedPercentage(double percent) {
