@@ -20,6 +20,5 @@ public class M6 extends AutoBase{
     @Override
     public void auto() {
         s.trajectoryState(path,7);
-        s.waitState(5);
     }
 }

@@ -25,15 +25,10 @@ import com.wcp.lib.util.Util;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
 /** Add your docs here. */
 public class SwerveDriveModule extends Subsystem {
-    FlywheelSim rotationSim;
-    FlywheelSim driveSim;
+
     TalonFX rotationMotor, driveMotor;
     Encoder rotationMagEncoder;
     String name;
@@ -73,7 +68,6 @@ public class SwerveDriveModule extends Subsystem {
             Translation2d modulePoseInches, boolean flipEncoder ,Translation2d moduleposemeters){
         this.rotationMotor = new TalonFX(rotationMotorPort);
         this.driveMotor = new TalonFX(driveMotorPort);
-        this.driveSim = new FlywheelSim(DCMotor.getFalcon500(1), 7.63, .3);
         this.moduleID = moduleID;
         this.name = "Module " + moduleID;
         this.encoderOffset = encoderStartingPos;

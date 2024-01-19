@@ -93,11 +93,11 @@ public class Vision extends Subsystem {
 
   @Override
   public void outputTelemetry() {
-    Logger.getInstance().recordOutput("Distance", getDistance());
-    Logger.getInstance().recordOutput("hasTarget", hasTarget());
-    Logger.getInstance().recordOutput("tx", tx.getDouble(0.0));
-    Logger.getInstance().recordOutput("ty", ty.getDouble(0.0));
-    Logger.getInstance().recordOutput("ta", ta.getDouble(0.0));
+    Logger.recordOutput("Distance", getDistance());
+    Logger.recordOutput("hasTarget", hasTarget());
+    Logger.recordOutput("tx", tx.getDouble(0.0));
+    Logger.recordOutput("ty", ty.getDouble(0.0));
+    Logger.recordOutput("ta", ta.getDouble(0.0));
   }
   
 

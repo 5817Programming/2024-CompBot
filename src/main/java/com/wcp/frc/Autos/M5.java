@@ -20,6 +20,5 @@ public class M5 extends AutoBase{
     @Override
     public void auto() {
         s.trajectoryState(path,5);
-        s.waitState(5);
     }
 }

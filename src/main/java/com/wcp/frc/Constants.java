@@ -101,6 +101,18 @@ public class Constants {
         public static final double IDLE = 0;
     }
     
+    public static final class IntakeConstants{
+        public static final double RAMP = 0;
+        public static final double HANDOFF = 0;
+        public static final double IDLE = 0;
+    }
+
+    public static final class IndexerConstants{
+        public static final double RAMP = 0;
+        public static final double HANDOFF = 0;
+        public static final double IDLE = 0;
+    }
+    
     public static final class ElevatorConstants{
         public static final double SPEAKER = 0;
         public static final double AMP = 0;

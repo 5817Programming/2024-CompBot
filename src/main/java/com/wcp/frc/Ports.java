@@ -32,8 +32,9 @@ public class Ports {
     // public static final int kSucker = ;
     
    
-        public static final int intake = 19;
+        public static final int Intake = 19;
         public static final int shooter = 0;
+        public static final int Pivot = 0;
 
 
 }

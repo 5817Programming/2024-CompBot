@@ -12,7 +12,6 @@ import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.wcp.frc.Constants;
-import com.wcp.frc.subsystems.Intake.State;
 import com.wcp.frc.subsystems.Requests.Request;
 import com.wcp.frc.subsystems.Requests.RequestList;
 import com.wcp.lib.geometry.Translation2d;
@@ -61,31 +60,9 @@ public class SuperStructure extends Subsystem {
         return activeRequestsComplete;
     }
 
-
-    PreState currentUnprocessedState = PreState.ZERO;
-
     boolean lockElevator = false;
     boolean cube = false;
     boolean isIntaking = false;
-
-    public enum GameState {
-        GETPIECE,
-        SCORE,
-        CHARGE;
-    }
-
-    public enum PreState {
-        HIGH,
-        MID,
-        LOW,
-        HOOMAN,
-        CHUTE,
-        ZERO,
-        GROUND;
-
-    }
-
-
 
     private void setActiveRequests(RequestList requests) {
         activeRequests = requests;
@@ -230,6 +207,7 @@ public class SuperStructure extends Subsystem {
                             request.act();
                     }
                     activeRequestsComplete = true;
+
                 }
             }
 
@@ -312,8 +290,11 @@ public class SuperStructure extends Subsystem {
         };
     }
 
-    public void waitState(double waitTime){
-        queue(waitRequest(waitTime));
+    public void waitState(double waitTime, boolean Override){
+        if(Override)
+            request(waitRequest(waitTime));
+        else
+            queue(waitRequest(waitTime));
     }
 
     public Request waitRequest(double waitTime) {
