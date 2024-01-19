@@ -90,10 +90,10 @@ public class Constants {
 
     ///The absolute starting postion for each module
     //originally +180 to each
-    public static final double kFrontRightStartingEncoderPosition = -81.6; //-354.950352
-    public static final double kFrontLeftStartingEncoderPosition = -287.3; //-263.094811
-    public static final double kRearLeftStartingEncoderPosition = -76.2; //-121.094031
-    public static final double kRearRightStartingEncoderPosition = -112.1; //-355.170825    
+    public static final double kFrontRightStartingEncoderPosition = -82; //-354.950352
+    public static final double kFrontLeftStartingEncoderPosition = -291; //-263.094811
+    public static final double kRearLeftStartingEncoderPosition = -129; //-121.094031
+    public static final double kRearRightStartingEncoderPosition = -61.4; //-355.170825     
         
         
     public static final class ShooterConstants{

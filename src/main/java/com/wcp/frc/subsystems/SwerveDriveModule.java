@@ -98,6 +98,10 @@ public class SwerveDriveModule extends Subsystem {
         driveMotor.getConfigurator().apply(driveConfigs);
         rotationMotor.getConfigurator().apply(rotationConfigs);
 
+        driveMotor.setNeutralMode(NeutralModeValue.Brake);
+        rotationMotor.setNeutralMode(NeutralModeValue.Brake);
+
+
     }
 
     public enum ControlMode{
@@ -170,7 +174,8 @@ public class SwerveDriveModule extends Subsystem {
 
     }
     
-    public void setDriveOpenLoop(double percentOuput) {// drives drive motor of pecentage
+    public void setDriveOpenLoop(double percentOuput) {
+        mPeriodicIO.driveControlMode = ControlMode.percentOuput;
         mPeriodicIO.driveDemand = percentOuput;
     }
     
@@ -213,7 +218,7 @@ public class SwerveDriveModule extends Subsystem {
     }
 
     public double rotationsToDegrees(double rotations){
-        return (rotations*360)*Options.rotationRatio;
+        return (rotations*360)/Options.rotationRatio;
     }
 
 
@@ -271,7 +276,7 @@ public class SwerveDriveModule extends Subsystem {
   }
 
   public void runPercentOutput(double percent, TalonFX motor){
-    motor.setControl(new DutyCycleOut(percent, true, true, true, true));
+    motor.setControl(new DutyCycleOut(percent, true, false, false, false));
   }
     public void runMotionMagic(double position, TalonFX motor){
     motor.setControl(new MotionMagicVoltage(position));
@@ -286,6 +291,10 @@ public class SwerveDriveModule extends Subsystem {
         Logger.recordOutput(this.name + " Status", getModuleStatus().toString());
         Logger.recordOutput(this.name + " Drive Position", mPeriodicIO.drivePosition);
         Logger.recordOutput(this.name + " A", Constants.kWheelCircumference);
+        Logger.recordOutput(this.name + "Drive Control Mode", mPeriodicIO.driveControlMode);
+        Logger.recordOutput(this.name + "Rotation Control Mode", mPeriodicIO.rotationControlMode);
+
+
     }
 
     @Override

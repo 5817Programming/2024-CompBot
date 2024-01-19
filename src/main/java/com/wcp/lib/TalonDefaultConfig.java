@@ -5,6 +5,7 @@
 package com.wcp.lib;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.wcp.frc.Constants;
 
 /** Add your docs here. */
@@ -13,14 +14,14 @@ public class TalonDefaultConfig {
     public static TalonFXConfiguration motionMagicConfig(){
         TalonFXConfiguration motionMagicConfig = new TalonFXConfiguration();
 
-        motionMagicConfig.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveRotationMaxSpeed * 15.5));
-        motionMagicConfig.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveRotationMaxSpeed));
+ motionMagicConfig.Slot0.kP = 6;
+        motionMagicConfig.Slot0.kS = 0.8;
+        motionMagicConfig.Slot0.kV = .1224;
 
-        // Slot 1 is for normal use
-        motionMagicConfig.Slot0.kP =  1; // 1.55
-        motionMagicConfig.Slot0.kI =  0.0;
-        motionMagicConfig.Slot0.kD =  5.0; // 5.0
-        motionMagicConfig.Slot0.kV = 1023.0 /Constants.kSwerveRotationMaxSpeed;
+
+
+        motionMagicConfig.MotionMagic.MotionMagicCruiseVelocity = 98;
+        motionMagicConfig.MotionMagic.MotionMagicAcceleration = 1000;
         
         return motionMagicConfig;
     }

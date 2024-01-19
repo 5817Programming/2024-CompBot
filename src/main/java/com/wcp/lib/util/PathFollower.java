@@ -60,7 +60,7 @@ public class PathFollower{
     this.timer.start();
     double currentTime = this.timer.get();
     State desiredState = transformedTrajectory.sample(currentTime);
-    double desiredRotation = ((State) transformedTrajectory.sample(currentTime)).targetHolonomicRotation
+    double desiredRotation = -((State) transformedTrajectory.sample(currentTime)).targetHolonomicRotation
         .getDegrees();
     double desiredX = desiredState.getTargetHolonomicPose().getTranslation().getX();
     double desiredY = desiredState.getTargetHolonomicPose().getTranslation().getY();
@@ -81,10 +81,9 @@ public class PathFollower{
   }
 
   public Pose2d getInitial(PathPlannerTrajectory trajectory) {
-    double initX = trajectory.getInitialTargetHolonomicPose().getX();
-    double initY = trajectory.getInitialTargetHolonomicPose().getY();
-    double initRot = trajectory.getInitialTargetHolonomicPose().getRotation().getDegrees();
-
+    double initX = trajectory.getInitialState().positionMeters.getX();
+    double initY = trajectory.getInitialState().positionMeters.getY();
+    double initRot = 180;
     if (alliance()) {
       return new Pose2d(new Translation2d(reflect(initX), initY),
           Rotation2d.fromDegrees(initRot).flip());

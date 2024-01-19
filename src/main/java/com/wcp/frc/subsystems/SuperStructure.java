@@ -286,11 +286,13 @@ public class SuperStructure extends Subsystem {
             indexer.hasPieceRequest()
         ), false);
 
-        if(Override)
+        if(Override){
             request(request,queue);
-        else
+        }
+        else{
             queue(request);
             queue(queue);
+        }
     }
 
     public void waitForTrajectoryState(double PercentageToRun) {
@@ -350,8 +352,8 @@ public class SuperStructure extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        logger.recordOutput("RequestsCompleted", requestsCompleted());
-        logger.recordOutput("CurrentRequest", currentRequestLog);
+        Logger.recordOutput("RequestsCompleted", requestsCompleted());
+        Logger.recordOutput("CurrentRequest", currentRequestLog);
     }
 
     @Override

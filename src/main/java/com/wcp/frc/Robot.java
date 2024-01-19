@@ -20,6 +20,9 @@ import com.wcp.frc.subsystems.Vision;
 import com.wcp.frc.subsystems.gyros.Gyro;
 import com.wcp.lib.util.PathFollower;
 import com.wcp.frc.Autos.AutoBase;
+import com.wcp.frc.Autos.M5;
+import com.wcp.frc.Autos.M6;
+import com.wcp.frc.Autos.M7;
 import com.wcp.frc.Autos.NS5;
 import com.wcp.frc.Autos.Shoot;
 
@@ -62,11 +65,11 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
 
     SmartDashboard.putData("Autonomous routine", autoChooser);
     
-    Logger.getInstance().recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+    Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
     new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
 
-    Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-    Logger.getInstance().start(); // Start logging! No more data receivers, replay sources, or metadata values may
+    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+    Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
 
     swerve = Swerve.getInstance();
     swerve.zeroModules();
@@ -127,7 +130,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
       // autoChooser.getSelected().runAuto();
     }else{
     }
-    new NS5().runAuto();
+    new M7().runAuto();
 
   }
 

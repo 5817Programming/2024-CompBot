@@ -126,7 +126,6 @@ public class Swerve extends Subsystem {
         pathFollower = PathFollower.getInstance();
         gyro = Pigeon.getInstance();
         vision = Vision.getInstance();
-        logger = Logger.getInstance();
 
         OdometryPID = new PID2d(new SynchronousPIDF(1, 0.0, 0),
                                 new SynchronousPIDF(1, 0.0, 0));
@@ -682,7 +681,7 @@ public class Swerve extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        logger.recordOutput("Odometry", pose.toWPI());        modules.forEach((m) -> {
+        Logger.recordOutput("Odometry", pose.toWPI());        modules.forEach((m) -> {
             m.outputTelemetry();
         });
     }
