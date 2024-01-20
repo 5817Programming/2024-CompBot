@@ -6,7 +6,9 @@ package com.wcp.frc.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.wcp.frc.Constants;
 import com.wcp.frc.Ports;
 import com.wcp.frc.subsystems.Requests.Request;
 import com.wcp.lib.TalonDefaultConfig;
@@ -77,7 +79,11 @@ public class Shooter extends Subsystem {
 
   public void conformToState(State state) {
     setState(state);
-    setshooterPercentRequest(state.output);
+    setShooterPercentRequest(state.output);
+  }
+  
+  public void setAcceleration(double accelerationDemand){
+    mPeriodicIO.accelerationDemand = accelerationDemand;
   }
 
   public Request stateRequest(State state) {
@@ -89,8 +95,9 @@ public class Shooter extends Subsystem {
       }
     };
   }
+  
 
-  public Request setshooterPercentRequest(double percentage) {
+  public Request setShooterPercentRequest(double percentage) {
     return new Request() {
 
       @Override
@@ -102,6 +109,19 @@ public class Shooter extends Subsystem {
     };
 
   }
+
+public Request setAccelerationRequest(double percentage) {
+    return new Request() {
+
+      @Override
+      public void act() {
+        setAcceleration(percentage);
+      }
+
+    };
+
+  }
+
 
   @Override
   public void update() {
@@ -122,11 +142,15 @@ public class Shooter extends Subsystem {
 
   }
 
-  public Request hasPieceRequest(){
+  public boolean atTarget(){
+    return Math.abs(mPeriodicIO.velocity) - Math.abs(mPeriodicIO.driveDemand) < 300 ;
+  }
+
+  public Request atTargetRequest(){
     return new Request() {
       @Override
         public boolean isFinished() {
-            return !stateChanged && hasPiece;
+            return !stateChanged && atTarget();
         }
     };
   }
@@ -144,7 +168,13 @@ public class Shooter extends Subsystem {
 
   @Override
   public void readPeriodicInputs() {
-    shooterMotor.setControl(new DutyCycleOut(mPeriodicIO.driveDemand, true, false, false, false));
+    shooterMotor.setControl(new VelocityDutyCycle(mPeriodicIO.driveDemand,
+                                                  mPeriodicIO.accelerationDemand,
+                                         true,
+                                                  Constants.ShooterConstants.FEEDFORWARD,
+                                                  0,false,
+                                                  false,
+                                                  false));
   }
 
   @Override
@@ -154,15 +184,14 @@ public class Shooter extends Subsystem {
 
   @Override
   public void stop() {
-    setshooterPercentRequest(0);
+    setShooterPercentRequest(0);
   }
 
   public static class PeriodicIO {// data
     double drivePosition = 0;
     double velocity = 0;
     double statorCurrent = 0;
-
-    double rotationDemand = 0.0;
+    double accelerationDemand = 0;
     double driveDemand = 0.0;
   }
 }

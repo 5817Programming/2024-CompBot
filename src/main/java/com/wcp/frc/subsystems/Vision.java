@@ -59,6 +59,19 @@ public class Vision extends Subsystem {
     }
   }
 
+  public Request hasTargetRequest(){
+    return new Request() {
+      @Override
+      public boolean isFinished() {
+          // TODO Auto-generated method stub
+          return hasTarget();
+      }
+    };
+  }
+  public double getPivotAngle(){
+    return 0; //TODO
+  }
+
   public double getDistance(){//gets distance to target
     double distanceFromLimelightToGoalInches = (Constants.VisionConstants.APRIL_HEIGHT_INCHES - Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT_INCHES)/Math.tan(Math.toRadians(Constants.VisionConstants.LIMELIGHT_MOUNT_ANGLE_DEGREES + getY()));
   return distanceFromLimelightToGoalInches>0&&distanceFromLimelightToGoalInches<1000?Units.inchesToMeters(distanceFromLimelightToGoalInches):0;

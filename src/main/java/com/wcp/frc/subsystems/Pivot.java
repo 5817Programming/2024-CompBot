@@ -89,9 +89,17 @@ public class Pivot extends Subsystem {
     timeEnteredState = Timer.getFPGATimestamp();
   }
 
+  public boolean atTarget(){
+    return Math.abs(currentState.output) - Math.abs(mPeriodicIO.rotationPosition) <1;
+  }
+
   public void conformToState(State state) {
     setState(state);
-    setPivotPercent(state.output);
+    setMotionMagic(state.output);
+  }
+  public void conformToState(double Override) {
+    setState(State.SHOOTING);
+    setMotionMagic(Override);
   }
 
   public void motionMagic(){
@@ -109,6 +117,16 @@ public class Pivot extends Subsystem {
       @Override
       public void act() {
         conformToState(state);
+      }
+    };
+  }
+
+  public Request stateRequest(Double position) {
+    return new Request() {
+
+      @Override
+      public void act() {
+        conformToState(position);
       }
     };
   }
@@ -132,16 +150,17 @@ public class Pivot extends Subsystem {
       case AMP:
         break;
       case SPEAKER:
-      
+
     }
 
   }
 
-  public Request hasPieceRequest(){
+
+  public Request atTargetRequest(){
     return new Request() {
       @Override
         public boolean isFinished() {
-            return !stateChanged && hasPiece;
+            return !stateChanged && atTarget();
         }
     };
   }

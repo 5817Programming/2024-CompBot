@@ -99,6 +99,7 @@ public class Constants {
     public static final class ShooterConstants{
         public static final double HANDOFF = 0;
         public static final double IDLE = 0;
+        public static final double FEEDFORWARD = 2;
     }
     
     public static final class IntakeConstants{
