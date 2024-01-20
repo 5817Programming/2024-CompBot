@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Indexer extends Subsystem {
   private PeriodicIO mPeriodicIO = new PeriodicIO();
-  private TalonFX indexerMotor = new TalonFX(Ports.intake);
+  private TalonFX indexerMotor = new TalonFX(Ports.Intake);
   private TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
   private State currentState;
   private boolean stateChanged;

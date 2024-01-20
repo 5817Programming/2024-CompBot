@@ -12,7 +12,6 @@ import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.wcp.frc.Constants;
-import com.wcp.frc.subsystems.Intake.State;
 import com.wcp.frc.subsystems.Requests.Request;
 import com.wcp.frc.subsystems.Requests.RequestList;
 import com.wcp.lib.geometry.Translation2d;
@@ -25,6 +24,8 @@ public class SuperStructure extends Subsystem {
     public Vision vision;
     public Logger logger;
     public Indexer indexer;
+    public Pivot pivot;
+    public Shooter shooter;
 
     private ArrayList<RequestList> queuedRequests;
 
@@ -33,6 +34,8 @@ public class SuperStructure extends Subsystem {
         vision = Vision.getInstance();
         intake = Intake.getInstance();
         indexer = Indexer.getInstance();
+        pivot = Pivot.getInstance();
+        shooter = Shooter.getInstance();
         idleState();
         queuedRequests = new ArrayList<>();
 
@@ -61,31 +64,9 @@ public class SuperStructure extends Subsystem {
         return activeRequestsComplete;
     }
 
-
-    PreState currentUnprocessedState = PreState.ZERO;
-
     boolean lockElevator = false;
     boolean cube = false;
     boolean isIntaking = false;
-
-    public enum GameState {
-        GETPIECE,
-        SCORE,
-        CHARGE;
-    }
-
-    public enum PreState {
-        HIGH,
-        MID,
-        LOW,
-        HOOMAN,
-        CHUTE,
-        ZERO,
-        GROUND;
-
-    }
-
-
 
     private void setActiveRequests(RequestList requests) {
         activeRequests = requests;
@@ -230,6 +211,7 @@ public class SuperStructure extends Subsystem {
                             request.act();
                     }
                     activeRequestsComplete = true;
+
                 }
             }
 
@@ -241,6 +223,19 @@ public class SuperStructure extends Subsystem {
                 logCurrentRequest("objectTarget"),
                 swerve.objectTargetRequest(fixedRotation)
                 ), false);
+        queue(request);
+    }
+
+    public void dynamicScoreState(boolean Override){
+        RequestList request = new RequestList(Arrays.asList(
+            logCurrentRequest("Aiming"),
+            vision.hasTargetRequest(),
+            pivot.stateRequest(vision.getPivotAngle()),
+            shooter.stateRequest(Shooter.State.Ramping),
+            pivot.atTargetRequest(),
+            shooter.atTargetRequest()
+        ),false);
+
         queue(request);
     }
 
@@ -312,8 +307,11 @@ public class SuperStructure extends Subsystem {
         };
     }
 
-    public void waitState(double waitTime){
-        queue(waitRequest(waitTime));
+    public void waitState(double waitTime, boolean Override){
+        if(Override)
+            request(waitRequest(waitTime));
+        else
+            queue(waitRequest(waitTime));
     }
 
     public Request waitRequest(double waitTime) {

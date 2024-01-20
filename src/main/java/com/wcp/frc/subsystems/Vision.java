@@ -59,6 +59,19 @@ public class Vision extends Subsystem {
     }
   }
 
+  public Request hasTargetRequest(){
+    return new Request() {
+      @Override
+      public boolean isFinished() {
+          // TODO Auto-generated method stub
+          return hasTarget();
+      }
+    };
+  }
+  public double getPivotAngle(){
+    return 0; //TODO
+  }
+
   public double getDistance(){//gets distance to target
     double distanceFromLimelightToGoalInches = (Constants.VisionConstants.APRIL_HEIGHT_INCHES - Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT_INCHES)/Math.tan(Math.toRadians(Constants.VisionConstants.LIMELIGHT_MOUNT_ANGLE_DEGREES + getY()));
   return distanceFromLimelightToGoalInches>0&&distanceFromLimelightToGoalInches<1000?Units.inchesToMeters(distanceFromLimelightToGoalInches):0;
@@ -93,11 +106,11 @@ public class Vision extends Subsystem {
 
   @Override
   public void outputTelemetry() {
-    Logger.getInstance().recordOutput("Distance", getDistance());
-    Logger.getInstance().recordOutput("hasTarget", hasTarget());
-    Logger.getInstance().recordOutput("tx", tx.getDouble(0.0));
-    Logger.getInstance().recordOutput("ty", ty.getDouble(0.0));
-    Logger.getInstance().recordOutput("ta", ta.getDouble(0.0));
+    Logger.recordOutput("Distance", getDistance());
+    Logger.recordOutput("hasTarget", hasTarget());
+    Logger.recordOutput("tx", tx.getDouble(0.0));
+    Logger.recordOutput("ty", ty.getDouble(0.0));
+    Logger.recordOutput("ta", ta.getDouble(0.0));
   }
   
 

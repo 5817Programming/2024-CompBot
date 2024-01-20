@@ -10,8 +10,6 @@ import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.wcp.frc.Constants;
 import com.wcp.frc.Ports;
@@ -29,9 +27,7 @@ import com.wcp.lib.util.Util;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Add your docs here. */
@@ -81,7 +77,6 @@ public class Swerve extends Subsystem {
     private Translation2d targetFollowTranslation = new Translation2d();
     private Rotation2d targetHeading = new Rotation2d();
 
-
     PID2d OdometryPID;
     PID2d VisionPID;
     SynchronousPIDF areaVisionPID;
@@ -97,8 +92,9 @@ public class Swerve extends Subsystem {
     SynchronousPIDF rPID;
     double currentSpeed = 0;
     double bestDistance;
-    
+
     double lastTimeStamp = 0;
+
     public Swerve() {
 
         frontRightModule = new SwerveDriveModule(Ports.FRONT_RIGHT_ROTATION, Ports.FRONT_RIGHT_DRIVE, 0,
@@ -128,10 +124,10 @@ public class Swerve extends Subsystem {
         vision = Vision.getInstance();
 
         OdometryPID = new PID2d(new SynchronousPIDF(1, 0.0, 0),
-                                new SynchronousPIDF(1, 0.0, 0));
+                new SynchronousPIDF(1, 0.0, 0));
 
         VisionPID = new PID2d(new SynchronousPIDF(.01, 0.005, 0.01),
-                              new SynchronousPIDF(.5, 0.01, 0));
+                new SynchronousPIDF(.5, 0.01, 0));
 
         areaVisionPID = new SynchronousPIDF(.025, 0.01, 0);
 
@@ -166,15 +162,15 @@ public class Swerve extends Subsystem {
         currentState = desiredState;
     }
 
-    public void startPath( boolean useAllianceColor) {
+    public void startPath(boolean useAllianceColor) {
         trajectoryStarted = true;
         this.useAllianceColor = useAllianceColor;
         pathFollower.startTimer();
 
     }
 
-    public void setSpeedPercent(double percent){
-        speedPercent = (1-(percent*Constants.GrannyModeWeight));
+    public void setSpeedPercent(double percent) {
+        speedPercent = (1 - (percent * Constants.GrannyModeWeight));
     }
 
     //
@@ -289,7 +285,7 @@ public class Swerve extends Subsystem {
         Translation2d deltaPos = updatedPose.getTranslation().translateBy(pose.getTranslation().inverse());
         distanceTraveled += deltaPos.getNorm();
         currentSpeed = deltaPos.getNorm() / (timestamp - lastUpdateTimestamp);
-        currentVelocity = deltaPos.scale(1/(timestamp - lastUpdateTimestamp));
+        currentVelocity = deltaPos.scale(1 / (timestamp - lastUpdateTimestamp));
 
         pose = updatedPose;
 
@@ -306,15 +302,16 @@ public class Swerve extends Subsystem {
     public void resetTimer() {
         PathFollower.getInstance().resetTimer();
     }
-    
 
     public Translation2d updateFollowedTranslation2d(double timestamp) {
         double dt = timestamp - lastTimestamp;
         Translation2d currentRobotPositionFromStart = pose.getTranslation();
         OdometryPID.x().setOutputRange(-.9, .9);
         OdometryPID.y().setOutputRange(-.9, .9);
-        double xError = OdometryPID.x().calculate(targetFollowTranslation.getX() - currentRobotPositionFromStart.getX(), dt);
-        double yError = OdometryPID.y().calculate(targetFollowTranslation.getY() - currentRobotPositionFromStart.getY(), dt);
+        double xError = OdometryPID.x().calculate(targetFollowTranslation.getX() - currentRobotPositionFromStart.getX(),
+                dt);
+        double yError = OdometryPID.y().calculate(targetFollowTranslation.getY() - currentRobotPositionFromStart.getY(),
+                dt);
         lastTimestamp = timestamp;
         if (Math.abs(xError + yError) / 2 < .1 && PathFollower.getInstance().isFinished()) {
             setState(State.OFF);
@@ -404,7 +401,7 @@ public class Swerve extends Subsystem {
         this.rotationScalar = scalar;
         update();
     }
-    
+
     public void Aim(Pose2d aimingVector) {
         currentState = State.AMP;
         this.aimingVector = aimingVector.getTranslation();
@@ -442,10 +439,7 @@ public class Swerve extends Subsystem {
         gyro.setAngle(-180);
     }
 
-    
-
-
-    public Translation2d getVelocity(){
+    public Translation2d getVelocity() {
         return currentVelocity;
     }
 
@@ -481,7 +475,6 @@ public class Swerve extends Subsystem {
 
     }
 
-
     public Request setStateRequest(State state) {
         return new Request() {
             @Override
@@ -508,7 +501,7 @@ public class Swerve extends Subsystem {
             @Override
             public boolean isFinished() {
                 Translation2d translation = targetObject(fixedRotation).getTranslation();
-                if(translation.within(.3) && vision.hasTarget()){
+                if (translation.within(.3) && vision.hasTarget()) {
                     aimingVector = new Translation2d();
                 }
                 return translation.within(.3) && vision.hasTarget();
@@ -533,11 +526,11 @@ public class Swerve extends Subsystem {
             @Override
             public boolean isFinished() {
                 Translation2d translation = targetApril().getTranslation();
-                if(translation.within(.4) && vision.hasTarget()){
+                if (translation.within(.4) && vision.hasTarget()) {
                     aimingVector = new Translation2d();
                 }
-                if(translation.within(.4) && vision.hasTarget()){
-                    System.out.println("Done. "); 
+                if (translation.within(.4) && vision.hasTarget()) {
+                    System.out.println("Done. ");
                 }
                 return translation.within(.4) && vision.hasTarget();
             }
@@ -556,7 +549,7 @@ public class Swerve extends Subsystem {
             VisionPID.y().setOutputRange(-.2, .2);
 
             xError = VisionPID.x().calculate(vision.getX(), dt);
-            yError = VisionPID.y().calculate(vision.getDistance()-.05, dt);
+            yError = VisionPID.y().calculate(vision.getDistance() - .05, dt);
         }
 
         else {
@@ -567,7 +560,6 @@ public class Swerve extends Subsystem {
         return new Pose2d(new Translation2d(yError, xError).inverse(), Rotation2d.fromDegrees(180));
     }
 
-
     public Pose2d targetObject(boolean fixedRotation) {
         double xError = 0;
         double yError = 0;
@@ -577,8 +569,7 @@ public class Swerve extends Subsystem {
             VisionPID.x().setOutputRange(-.2, .2);
             areaVisionPID.setOutputRange(-.2, .2);
             VisionPID.x().setOutputMagnitude(.03);
-            areaVisionPID.setOutputMagnitude(.02
-            );
+            areaVisionPID.setOutputMagnitude(.02);
 
             xError = VisionPID.x().calculate(vision.getX(), dt);
             yError = areaVisionPID.calculate(vision.getArea() - 20, dt);
@@ -589,7 +580,8 @@ public class Swerve extends Subsystem {
             yError = 0;
         }
         lastTimeStamp = currentTime;
-        return new Pose2d(new Translation2d(yError, -xError).inverse(), (fixedRotation ? new Rotation2d() : getRobotHeading()));
+        return new Pose2d(new Translation2d(yError, -xError).inverse(),
+                (fixedRotation ? new Rotation2d() : getRobotHeading()));
     }
 
     public Request openLoopRequest(Translation2d x, double r) {
@@ -605,18 +597,13 @@ public class Swerve extends Subsystem {
         };
 
     }
-    
+
     public Request startPathRequest(boolean useAllianceColor) {
         return new Request() {
             @Override
             public void act() {
                 setState(State.TRAJECTORY);
                 startPath(useAllianceColor);
-            }
-
-            @Override
-            public boolean isFinished(){
-                return false;
             }
         };
     }
@@ -640,31 +627,34 @@ public class Swerve extends Subsystem {
     }
 
     // public Request generateTrajectoryRequest(int node) {
-    //     return new Request() {
+    // return new Request() {
 
-    //         @Override
-    //         public void act() {
-    //             PathPlannerTrajectory trajectory = PathGenerator.generatePath(new PathConstraints(4, 4),
-    //                     new Node(Constants.scoresY.get(node), DriverStation.getAlliance() == Alliance.Blue ? 2 : 14.71),
-    //                     Constants.FieldConstants.obstacles);
-    //             setTrajectory(trajectory);TODO
-    //         }
+    // @Override
+    // public void act() {
+    // PathPlannerTrajectory trajectory = PathGenerator.generatePath(new
+    // PathConstraints(4, 4),
+    // new Node(Constants.scoresY.get(node), DriverStation.getAlliance() ==
+    // Alliance.Blue ? 2 : 14.71),
+    // Constants.FieldConstants.obstacles);
+    // setTrajectory(trajectory);TODO
+    // }
 
-    //     };
+    // };
 
     // }
 
     // public Request generateTrajectoryRequest(Node node) {
-    //     return new Request() {
+    // return new Request() {
 
-    //         @Override
-    //         public void act() {
-    //             PathPlannerTrajectory trajectory = PathGenerator.generatePath(new PathConstraints(4, 4), node,
-    //                     Constants.FieldConstants.obstacles);
-    //             setTrajectory(trajectory);
-    //         }
+    // @Override
+    // public void act() {
+    // PathPlannerTrajectory trajectory = PathGenerator.generatePath(new
+    // PathConstraints(4, 4), node,
+    // Constants.FieldConstants.obstacles);
+    // setTrajectory(trajectory);
+    // }
 
-    //     };
+    // };
 
     // }
 
@@ -681,7 +671,8 @@ public class Swerve extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        Logger.recordOutput("Odometry", pose.toWPI());        modules.forEach((m) -> {
+        Logger.recordOutput("Odometry", pose.toWPI());
+        modules.forEach((m) -> {
             m.outputTelemetry();
         });
     }

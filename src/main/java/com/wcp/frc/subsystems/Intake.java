@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Intake extends Subsystem {
   private PeriodicIO mPeriodicIO = new PeriodicIO();
-  private TalonFX intakeMotor = new TalonFX(Ports.intake);
+  private TalonFX intakeMotor = new TalonFX(Ports.Intake);
   private TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
   private State currentState;
   private boolean stateChanged;
