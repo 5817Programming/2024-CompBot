@@ -119,6 +119,8 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @Override
   public void autonomousInit() {
     swerve = Swerve.getInstance();
+    swerve.zeroModules();
+
     
     swerve.fieldzeroSwerve();
     swerve.sendInput(0, 0,0);
@@ -146,6 +148,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     SuperStructure.getInstance().idleState();
     swerve = Swerve.getInstance();
     swerve.fieldzeroSwerve();
+    swerve.zeroModules();
 
 
 

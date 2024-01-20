@@ -23,10 +23,10 @@ public class Ports {
 
     public static final int PIGEON = 23;
 
-    public static final int FRONT_RIGHT_ENCODER = 1; // 3
-    public static final int FRONT_LEFT_ENCODER = 0; // 4
-    public static final int REAR_LEFT_ENCODER = 2; // 1
-    public static final int REAR_RIGHT_ENCODER = 3; // 0
+    public static final int FRONT_RIGHT_ENCODER = 9; // 3
+    public static final int FRONT_LEFT_ENCODER = 7; // 4
+    public static final int REAR_LEFT_ENCODER = 6; // 1
+    public static final int REAR_RIGHT_ENCODER = 8; // 0
     public static final int[] SWERVE_ENCODERS = new int[] { FRONT_RIGHT_ENCODER, FRONT_LEFT_ENCODER,
             REAR_LEFT_ENCODER, REAR_RIGHT_ENCODER };
     // public static final int kSucker = ;

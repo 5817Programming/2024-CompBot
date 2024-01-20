@@ -44,6 +44,7 @@ public class Constants {
         new Translation2d(-mRobotBaseWidth / 2, mRobotBaseLength / 2),
         new Translation2d(-mRobotBaseWidth / 2, -mRobotBaseLength / 2),
       
+
     };
     //The positions of the modules, relative to the robot's center
     public static final Translation2d kFrontRightPosition = new Translation2d(kRobotBaseWidth / 2, kRobotBaseLength / 2);
@@ -90,10 +91,10 @@ public class Constants {
 
     ///The absolute starting postion for each module
     //originally +180 to each
-    public static final double kFrontRightStartingEncoderPosition = -82; //-354.950352
-    public static final double kFrontLeftStartingEncoderPosition = -291; //-263.094811
-    public static final double kRearLeftStartingEncoderPosition = -129; //-121.094031
-    public static final double kRearRightStartingEncoderPosition = -61.4; //-355.170825     
+    public static final double kFrontRightStartingEncoderPosition = -300; //-354.950352
+    public static final double kFrontLeftStartingEncoderPosition = -273; //-263.094811
+    public static final double kRearLeftStartingEncoderPosition = -360; //-121.094031
+    public static final double kRearRightStartingEncoderPosition = -261; //-355.170825     
         
         
     public static final class ShooterConstants{

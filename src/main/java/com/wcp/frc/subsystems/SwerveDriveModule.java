@@ -105,7 +105,7 @@ public class SwerveDriveModule extends Subsystem {
     }
 
     public enum ControlMode{
-        percentOuput,
+        PercentOuput,
         MotionMagic,
       }
 
@@ -175,7 +175,7 @@ public class SwerveDriveModule extends Subsystem {
     }
     
     public void setDriveOpenLoop(double percentOuput) {
-        mPeriodicIO.driveControlMode = ControlMode.percentOuput;
+        mPeriodicIO.driveControlMode = ControlMode.PercentOuput;
         mPeriodicIO.driveDemand = percentOuput;
     }
     
@@ -226,10 +226,11 @@ public class SwerveDriveModule extends Subsystem {
     
 
     public void resetModulePositionToAbsolute() {
-            if (isMagEncoderConnected()) {
                 double offset = getModuleAbsolutePosition() - encoderOffset;
                 rotationMotor.setPosition(degreesToRotations(offset));
-            }
+                System.out.print(this.name + offset);
+        
+            
 
     }
 
@@ -260,14 +261,14 @@ public class SwerveDriveModule extends Subsystem {
       @Override
   public void readPeriodicInputs() {
     switch (mPeriodicIO.driveControlMode) {
-      case percentOuput:
+      case PercentOuput:
           runPercentOutput(mPeriodicIO.driveDemand, driveMotor);
         break;
       case MotionMagic:
           runMotionMagic(mPeriodicIO.driveDemand, driveMotor);
     }
     switch (mPeriodicIO.rotationControlMode) {
-      case percentOuput:
+      case PercentOuput:
           runPercentOutput(mPeriodicIO.rotationDemand, rotationMotor);
         break;
       case MotionMagic:
@@ -293,6 +294,7 @@ public class SwerveDriveModule extends Subsystem {
         Logger.recordOutput(this.name + " A", Constants.kWheelCircumference);
         Logger.recordOutput(this.name + "Drive Control Mode", mPeriodicIO.driveControlMode);
         Logger.recordOutput(this.name + "Rotation Control Mode", mPeriodicIO.rotationControlMode);
+    
 
 
     }
@@ -309,7 +311,7 @@ public class SwerveDriveModule extends Subsystem {
         double velocity = 0;
 
         ControlMode rotationControlMode = ControlMode.MotionMagic;
-        ControlMode driveControlMode = ControlMode.percentOuput;
+        ControlMode driveControlMode = ControlMode.PercentOuput;
         double rotationDemand = 0.0;
         double driveDemand = 0.0;
     }
