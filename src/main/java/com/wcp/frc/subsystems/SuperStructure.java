@@ -20,22 +20,22 @@ import edu.wpi.first.wpilibj.Timer;
 /** Add your docs here. */
 public class SuperStructure extends Subsystem {
     public Swerve swerve;
-    public Intake intake;
+    // public Intake intake;
     public Vision vision;
     public Logger logger;
-    public Indexer indexer;
-    public Pivot pivot;
-    public Shooter shooter;
+    // public Indexer indexer;
+    // public Pivot pivot;
+    // public Shooter shooter;
 
     private ArrayList<RequestList> queuedRequests;
 
     public SuperStructure() {
         swerve = Swerve.getInstance();
         vision = Vision.getInstance();
-        intake = Intake.getInstance();
-        indexer = Indexer.getInstance();
-        pivot = Pivot.getInstance();
-        shooter = Shooter.getInstance();
+        // intake = Intake.getInstance();
+        // indexer = Indexer.getInstance();
+        // pivot = Pivot.getInstance();
+        // shooter = Shooter.getInstance();
         idleState();
         queuedRequests = new ArrayList<>();
 
@@ -229,11 +229,11 @@ public class SuperStructure extends Subsystem {
     public void dynamicScoreState(boolean Override){
         RequestList request = new RequestList(Arrays.asList(
             logCurrentRequest("Aiming"),
-            vision.hasTargetRequest(),
-            pivot.stateRequest(vision.getPivotAngle()),
-            shooter.stateRequest(Shooter.State.Ramping),
-            pivot.atTargetRequest(),
-            shooter.atTargetRequest()
+            vision.hasTargetRequest()
+            // pivot.stateRequest(vision.getPivotAngle()),
+            // shooter.stateRequest(Shooter.State.Ramping),
+            // pivot.atTargetRequest()
+            // shooter.atTargetRequest()
         ),false);
 
         queue(request);
@@ -250,18 +250,18 @@ public class SuperStructure extends Subsystem {
 
     public void intakePercent(double percentage) {
         RequestList request = new RequestList(Arrays.asList(
-            intake.setIntakePercentRequest(percentage)
+            // intake.setIntakePercentRequest(percentage)
                 ), true);
 
         queue(request);
     }
 
-    public void trajectoryState(PathPlannerTrajectory trajectory, double nodes) {
+    public void trajectoryState(PathPlannerTrajectory trajectory, double nodes,double initRotation) {
         RequestList request = new RequestList(Arrays.asList(
                 logCurrentRequest("trajectory")
         ), true);
         RequestList queue = new RequestList(Arrays.asList(
-                swerve.setTrajectoryRequest(trajectory, nodes),
+                swerve.setTrajectoryRequest(trajectory, nodes,initRotation),
                 swerve.startPathRequest(true)), false);
         queue(request);
         queue(queue);
@@ -269,16 +269,16 @@ public class SuperStructure extends Subsystem {
 
     public void intakeState(boolean Override){
         RequestList request = new RequestList(Arrays.asList(
-            logCurrentRequest("Intaking"),
-            intake.stateRequest(Intake.State.Intaking),
-            intake.hasPieceRequest()
+            logCurrentRequest("Intaking")
+            // intake.stateRequest(Intake.State.Intaking),
+            // intake.hasPieceRequest()
         ), true);
         RequestList queue = new RequestList(Arrays.asList(
-            logCurrentRequest("Transfering"),
-            intake.hasPieceRequest(),
-            intake.stateRequest(Intake.State.Feeding),
-            indexer.stateRequest(Indexer.State.Recieving),
-            indexer.hasPieceRequest()
+            logCurrentRequest("Transfering")
+            // intake.hasPieceRequest(),
+            // intake.stateRequest(Intake.State.Feeding),
+            // indexer.stateRequest(Indexer.State.Recieving),
+            // indexer.hasPieceRequest()
         ), false);
 
         if(Override){

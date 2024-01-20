@@ -80,10 +80,10 @@ public class PathFollower{
     return DriverStation.getAlliance().get().equals(Alliance.Red);
   }
 
-  public Pose2d getInitial(PathPlannerTrajectory trajectory) {
+  public Pose2d getInitial(PathPlannerTrajectory trajectory,double Rotation) {
     double initX = trajectory.getInitialState().positionMeters.getX();
     double initY = trajectory.getInitialState().positionMeters.getY();
-    double initRot = 180;
+    double initRot = Rotation;
     if (alliance()) {
       return new Pose2d(new Translation2d(reflect(initX), initY),
           Rotation2d.fromDegrees(initRot).flip());

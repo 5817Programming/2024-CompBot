@@ -12,8 +12,8 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 
-import com.wcp.frc.subsystems.Intake;
-import com.wcp.frc.subsystems.Shooter;
+// import com.wcp.frc.subsystems.Intake;
+// import com.wcp.frc.subsystems.Shooter;
 import com.wcp.frc.subsystems.SuperStructure;
 import com.wcp.frc.subsystems.Swerve;
 import com.wcp.frc.subsystems.Vision;
@@ -21,6 +21,7 @@ import com.wcp.frc.subsystems.gyros.Gyro;
 import com.wcp.lib.util.PathFollower;
 import com.wcp.frc.Autos.AutoBase;
 import com.wcp.frc.Autos.M5;
+import com.wcp.frc.Autos.M5Safe;
 import com.wcp.frc.Autos.M6;
 import com.wcp.frc.Autos.M7;
 import com.wcp.frc.Autos.NS5;
@@ -80,9 +81,9 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     subsystemManager.addSystems(Arrays.asList(
         Swerve.getInstance(),
         SuperStructure.getInstance(), 
-        Vision.getInstance(),
-        Shooter.getInstance(),
-        Intake.getInstance()
+        Vision.getInstance()
+        // Shooter.getInstance()
+        // Intake.getInstance()
         ));
     }
 
@@ -132,7 +133,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
       // autoChooser.getSelected().runAuto();
     }else{
     }
-    new M7().runAuto();
+    new NS5().runAuto();
 
   }
 

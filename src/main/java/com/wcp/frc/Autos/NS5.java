@@ -14,11 +14,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 public class NS5 extends AutoBase{
     SuperStructure s = SuperStructure.getInstance();
     Swerve swerve = Swerve.getInstance();
-
-    PathPlannerTrajectory path = PathPlannerPath.fromPathFile("NS5").getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(180));
+    double initRotation = -62;
+    PathPlannerTrajectory path = PathPlannerPath.fromPathFile("NS5").getTrajectory(new ChassisSpeeds(),  Rotation2d.fromDegrees(initRotation));
 
     @Override
     public void auto() {
-        s.trajectoryState(path,5);
+        s.trajectoryState(path,6,initRotation);
+        s.waitState(15, false);
     }
 }

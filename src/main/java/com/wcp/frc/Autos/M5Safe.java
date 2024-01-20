@@ -11,11 +11,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 
-public class NS3 extends AutoBase{
+public class M5Safe extends AutoBase{
     SuperStructure s = SuperStructure.getInstance();
     Swerve swerve = Swerve.getInstance();
-    double initRotation = 180;
-    PathPlannerTrajectory path = PathPlannerPath.fromPathFile("NS3").getTrajectory(new ChassisSpeeds(),  Rotation2d.fromDegrees(initRotation));
+    double initRotation = 0;
+    PathPlannerTrajectory path = PathPlannerPath.fromPathFile("M5 Safe").getTrajectory(new ChassisSpeeds(),  Rotation2d.fromDegrees(initRotation));
 
     @Override
     public void auto() {

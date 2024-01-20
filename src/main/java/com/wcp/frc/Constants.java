@@ -92,7 +92,7 @@ public class Constants {
     ///The absolute starting postion for each module
     //originally +180 to each
     public static final double kFrontRightStartingEncoderPosition = -300; //-354.950352
-    public static final double kFrontLeftStartingEncoderPosition = -273; //-263.094811
+    public static final double kFrontLeftStartingEncoderPosition = -280; //-263.094811
     public static final double kRearLeftStartingEncoderPosition = -360; //-121.094031
     public static final double kRearRightStartingEncoderPosition = -261; //-355.170825     
         
