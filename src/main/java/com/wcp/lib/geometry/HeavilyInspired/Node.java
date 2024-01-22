@@ -3,7 +3,7 @@ package com.wcp.lib.geometry.HeavilyInspired;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wcp.frc.subsystems.Swerve;
+import com.wcp.frc.subsystems.Swerve.SwerveDrive;
 import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
 
@@ -28,16 +28,16 @@ public class Node {
         this.neighbors = new ArrayList < > ();
     }
 
-    public Node(Swerve swerve){
-      this.x = swerve.getPose().getTranslation().getX();
-      this.y = swerve.getPose().getTranslation().getY(); 
-      this.holonomicRotation = swerve.getPose().getRotation();
+    public Node(SwerveDrive swerve){
+      this.x = swerve.getPoseMeters().getTranslation().x();
+      this.y = swerve.getPoseMeters().getTranslation().y(); 
+      this.holonomicRotation = swerve.getPoseMeters().getRotation();
       this.neighbors = new ArrayList <>();
     }
   
     public Node(Translation2d coordinates, Rotation2d holonomicRotation) {
-      this.x = coordinates.getX();
-      this.y = coordinates.getY(); 
+      this.x = coordinates.x();
+      this.y = coordinates.y(); 
       this.holonomicRotation = holonomicRotation;
       this.neighbors = new ArrayList < > ();
     }

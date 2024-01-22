@@ -14,14 +14,16 @@ import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.wcp.frc.Constants;
 import com.wcp.frc.subsystems.Requests.Request;
 import com.wcp.frc.subsystems.Requests.RequestList;
+import com.wcp.frc.subsystems.Swerve.SwerveDrive;
+import com.wcp.frc.subsystems.Vision.LimeLight;
 import com.wcp.lib.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 
 /** Add your docs here. */
 public class SuperStructure extends Subsystem {
-    public Swerve swerve;
+    public SwerveDrive swerve;
     // public Intake intake;
-    public Vision vision;
+    public LimeLight vision;
     public Logger logger;
     // public Indexer indexer;
     // public Pivot pivot;
@@ -30,8 +32,8 @@ public class SuperStructure extends Subsystem {
     private ArrayList<RequestList> queuedRequests;
 
     public SuperStructure() {
-        swerve = Swerve.getInstance();
-        vision = Vision.getInstance();
+        swerve = SwerveDrive.getInstance();
+        vision = LimeLight.getInstance();
         // intake = Intake.getInstance();
         // indexer = Indexer.getInstance();
         // pivot = Pivot.getInstance();

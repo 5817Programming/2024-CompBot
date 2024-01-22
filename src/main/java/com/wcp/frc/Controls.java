@@ -5,7 +5,7 @@
 package com.wcp.frc;
 
 import com.wcp.frc.subsystems.SuperStructure;
-import com.wcp.frc.subsystems.Swerve;
+import com.wcp.frc.subsystems.Swerve.SwerveDrive;
 import com.wcp.lib.geometry.Translation2d;
 
 
@@ -16,7 +16,7 @@ public class Controls {
     SuperStructure s;
     XboxController Driver;
     XboxController CoDriver;
-    Swerve swerve;
+    SwerveDrive swerve;
 
     ButtonCheck driverLeftTrigger = new ButtonCheck(.5);
     ButtonCheck driverRightTrigger = new ButtonCheck(.5);
@@ -63,7 +63,7 @@ public class Controls {
     public Controls() {
         Driver = new XboxController(Ports.XBOX_1);
         CoDriver = new XboxController(Ports.XBOX_2);
-        swerve = Swerve.getInstance();   
+        swerve = SwerveDrive.getInstance();   
     }
 
 

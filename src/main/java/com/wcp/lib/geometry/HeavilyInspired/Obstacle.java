@@ -7,6 +7,7 @@ import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
 
 
+
 public class Obstacle {
     public PolygonDouble polygon;
 
@@ -63,11 +64,11 @@ public class Obstacle {
                     // If lines don't intersect, and the edge hasn't been plotted out already
                     if(!edge.hasBeenCleaned()) {
                         // If edge was cleaned from a previous loop, don't add the first point
-                        xPoints.add( offsetEdges.get(i).point1.getX());
-                        yPoints.add( offsetEdges.get(i).point1.getY());
+                        xPoints.add( offsetEdges.get(i).point1.x());
+                        yPoints.add( offsetEdges.get(i).point1.y());
                     }
-                    xPoints.add(offsetEdges.get(i).point2.getX());
-                    yPoints.add(offsetEdges.get(i).point2.getY());
+                    xPoints.add(offsetEdges.get(i).point2.x());
+                    yPoints.add(offsetEdges.get(i).point2.y());
                     edge.setHasBeenPlotted(true);
                 }
                 else {
@@ -76,11 +77,11 @@ public class Obstacle {
                         // Don't duplicate points
                         if (!edge.hasBeenCleaned()) {
                             // If edge was cleaned from a previous loop, don't add the first point
-                            xPoints.add( offsetEdges.get(i).point1.getX());
-                            yPoints.add( offsetEdges.get(i).point1.getY());
+                            xPoints.add( offsetEdges.get(i).point1.x());
+                            yPoints.add( offsetEdges.get(i).point1.y());
                         }
-                        xPoints.add( intersectionPoint.getX());
-                        yPoints.add( intersectionPoint.getY());
+                        xPoints.add( intersectionPoint.x());
+                        yPoints.add( intersectionPoint.y());
                         otherEdge.setHasBeenCleaned(true);
                         edge.setHasBeenPlotted(true);
                     }
@@ -139,27 +140,27 @@ public class Obstacle {
          */
         public Translation2d findIntersectionPoint(ObstacleEdge other) {
             // Calculate x distance of line 1
-            double s1_x = this.point2.getX() - this.point1.getX();
+            double s1_x = this.point2.x() - this.point1.x();
             // Calculate x distance of line 2
-            double s2_x = other.point2.getX() - other.point1.getX();
+            double s2_x = other.point2.x() - other.point1.x();
             // Calculate y distance of line 1
-            double s1_y = this.point2.getY() - this.point1.getY();
+            double s1_y = this.point2.y() - this.point1.y();
             // Calculate y distance of line 2
-            double s2_y = other.point2.getY() - other.point1.getY();
+            double s2_y = other.point2.y() - other.point1.y();
 
             double s, t;
             // Denominator portion of below equations, split into variable because it's the same between the two
             double d = -s2_x * s1_y + s1_x * s2_y;
 
             // Magical math that I need to look into how it works more
-            s = (-s1_y * (this.point1.getX() - other.point1.getX()) + s1_x * (this.point1.getY() - other.point1.getY())) / d;
-            t = ( s2_x * (this.point1.getY() - other.point1.getY()) - s2_y * (this.point1.getX() - other.point1.getX())) / d;
+            s = (-s1_y * (this.point1.x() - other.point1.x()) + s1_x * (this.point1.y() - other.point1.y())) / d;
+            t = ( s2_x * (this.point1.y() - other.point1.y()) - s2_y * (this.point1.x() - other.point1.x())) / d;
 
             double i_x, i_y;
             if(s >= 0 && s <= 1 && t >= 0 && t <= 1) {
                 // Intersection found
-                i_x = this.point1.getX() + (t * s1_x);
-                i_y = this.point1.getY() + (t * s1_y);
+                i_x = this.point1.x() + (t * s1_x);
+                i_y = this.point1.y() + (t * s1_y);
                 return new Translation2d(i_x, i_y);
             }
             return null;

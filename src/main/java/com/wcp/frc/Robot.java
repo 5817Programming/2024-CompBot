@@ -15,8 +15,8 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 // import com.wcp.frc.subsystems.Intake;
 // import com.wcp.frc.subsystems.Shooter;
 import com.wcp.frc.subsystems.SuperStructure;
-import com.wcp.frc.subsystems.Swerve;
-import com.wcp.frc.subsystems.Vision;
+import com.wcp.frc.subsystems.Swerve.SwerveDrive;
+import com.wcp.frc.subsystems.Vision.LimeLight;
 import com.wcp.frc.subsystems.gyros.Gyro;
 import com.wcp.lib.util.PathFollower;
 import com.wcp.frc.Autos.AutoBase;
@@ -41,9 +41,9 @@ public class Robot extends LoggedRobot {
 
   Controls controls;
   SubsystemManager subsystemManager;
-  Swerve swerve;
+  SwerveDrive swerve;
   double yaw;
-  Vision vision;
+  LimeLight vision;
   
   Gyro pigeon;
   public SendableChooser<AutoBase> autoChooser = new SendableChooser<>();
@@ -72,16 +72,16 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
 
-    swerve = Swerve.getInstance();
+    swerve = SwerveDrive.getInstance();
     swerve.zeroModules();
     controls = Controls.getInstance();
-    swerve = Swerve.getInstance();
-    vision = Vision.getInstance();
+    swerve = SwerveDrive.getInstance();
+    vision = LimeLight.getInstance();
     subsystemManager = new SubsystemManager();
     subsystemManager.addSystems(Arrays.asList(
-        Swerve.getInstance(),
+        SwerveDrive.getInstance(),
         SuperStructure.getInstance(), 
-        Vision.getInstance()
+        LimeLight.getInstance()
         // Shooter.getInstance()
         // Intake.getInstance()
         ));
@@ -119,7 +119,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
 
   @Override
   public void autonomousInit() {
-    swerve = Swerve.getInstance();
+    swerve = SwerveDrive.getInstance();
     swerve.zeroModules();
 
     
@@ -147,7 +147,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @Override
   public void teleopInit() {
     SuperStructure.getInstance().idleState();
-    swerve = Swerve.getInstance();
+    swerve = SwerveDrive.getInstance();
     swerve.fieldzeroSwerve();
     swerve.zeroModules();
 

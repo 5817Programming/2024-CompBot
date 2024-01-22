@@ -143,19 +143,6 @@
 
 //   }
 
-//   @Override
-//   public void update() {
-//     double currentTime = Timer.getFPGATimestamp();
-//     switch (currentState) {
-//       case AMP:
-//         break;
-//       case SPEAKER:
-
-//     }
-
-//   }
-
-
 //   public Request atTargetRequest(){
 //     return new Request() {
 //       @Override

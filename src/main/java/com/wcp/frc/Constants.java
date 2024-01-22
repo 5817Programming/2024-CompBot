@@ -6,10 +6,17 @@ package com.wcp.frc;
 
 import java.util.Arrays;
 import java.util.List;
+
+import com.wcp.lib.geometry.Pose2d;
+import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
 import com.wcp.lib.util.InterpolatingDouble;
 import com.wcp.lib.util.InterpolatingTreeMap;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
@@ -36,6 +43,13 @@ public class Constants {
     public static final double mRobotBaseLength = Units.inchesToMeters(22);//The Robot Wheel Base Length
 
     public static final double kOuterWheelDriveDiameter = 4.0;
+
+
+         //Kalman Filters
+     public static final Matrix<N2, N1> kStateStdDevs = VecBuilder.fill(Math.pow(0.04, 1), Math.pow(0.04, 1));
+     public static final Matrix<N2, N1> kLocalMeasurementStdDevs = VecBuilder.fill(Math.pow(0.01, 1), Math.pow(0.01, 1));
+    public static final double kTagPoseRejectionFilter = 2.25; //Reject Vision Correction if Current Pose Farther than 3m from April Tag
+     public static final double kNumInitialMeasurements = 15;//100; //Number of Measurements to Let Into Filter Without Rejection to Initialize X_Hat
 
     //Sets the motor on a 2Dplane
     public static final Translation2d[] modulePositions = new Translation2d[] {
@@ -169,6 +183,15 @@ public class Constants {
         public static final int APRIL_HEIGHT_INCHES = 0;
         public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 0;
         public static final double LIMELIGHT_MOUNT_ANGLE_DEGREES = 0;
+
+        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(-0.27621 , 0), Rotation2d.fromDegrees(0));
+
+        public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);
+        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(-35);
+
+
+        public static final double IMAGE_CAPTURE_LATENCY = 11.0;
+
     }
 
     public static final class LightConstants {

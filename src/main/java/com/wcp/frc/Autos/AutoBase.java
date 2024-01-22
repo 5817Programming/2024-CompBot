@@ -5,7 +5,7 @@
 package com.wcp.frc.Autos;
 
 import com.wcp.frc.subsystems.SuperStructure;
-import com.wcp.frc.subsystems.Swerve;
+import com.wcp.frc.subsystems.Swerve.SwerveDrive;
 
 /** 
  * This is an abstract class
@@ -22,6 +22,6 @@ public abstract class AutoBase {
     }
     public void stopAuto(){
         SuperStructure.getInstance().clearQueues();
-        Swerve.getInstance().setState(Swerve.State.MANUAL);
+        SwerveDrive.getInstance().setState(SwerveDrive.State.MANUAL);
     }
 }
