@@ -16,7 +16,7 @@ import com.wcp.lib.swerve.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 
 public class AutoAlignMotionPlanner {
-
+    
     private ProfileFollower mXController = new ProfileFollower(2.5, 0, 0, 1, 0, 0);
     private ProfileFollower mYController = new ProfileFollower(2.5, 0, 0, 1, 0, 0);
     private ProfileFollower mThetaController = new ProfileFollower(1.5, 0.0, 0.0, 1.0, 0.0, 0.0);
@@ -35,7 +35,7 @@ public class AutoAlignMotionPlanner {
         mAutoAlignComplete = false;
     }
 
-    public synchronized void setTargetPoint(Pose2d targetPoint) {
+    public synchronized void setTargetPoint(Pose2d targetPoint) {//TODO setpoint generator
         mFieldToTargetPoint = targetPoint;
     }
 
