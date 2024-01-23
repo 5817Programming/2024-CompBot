@@ -481,33 +481,6 @@ public class SwerveDrive extends Subsystem {
         return ChassisSpeeds.fromRobotRelativeSpeeds(desiredThrottleSpeed, desiredStrafeSpeed, desiredRotationSpeed);
     }
 
-    public Request aimStateRequest(boolean cube) {
-        return new Request() {
-
-            public void act() {
-                setState(State.AMP);
-                Aim(targetApril());
-            }
-
-            @Override
-            public void initialize() {
-                vision.setPipeline(1);
-            }
-
-            @Override
-            public boolean isFinished() {
-                Translation2d translation = targetApril().getTranslation();
-                if (translation.within(.4) && vision.hasTarget()) {
-                    aimingVector = new Translation2d();
-                }
-                if (translation.within(.4) && vision.hasTarget()) {
-                    System.out.println("Done. ");
-                }
-                return translation.within(.4) && vision.hasTarget();
-            }
-        };
-
-    }
 
     public Pose2d targetApril() {
         double xError = 0;

@@ -24,7 +24,6 @@ public class RobotStateEstimator extends Subsystem {
 
   private SwerveOdometry mOdometry = new SwerveOdometry(new Pose2d());
   private SwerveDrive mDrive;
-  private LimeLight mVision;
   
   public static RobotStateEstimator getInstance(){
     if(instance == null){
@@ -37,8 +36,6 @@ public class RobotStateEstimator extends Subsystem {
   /** Creates a new RobotStateEstimator. */
   public RobotStateEstimator() { 
     mDrive = SwerveDrive.getInstance();
-    mVision = LimeLight.getInstance();
-
   }
 
   @Override
