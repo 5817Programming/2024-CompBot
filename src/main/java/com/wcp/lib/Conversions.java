@@ -22,14 +22,13 @@ public static double RPMToFalcon(double RPM, double gearRation){
     return senseorCounts;
 
 }
-public static double falconToRPM(double velocitycounts, double gearRatio){
-    double motorRPM = velocitycounts*(600/2048);
-    double mechRPM = motorRPM/gearRatio;
-    return mechRPM;
-}
+// public static double falconToRPM(double velocitycounts, double gearRatio){
+//     double mechRPM = motorRPM/gearRatio;
+//     return mechRPM;
+// }
     
     public static double falconToMPS(double veloctycounts, double circumference, double gearRatio){
-    double wheelRPM = falconToRPM(veloctycounts, gearRatio);
+    double wheelRPM = veloctycounts/gearRatio;
     double wheelMPS = (wheelRPM*circumference)/60;
     return wheelMPS;
 

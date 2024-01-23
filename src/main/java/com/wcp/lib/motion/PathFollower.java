@@ -1,4 +1,4 @@
-package com.wcp.lib.util;
+package com.wcp.lib.motion;
 
 
 import com.pathplanner.lib.path.PathPlannerTrajectory;
@@ -22,7 +22,6 @@ import org.littletonrobotics.junction.Logger;
 
 /** Custom PathPlanner version of SwerveControllerCommand */
 public class PathFollower{
-  public static final double kEpsilon = 1e-12;
   private final Timer timer = new Timer();
   public static PathFollower instance = null;
   private PathPlannerTrajectory transformedTrajectory;

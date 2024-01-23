@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.wcp.frc.Constants;
@@ -21,6 +22,7 @@ import com.wcp.lib.Conversions;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
+import com.wcp.lib.swerve.SwerveModuleState;
 import com.wcp.lib.swerve.SwerveTalonDefaultConfig;
 import com.wcp.lib.util.Util;
 
@@ -103,6 +105,7 @@ public class SwerveDriveModule extends Subsystem {
     public enum ControlMode{
         PercentOuput,
         MotionMagic,
+        Velocity
       }
 
     public void invertDriveMotor(boolean invert) {
@@ -169,6 +172,21 @@ public class SwerveDriveModule extends Subsystem {
         mPeriodicIO.driveControlMode = ControlMode.PercentOuput;
         mPeriodicIO.driveDemand = percentOuput;
     }
+
+    public void setDriveVelocity(double velocity) {
+        mPeriodicIO.driveControlMode = ControlMode.Velocity;
+        mPeriodicIO.driveDemand = velocity;
+    }
+
+    public SwerveModuleState getSwerveModuleState(){
+        return new SwerveModuleState(Conversions.falconToMPS(
+            mPeriodicIO.velocity,
+            Constants.kWheelCircumference,
+            Options.driveRatio),
+            mPeriodicIO.distanceTraveled ,
+            Rotation2d.fromDegrees(rotationsToDegrees(mPeriodicIO.rotationPosition)
+            ));
+    }
     
     public synchronized void updatePose(Rotation2d robotHeading){
 		double currentEncDistance = Conversions.falconToMeters(driveMotor.getPosition().getValueAsDouble(), Constants.kWheelCircumference, Options.driveRatio);
@@ -195,6 +213,7 @@ public class SwerveDriveModule extends Subsystem {
 		deltaPosition = new Translation2d(deltaPosition.x() * xScrubFactor,
 			deltaPosition.y() * yScrubFactor);
         Logger.recordOutput("delta t" + moduleID, deltaPosition.y());
+        mPeriodicIO.distanceTraveled += deltaPosition.norm();
 		Translation2d updatedPosition = position.translateBy(deltaPosition);
 		Pose2d staticWheelPose = new Pose2d(updatedPosition, robotHeading);
 		Pose2d robotPose = staticWheelPose.transformBy(Pose2d.fromTranslation(mstartingPosition).inverse());
@@ -257,6 +276,10 @@ public class SwerveDriveModule extends Subsystem {
         break;
       case MotionMagic:
           runMotionMagic(mPeriodicIO.driveDemand, driveMotor);
+        break;
+      case Velocity:
+          runVelocity(mPeriodicIO.driveDemand, driveMotor);
+        break;
     }
     switch (mPeriodicIO.rotationControlMode) {
       case PercentOuput:
@@ -264,7 +287,11 @@ public class SwerveDriveModule extends Subsystem {
         break;
       case MotionMagic:
           runMotionMagic(mPeriodicIO.rotationDemand, rotationMotor);
+        default:
+          runMotionMagic(mPeriodicIO.rotationDemand, rotationMotor);
+        break;
     }
+
   }
 
   public void runPercentOutput(double percent, TalonFX motor){
@@ -272,6 +299,10 @@ public class SwerveDriveModule extends Subsystem {
   }
     public void runMotionMagic(double position, TalonFX motor){
     motor.setControl(new MotionMagicVoltage(position));
+  }
+
+  public void runVelocity(double velocity, TalonFX motor){
+    motor.setControl(new VelocityDutyCycle(velocity).withEnableFOC(true).withSlot(0));
   }
     @Override
     public void outputTelemetry() {
@@ -300,6 +331,7 @@ public class SwerveDriveModule extends Subsystem {
         double rotationPosition = 0;
         double drivePosition = 0;
         double velocity = 0;
+        double distanceTraveled = 0;
 
         ControlMode rotationControlMode = ControlMode.MotionMagic;
         ControlMode driveControlMode = ControlMode.PercentOuput;

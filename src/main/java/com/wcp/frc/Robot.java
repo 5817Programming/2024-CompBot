@@ -18,7 +18,7 @@ import com.wcp.frc.subsystems.SuperStructure;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
 import com.wcp.frc.subsystems.Vision.LimeLight;
 import com.wcp.frc.subsystems.gyros.Gyro;
-import com.wcp.lib.util.PathFollower;
+import com.wcp.lib.motion.PathFollower;
 import com.wcp.frc.Autos.AutoBase;
 import com.wcp.frc.Autos.M5;
 import com.wcp.frc.Autos.M5Safe;

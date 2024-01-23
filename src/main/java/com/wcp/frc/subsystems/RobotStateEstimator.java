@@ -22,7 +22,7 @@ public class RobotStateEstimator extends Subsystem {
 
   static RobotStateEstimator instance = null;
 
-  private SwerveOdometry mOdometry = new SwerveOdometry(new Pose2d());
+  private SwerveOdometry mOdometry = new SwerveOdometry(SwerveDrive.getInstance().getKinematics(), new Pose2d());
   private SwerveDrive mDrive;
   
   public static RobotStateEstimator getInstance(){

@@ -5,6 +5,7 @@
 package com.wcp.lib.swerve;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.wcp.frc.Constants;
 
@@ -12,36 +13,49 @@ import com.wcp.frc.Constants;
 public class SwerveTalonDefaultConfig {
 
     public static TalonFXConfiguration motionMagicConfig(){
-        TalonFXConfiguration motionMagicConfig = new TalonFXConfiguration();
+        TalonFXConfiguration mSteerConfig = new TalonFXConfiguration();
 
- motionMagicConfig.Slot0.kP = 6;
-        motionMagicConfig.Slot0.kS = 0.8;
-        motionMagicConfig.Slot0.kV = .1224;
+        mSteerConfig.CurrentLimits.SupplyCurrentLimit = 120;
+        mSteerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        mSteerConfig.CurrentLimits.StatorCurrentLimit = 120;
+        mSteerConfig.CurrentLimits.StatorCurrentLimitEnable = false;
 
+        mSteerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        mSteerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
+        mSteerConfig.Slot0.kP = 6;
+        mSteerConfig.Slot0.kS = 0.8;
+        mSteerConfig.Slot0.kV = .1224;
 
-        motionMagicConfig.MotionMagic.MotionMagicCruiseVelocity = 98;
-        motionMagicConfig.MotionMagic.MotionMagicAcceleration = 1000;
+        mSteerConfig.MotionMagic.MotionMagicCruiseVelocity = 98;
+        mSteerConfig.MotionMagic.MotionMagicAcceleration = 1000;
         
-        return motionMagicConfig;
+        return mSteerConfig;
     }
 
     public static TalonFXConfiguration driveConfigs() {
-        TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
+        TalonFXConfiguration mDriveConfig = new TalonFXConfiguration();
 
 
+        mDriveConfig.CurrentLimits.SupplyCurrentLimit = 120;
+        mDriveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        mDriveConfig.CurrentLimits.StatorCurrentLimit = 120;
+        mDriveConfig.CurrentLimits.StatorCurrentLimitEnable = false;
 
-        driveConfigs.Slot0.kD=( 3.6);
-        driveConfigs.Slot0.kV = 1023.0 / Constants.kSwerveDriveMaxSpeed;
-        driveConfigs.Slot1.kP = 0;
-        driveConfigs.Slot1.kI = 0.0;
-        driveConfigs.Slot1.kD = 0;
-        driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 
+        mDriveConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        mDriveConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
-        driveConfigs.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));
+        mDriveConfig.Slot0.kI = 0.0;
+        mDriveConfig.Slot0.kP = .24;
+        mDriveConfig.Slot0.kD = 0.000002 * 12;
+        mDriveConfig.Slot0.kV = 1 / 101.98 * 12;
+        mDriveConfig.Slot0.kS = 0.8;
+        // mDriveConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5;
 
-      return driveConfigs;
+        mDriveConfig.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
+        mDriveConfig.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));
+
+      return mDriveConfig;
     }
 
 

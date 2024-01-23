@@ -16,6 +16,7 @@ import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.wcp.frc.Constants;
 import com.wcp.frc.Options;
 import com.wcp.frc.Ports;
+import com.wcp.frc.Planners.AutoAlignMotionPlanner;
 import com.wcp.frc.subsystems.RobotState;
 import com.wcp.frc.subsystems.RobotStateEstimator;
 import com.wcp.frc.subsystems.Subsystem;
@@ -27,15 +28,16 @@ import com.wcp.lib.HeadingController;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
+import com.wcp.lib.motion.PathFollower;
 import com.wcp.lib.swerve.ChassisSpeeds;
-import com.wcp.lib.swerve.SwerveInverseKinematics;
+import com.wcp.lib.swerve.SwerveKinematics;
 import com.wcp.lib.util.PID2d;
-import com.wcp.lib.util.PathFollower;
 import com.wcp.lib.util.SynchronousPIDF;
 import com.wcp.lib.util.Util;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Time;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -59,7 +61,6 @@ public class SwerveDrive extends Subsystem {
     double rotationalVel;
     boolean trajectoryStarted = false;
     boolean trajectoryFinished = false;
-    double speed;
     boolean useAllianceColor;
 
     Pigeon gyro;
@@ -91,15 +92,13 @@ public class SwerveDrive extends Subsystem {
     SynchronousPIDF areaVisionPID;
 
     private double lastTimestamp = Timer.getFPGATimestamp();
-    SwerveInverseKinematics inverseKinematics = new SwerveInverseKinematics();
+    SwerveKinematics inverseKinematics = new SwerveKinematics();
     RobotStateEstimator robotStateEstimator;
+    AutoAlignMotionPlanner mAutoAlignMotionPlanner;
+    RobotState robotState;
     public HeadingController headingController = new HeadingController();
 
-    boolean pathStarted;
-    PIDController thetaController;
-    PIDController advanceController;
 
-    SynchronousPIDF rPID;
     double currentSpeed = 0;
     double bestDistance;
 
@@ -133,15 +132,8 @@ public class SwerveDrive extends Subsystem {
         gyro = Pigeon.getInstance();
         vision = LimeLight.getInstance();
         robotStateEstimator = RobotStateEstimator.getInstance();
-
-        OdometryPID = new PID2d(new SynchronousPIDF(1, 0.0, 0),
-                new SynchronousPIDF(1, 0.0, 0));
-
-        VisionPID = new PID2d(new SynchronousPIDF(.01, 0.005, 0.01),
-                new SynchronousPIDF(.5, 0.01, 0));
-
-        areaVisionPID = new SynchronousPIDF(.025, 0.01, 0);
-
+        robotState = RobotState.getInstance();
+        mAutoAlignMotionPlanner = new AutoAlignMotionPlanner();
     }
 
     public void setTrajectory(PathPlannerTrajectory trajectory, double nodes,double initRotation) {
@@ -159,7 +151,7 @@ public class SwerveDrive extends Subsystem {
         TRAJECTORY,
         OFF,
         AIMING,
-        AMP,
+        ALIGNMENT,
         SNAP,
     }
 
@@ -171,6 +163,10 @@ public class SwerveDrive extends Subsystem {
 
     public void setState(State desiredState) {
         currentState = desiredState;
+    }
+
+    public SwerveKinematics getKinematics(){
+        return inverseKinematics;
     }
 
     public void startPath(boolean useAllianceColor) {
@@ -227,6 +223,21 @@ public class SwerveDrive extends Subsystem {
 
     public void commandModules(List<Translation2d> moduleVectors) {
         this.moduleVectors = moduleVectors;
+        for (int i = 0; i < moduleVectors.size(); i++) {
+            if (Util.shouldReverse(moduleVectors.get(i).direction(),
+                    Rotation2d.fromDegrees(modules.get(i).getModuleAngle()))) {
+                modules.get(i).setModuleAngle(moduleVectors.get(i).direction().getDegrees() + 180);
+                modules.get(i).setDriveOpenLoop(-moduleVectors.get(i).norm());
+            } else {
+                modules.get(i).setModuleAngle(moduleVectors.get(i).direction().getDegrees());
+                modules.get(i).setDriveOpenLoop(moduleVectors.get(i).norm());
+
+            }
+        }
+    }
+
+    public void commandModuleVelocitys(List<Translation2d> moduleVectors){
+         this.moduleVectors = moduleVectors;
         for (int i = 0; i < moduleVectors.size(); i++) {
             if (Util.shouldReverse(moduleVectors.get(i).direction(),
                     Rotation2d.fromDegrees(modules.get(i).getModuleAngle()))) {
@@ -299,7 +310,7 @@ public class SwerveDrive extends Subsystem {
     @Override
     public void update() {
         double timeStamp = Timer.getFPGATimestamp();
-        poseMeters = RobotState.getInstance().getLatestOdomToVehicle().getValue();
+        poseMeters = robotState.getLatestOdomToVehicle().getValue();
         drivingpose = Pose2d.fromRotation(getRobotHeading());
         switch (currentState) {
             case MANUAL:
@@ -313,13 +324,15 @@ public class SwerveDrive extends Subsystem {
                         rotationScalar + rotationCorrection, drivingpose, robotCentric));
                 break;
 
-            case AMP:
-                headingController.setTargetHeading(targetHeading);
-                rotationCorrection = headingController.getRotationCorrection(getRobotHeading(), timeStamp);
-                SmartDashboard.putNumber("Swerve Heading Correctiomm    33  33   /n", rotationCorrection);
-                commandModules(inverseKinematics.updateDriveVectors(translationVector.translateBy(aimingVector),
-                        rotationCorrection, drivingpose,
-                        robotCentric));
+            case ALIGNMENT:
+                ChassisSpeeds targetChassisSpeeds = updateAutoAlign();
+                commandModuleVelocitys(inverseKinematics.updateDriveVectors(new Translation2d(
+                    targetChassisSpeeds.vxMetersPerSecond,
+                    targetChassisSpeeds.vyMetersPerSecond),
+                    targetChassisSpeeds.omegaRadiansPerSecond,
+                    poseMeters,
+                    robotCentric
+                    ));
                 break;
 
             case TRAJECTORY:
@@ -354,6 +367,14 @@ public class SwerveDrive extends Subsystem {
 
     }
 
+    public ChassisSpeeds updateAutoAlign(){
+        final double now = Timer.getFPGATimestamp();
+        var fieldToOdometry = robotState.getFieldToOdom(now);
+        var odomToVehicle = robotState.getOdomToVehicle(now);
+        ChassisSpeeds output = mAutoAlignMotionPlanner.updateAutoAlign(now, odomToVehicle, Pose2d.fromTranslation(fieldToOdometry), robotState.getMeasuredVelocity());
+        return output;
+    }
+
     public void snap(double r) {
         setState(State.SNAP);
         targetHeading = Rotation2d.fromDegrees(r);
@@ -368,7 +389,7 @@ public class SwerveDrive extends Subsystem {
     }
 
     public void Aim(Pose2d aimingVector) {
-        currentState = State.AMP;
+        currentState = State.ALIGNMENT;
         this.aimingVector = aimingVector.getTranslation();
         targetHeading = aimingVector.getRotation();
         headingController.setTargetHeading(targetHeading);
@@ -376,7 +397,7 @@ public class SwerveDrive extends Subsystem {
     }
 
     public void Aim(Translation2d aimingVector, Rotation2d rotation) {
-        currentState = State.AMP;// SETS HEADING TO 0or 180
+        currentState = State.ALIGNMENT;// SETS HEADING TO 0or 180
         this.aimingVector = aimingVector;
         targetHeading = rotation;
         headingController.setTargetHeading(rotation);
@@ -454,7 +475,7 @@ public class SwerveDrive extends Subsystem {
 
             @Override
             public void act() {
-                setState(State.AMP);
+                setState(State.ALIGNMENT);
                 Aim(targetObject(fixedRotation));
             }
 
