@@ -14,6 +14,7 @@ public class HeadingController {
     private double lastTimestamp;
 
     private double disabledStartTimestamp = 0;
+    private boolean atTarget = false;
     private boolean isDisabled = false;
     public void disableHeadingController(boolean disable) {
         disabledStartTimestamp = lastTimestamp;
@@ -26,6 +27,7 @@ public class HeadingController {
     }
     public void setTargetHeading(Rotation2d heading) {
         targetHeading = Rotation2d.fromDegrees(heading.getDegrees());
+        atTarget = false;
     }
     public double updateRotationCorrection(Rotation2d heading, double timestamp) {
         if(isDisabled) {
@@ -37,10 +39,17 @@ public class HeadingController {
         }
         return getRotationCorrection(heading, timestamp);
     }
+
+    public boolean atTarget(){
+        return atTarget;
+    }
     public double getRotationCorrection(Rotation2d heading, double timestamp) {
         double error = new Rotation2d(targetHeading).rotateBy(heading.inverse()).getDegrees();
         double dt = timestamp - lastTimestamp;
         lastTimestamp = timestamp;
+        if(Math.abs(error)< 1){
+            atTarget = true;
+        }
         double correctionForce = pidController.calculate(error, dt);
         if(Math.abs(correctionForce) > 0.017){
             correctionForce = .017* Math.signum(correctionForce);

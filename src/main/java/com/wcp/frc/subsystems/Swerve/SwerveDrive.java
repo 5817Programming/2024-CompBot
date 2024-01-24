@@ -88,7 +88,7 @@ public class SwerveDrive extends Subsystem {
     SwerveKinematics inverseKinematics = new SwerveKinematics();
     RobotStateEstimator robotStateEstimator;
     AutoAlignMotionPlanner mAutoAlignMotionPlanner;
-    DriveMotionPlanner driveMotionPlanner;
+    DriveMotionPlanner mDriveMotionPlanner;
     RobotState robotState;
     public HeadingController headingController = new HeadingController();
 
@@ -126,8 +126,9 @@ public class SwerveDrive extends Subsystem {
         vision = LimeLight.getInstance();
         robotStateEstimator = RobotStateEstimator.getInstance();
         robotState = RobotState.getInstance();
+
         mAutoAlignMotionPlanner = new AutoAlignMotionPlanner();
-        driveMotionPlanner =DriveMotionPlanner.getInstance();
+        mDriveMotionPlanner = new DriveMotionPlanner();
     }
 
 
@@ -155,7 +156,9 @@ public class SwerveDrive extends Subsystem {
         return inverseKinematics;
     }
 
-
+    public void resetModulePose(Pose2d newpose){
+        modules.forEach((m) -> m.resetPose(newpose));
+    }
 
     public void setSpeedPercent(double percent) {
         speedPercent = (1 - (percent * Constants.GrannyModeWeight));
@@ -269,18 +272,18 @@ public class SwerveDrive extends Subsystem {
     @Override
     public void update() {
         double timeStamp = Timer.getFPGATimestamp();
-        poseMeters = robotState.getLatestOdomToVehicle().getValue();
-        drivingpose = Pose2d.fromRotation(getRobotHeading());
+        poseMeters = robotState.getKalmanPose(timeStamp);
+        drivingPose = Pose2d.fromRotation(getRobotHeading());
         switch (currentState) {
             case MANUAL:
-                double rotationCorrection = headingController.updateRotationCorrection(drivingpose.getRotation(),
+                double rotationCorrection = headingController.updateRotationCorrection(drivingPose.getRotation(),
                         timeStamp);
                 if (translationVector.norm() == 0 || rotationScalar != 0) {
                     rotationCorrection = 0;
                 }
                 SmartDashboard.putNumber("Swerve Heading Correctiomm    33  33   /n", rotationCorrection);
                 commandModules(inverseKinematics.updateDriveVectors(translationVector,
-                        rotationScalar + rotationCorrection, drivingpose, robotCentric));
+                        rotationScalar + rotationCorrection, drivingPose, robotCentric));
                 break;
 
             case ALIGNMENT:
@@ -295,9 +298,9 @@ public class SwerveDrive extends Subsystem {
                 break;
 
             case TRAJECTORY:
-                driveMotionPlanner.updateTrajectory();
-                Translation2d translationCorrection = driveMotionPlanner.updateFollowedTranslation2d(timeStamp).scale(1);
-                headingController.setTargetHeading(driveMotionPlanner.getTargetHeading());
+                mDriveMotionPlanner.updateTrajectory();
+                Translation2d translationCorrection = mDriveMotionPlanner.updateFollowedTranslation2d(timeStamp).scale(1);
+                headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading());
                 rotationCorrection = headingController.getRotationCorrection(getRobotHeading(), timeStamp);
                 desiredRotationScalar = rotationCorrection;
                 commandModules(inverseKinematics.updateDriveVectors(translationCorrection, rotationCorrection, poseMeters,
@@ -306,15 +309,15 @@ public class SwerveDrive extends Subsystem {
 
             case AIMING:
                 commandModules(
-                        inverseKinematics.updateDriveVectors(aimingVector, rotationScalar, drivingpose, robotCentric));
+                        inverseKinematics.updateDriveVectors(aimingVector, rotationScalar, drivingPose, robotCentric));
                 break;
 
             case OFF:
-                commandModules(inverseKinematics.updateDriveVectors(new Translation2d(), 0, drivingpose, robotCentric));
+                commandModules(inverseKinematics.updateDriveVectors(new Translation2d(), 0, drivingPose, robotCentric));
                 break;
 
             case SNAP:
-                headingController.setTargetHeading(driveMotionPlanner.getTargetHeading());
+                headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading());
                 rotationCorrection = headingController.getRotationCorrection(getRobotHeading(), timeStamp);
                 desiredRotationScalar = rotationCorrection;
                 commandModules(inverseKinematics.updateDriveVectors(translationVector, rotationCorrection, poseMeters,
@@ -327,8 +330,8 @@ public class SwerveDrive extends Subsystem {
 
     public ChassisSpeeds updateAutoAlign(){
         final double now = Timer.getFPGATimestamp();
-        var fieldToOdometry = robotState.getFieldToOdom(now);
-        var odomToVehicle = robotState.getOdomToVehicle(now);
+        var fieldToOdometry = robotState.getAbsoluteVisionPoseComponent(now);
+        var odomToVehicle = robotState.getPoseFromOdom(now);
         ChassisSpeeds output = mAutoAlignMotionPlanner.updateAutoAlign(now, odomToVehicle, Pose2d.fromTranslation(fieldToOdometry), robotState.getMeasuredVelocity());
         return output;
     }

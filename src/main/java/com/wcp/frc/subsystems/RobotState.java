@@ -254,7 +254,7 @@ public class RobotState {
         return initialPose.get().inverse().translateBy(visionPoseComponent.getInterpolated(new InterpolatingDouble(timestamp)));
     }
 
-    public synchronized Translation2d getAbsoluteFieldToOdom(double timestamp) {
+    public synchronized Translation2d getAbsoluteVisionPoseComponent(double timestamp) {
         return visionPoseComponent.getInterpolated(new InterpolatingDouble(timestamp));
     }
 
@@ -275,7 +275,7 @@ public class RobotState {
 
     }
 
-    public synchronized Pose2d getInterpolatedKalmanPose(double timestamp) {
+    public synchronized Pose2d getAbosoluteKalmanPose(double timestamp) {
         var initialPose_ = initialPose.orElse(Translation2d.identity());
         return Pose2d.fromTranslation(initialPose_).transformBy(getKalmanPose(timestamp));
     }
@@ -294,7 +294,8 @@ public class RobotState {
         Logger.recordOutput("Robot Velocity", getMeasuredVelocity().toString());
         Logger.recordOutput("PoseFromOdometry",  getPoseFromOdom(Timer.getFPGATimestamp()).toWPI());
         Logger.recordOutput("Vision Pose Component", getVisionPoseComponent(Timer.getFPGATimestamp()).toWPI());
-        Logger.recordOutput("Filtered Poes", getKalmanPose(Timer.getFPGATimestamp()).toWPI());
+        Logger.recordOutput("Filtered Pose", getKalmanPose(Timer.getFPGATimestamp()).toWPI());
+        Logger.recordOutput("SetPoint Pose", mSetpointPose.toWPI());
    }
 
     public void setDisplaySetpointPose(Pose2d setpoint) {

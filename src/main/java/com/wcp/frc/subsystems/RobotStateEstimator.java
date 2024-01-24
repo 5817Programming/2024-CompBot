@@ -44,8 +44,8 @@ public class RobotStateEstimator extends Subsystem {
     mOdometry.updateWithSwerveModuleStates(mDrive.getRobotHeading(), mDrive.getModules(), timeStamp);
     Twist2d measuredVelocity = mOdometry.getVelocity().toTwist2d();
     Twist2d predictedVelocity = mDrive.getSetPoint().toTwist2d();
-    RobotState.getInstance().addOdomObservation(timeStamp, mOdometry.getPoseMeters(), measuredVelocity, predictedVelocity);
-    
+    RobotState.getInstance().addOdomObservations(timeStamp, mOdometry.getPoseMeters(), measuredVelocity, predictedVelocity);
+    mDrive.resetModulePose(mOdometry.getPoseMeters());
   }
 
   public void resetOdometry(Pose2d initialPose) {

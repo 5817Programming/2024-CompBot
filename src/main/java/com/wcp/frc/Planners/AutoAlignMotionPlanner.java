@@ -48,7 +48,7 @@ public class AutoAlignMotionPlanner {
                         IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 0.08, 0.05),
                 Constants.kPositionMotionProfileConstraints);
         mYController.setGoalAndConstraints(
-                new MotionProfileGoal(odomToTargetPoint.getTranslation().x(), 0,
+                new MotionProfileGoal(odomToTargetPoint.getTranslation().y(), 0,
                         IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.08, 0.05),
                 Constants.kPositionMotionProfileConstraints);
         mThetaController.setGoalAndConstraints(
@@ -92,7 +92,7 @@ public class AutoAlignMotionPlanner {
         mAutoAlignComplete = yOutputWithinDeadband && xOutputWithinDeadband && thetaWithinDeadband;
 
         if (mStartTime.isPresent() && mAutoAlignComplete) {
-            System.out.println("alignment took" + (Timer.getFPGATimestamp() - mStartTime.getAsDouble()));
+            System.out.println("Alignment took " + (Timer.getFPGATimestamp() - mStartTime.getAsDouble()));
             mStartTime = OptionalDouble.empty();
         }
 
