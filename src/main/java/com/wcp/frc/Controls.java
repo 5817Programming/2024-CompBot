@@ -121,7 +121,9 @@ public class Controls {
        swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput);
        swerve.setSpeedPercent(driverLeftTrigger.getValue());
        
-
+       if(driverLeftBumper.isPressed()){
+        
+       }
       
 
         
