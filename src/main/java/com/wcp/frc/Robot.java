@@ -12,8 +12,6 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 
-// import com.wcp.frc.subsystems.Intake;
-// import com.wcp.frc.subsystems.Shooter;
 import com.wcp.frc.subsystems.SuperStructure;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
 import com.wcp.frc.subsystems.Vision.LimeLight;
@@ -130,7 +128,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     startime = Timer.getFPGATimestamp();
     
     if(autoChooser.getSelected() != null){
-      // autoChooser.getSelected().runAuto();
+      autoChooser.getSelected().runAuto();
     }else{
     }
     new NS5().runAuto();

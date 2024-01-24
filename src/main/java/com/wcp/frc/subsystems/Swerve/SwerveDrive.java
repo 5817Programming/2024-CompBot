@@ -28,7 +28,6 @@ import com.wcp.lib.HeadingController;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
-import com.wcp.lib.motion.PathFollower;
 import com.wcp.lib.swerve.ChassisSpeeds;
 import com.wcp.lib.swerve.SwerveKinematics;
 import com.wcp.lib.util.PID2d;
@@ -65,7 +64,6 @@ public class SwerveDrive extends Subsystem {
 
     Pigeon gyro;
     LimeLight vision;
-    PathFollower pathFollower;
     Logger logger;
 
     Pose2d poseMeters = new Pose2d();
@@ -84,8 +82,7 @@ public class SwerveDrive extends Subsystem {
 
     double lastUpdateTimestamp = 0;
 
-    private Translation2d targetFollowTranslation = new Translation2d();
-    private Rotation2d targetHeading = new Rotation2d();
+
 
     PID2d OdometryPID;
     PID2d VisionPID;
@@ -128,7 +125,6 @@ public class SwerveDrive extends Subsystem {
         positionModules = Arrays.asList(frontRightModule, frontLeftModule, rearLeftModule, rearRightModule);
         distanceTraveled = 0;
 
-        pathFollower = PathFollower.getInstance();
         gyro = Pigeon.getInstance();
         vision = LimeLight.getInstance();
         robotStateEstimator = RobotStateEstimator.getInstance();
@@ -136,15 +132,7 @@ public class SwerveDrive extends Subsystem {
         mAutoAlignMotionPlanner = new AutoAlignMotionPlanner();
     }
 
-    public void setTrajectory(PathPlannerTrajectory trajectory, double nodes,double initRotation) {
-        trajectoryFinished = false;
-        pathFollower.setTrajectory(trajectory, nodes);
-        poseMeters = pathFollower.getInitial(trajectory,initRotation);
-        Pose2d newpose = (pathFollower.getInitial(trajectory,initRotation));
-        modules.forEach((m) -> m.resetPose(new Pose2d(newpose.getTranslation(), new Rotation2d())));
-        gyro.setAngle(newpose.getRotation().getDegrees());
 
-    }
 
     public enum State {
         MANUAL,
@@ -169,12 +157,7 @@ public class SwerveDrive extends Subsystem {
         return inverseKinematics;
     }
 
-    public void startPath(boolean useAllianceColor) {
-        trajectoryStarted = true;
-        this.useAllianceColor = useAllianceColor;
-        pathFollower.startTimer();
 
-    }
 
     public void setSpeedPercent(double percent) {
         speedPercent = (1 - (percent * Constants.GrannyModeWeight));
@@ -208,11 +191,7 @@ public class SwerveDrive extends Subsystem {
 
     }
 
-    public void updateTrajectory() {
-        Pose2d desiredPose = pathFollower.getDesiredPose2d(useAllianceColor, getPoseMeters());
-        targetHeading = desiredPose.getRotation().inverse();
-        targetFollowTranslation = desiredPose.getTranslation();
-    }
+
 
     public void parkMode() {
         rotationScalar = .5;
@@ -270,27 +249,8 @@ public class SwerveDrive extends Subsystem {
 
     }
 
-    public void resetTimer() {
-        PathFollower.getInstance().resetTimer();
-    }
 
-    public Translation2d updateFollowedTranslation2d(double timestamp) {
-        double dt = timestamp - lastTimestamp;
-        Translation2d currentRobotPositionFromStart = poseMeters.getTranslation();
-        OdometryPID.x().setOutputRange(-.9, .9);
-        OdometryPID.y().setOutputRange(-.9, .9);
-        double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.x(),
-                dt);
-        double yError = OdometryPID.y().calculate(targetFollowTranslation.y() - currentRobotPositionFromStart.y(),
-                dt);
-        lastTimestamp = timestamp;
-        if (Math.abs(xError + yError) / 2 < .1 && PathFollower.getInstance().isFinished()) {
-            setState(State.OFF);
-            trajectoryFinished = true;
-            return new Translation2d();
-        }
-        return new Translation2d(xError, -yError);
-    }
+
 
     public void zeroModules() {
         modules.forEach((m) -> {
@@ -336,7 +296,6 @@ public class SwerveDrive extends Subsystem {
                 break;
 
             case TRAJECTORY:
-                System.out.println("hwlakhfa");
                 updateTrajectory();
                 Translation2d translationCorrection = updateFollowedTranslation2d(timeStamp).scale(1);
                 headingController.setTargetHeading(targetHeading);
@@ -572,14 +531,7 @@ public class SwerveDrive extends Subsystem {
         };
     }
 
-    public Request waitForTrajectoryRequest(double PercentageToRun) {
-        return new Request() {
-            @Override
-            public boolean isFinished() {
-                return pathFollower.hasElapsedPercentage(PercentageToRun);
-            }
-        };
-    }
+
 
     public Request waitForTrajectoryRequest() {
         return new Request() {
