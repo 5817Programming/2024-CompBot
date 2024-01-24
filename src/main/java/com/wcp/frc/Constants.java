@@ -141,6 +141,14 @@ public class Constants {
         public static final double HANDOFF = 0;
         public static final double IDLE = 0;
         public static final double FEEDFORWARD = 2;
+
+        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SHOT_TRAVEL_TIME_TREE_MAP = new InterpolatingTreeMap<>();
+        static {
+            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+        }
     }
 
     public static final class IntakeConstants {

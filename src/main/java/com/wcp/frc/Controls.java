@@ -4,11 +4,17 @@
 
 package com.wcp.frc;
 
+import java.util.Optional;
+
+import com.wcp.frc.Planners.AutoAlignMotionPlanner;
+import com.wcp.frc.Planners.AutoAlignPointSelector;
+import com.wcp.frc.subsystems.RobotState;
 import com.wcp.frc.subsystems.SuperStructure;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
+import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Translation2d;
 
-
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 
 
@@ -68,6 +74,7 @@ public class Controls {
 
 
     public void update() {
+        var timestamp = Timer.getFPGATimestamp();
         s = SuperStructure.getInstance();
 
         double driverLeftXInput = Driver.getLeftX();
@@ -116,13 +123,13 @@ public class Controls {
         if(driverStartButton.isPressed())
             swerve.resetGryo(180);
         
-        
-       s.requestSwerveInput(new Translation2d(driverLeftYInput, -driverLeftXInput), -driverRightXInput);
-       swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput);
-       swerve.setSpeedPercent(driverLeftTrigger.getValue());
+        swerve.setSpeedPercent(driverLeftTrigger.getValue());
        
        if(driverLeftBumper.isPressed()){
-        
+        Optional<Pose2d> targetPoint = AutoAlignPointSelector.chooseTargetPoint(RobotState.getInstance().getInterpolatedKalmanPose(timestamp));
+        swerve.snapToPoint(targetPoint.get());
+       } else{
+        swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput);
        }
       
 

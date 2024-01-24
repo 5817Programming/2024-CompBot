@@ -12,11 +12,11 @@ import javax.swing.text.html.Option;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.wcp.frc.Constants;
 import com.wcp.frc.Options;
 import com.wcp.frc.Ports;
 import com.wcp.frc.Planners.AutoAlignMotionPlanner;
+import com.wcp.frc.Planners.DriveMotionPlanner;
 import com.wcp.frc.subsystems.RobotState;
 import com.wcp.frc.subsystems.RobotStateEstimator;
 import com.wcp.frc.subsystems.Subsystem;
@@ -58,17 +58,15 @@ public class SwerveDrive extends Subsystem {
     public double rotationScalar = 0;
     double speedPercent = 1;
     double rotationalVel;
-    boolean trajectoryStarted = false;
-    boolean trajectoryFinished = false;
-    boolean useAllianceColor;
+
 
     Pigeon gyro;
     LimeLight vision;
     Logger logger;
+    Pose2d drivingPose;
 
     Pose2d poseMeters = new Pose2d();
-    Pose2d drivingpose = new Pose2d();
-    PathPlannerTrajectory trajectoryDesired;
+    
     List<SwerveDriveModule> positionModules;
     Translation2d currentVelocity = new Translation2d();
 
@@ -83,8 +81,6 @@ public class SwerveDrive extends Subsystem {
     double lastUpdateTimestamp = 0;
 
 
-
-    PID2d OdometryPID;
     PID2d VisionPID;
     SynchronousPIDF areaVisionPID;
 
@@ -92,6 +88,7 @@ public class SwerveDrive extends Subsystem {
     SwerveKinematics inverseKinematics = new SwerveKinematics();
     RobotStateEstimator robotStateEstimator;
     AutoAlignMotionPlanner mAutoAlignMotionPlanner;
+    DriveMotionPlanner driveMotionPlanner;
     RobotState robotState;
     public HeadingController headingController = new HeadingController();
 
@@ -130,6 +127,7 @@ public class SwerveDrive extends Subsystem {
         robotStateEstimator = RobotStateEstimator.getInstance();
         robotState = RobotState.getInstance();
         mAutoAlignMotionPlanner = new AutoAlignMotionPlanner();
+        driveMotionPlanner =DriveMotionPlanner.getInstance();
     }
 
 
@@ -165,6 +163,7 @@ public class SwerveDrive extends Subsystem {
 
     //
     public void sendInput(double x, double y, double rotation) {
+        setState(State.MANUAL);
         translationVector = new Translation2d(x, y).scale(speedPercent);
         if (Math.abs(rotation) <= rotationDeadband) {
             rotation = 0;
@@ -240,11 +239,11 @@ public class SwerveDrive extends Subsystem {
         modules.forEach((m) -> m.resetPose(newPose));
     }
 
-    /** The tried and true algorithm for keeping track of position */
 
 
     public void resetOdometry(Pose2d newpose, Rotation2d rotation) {
         Pose2d newpose2 = new Pose2d(newpose.getTranslation(), rotation);
+        gyro.setAngle(rotation.getDegrees());
         modules.forEach((m) -> m.resetPose(newpose2));
 
     }
@@ -296,9 +295,9 @@ public class SwerveDrive extends Subsystem {
                 break;
 
             case TRAJECTORY:
-                updateTrajectory();
-                Translation2d translationCorrection = updateFollowedTranslation2d(timeStamp).scale(1);
-                headingController.setTargetHeading(targetHeading);
+                driveMotionPlanner.updateTrajectory();
+                Translation2d translationCorrection = driveMotionPlanner.updateFollowedTranslation2d(timeStamp).scale(1);
+                headingController.setTargetHeading(driveMotionPlanner.getTargetHeading());
                 rotationCorrection = headingController.getRotationCorrection(getRobotHeading(), timeStamp);
                 desiredRotationScalar = rotationCorrection;
                 commandModules(inverseKinematics.updateDriveVectors(translationCorrection, rotationCorrection, poseMeters,
@@ -315,7 +314,7 @@ public class SwerveDrive extends Subsystem {
                 break;
 
             case SNAP:
-                headingController.setTargetHeading(targetHeading);
+                headingController.setTargetHeading(driveMotionPlanner.getTargetHeading());
                 rotationCorrection = headingController.getRotationCorrection(getRobotHeading(), timeStamp);
                 desiredRotationScalar = rotationCorrection;
                 commandModules(inverseKinematics.updateDriveVectors(translationVector, rotationCorrection, poseMeters,
@@ -336,32 +335,7 @@ public class SwerveDrive extends Subsystem {
 
     public void snap(double r) {
         setState(State.SNAP);
-        targetHeading = Rotation2d.fromDegrees(r);
-        headingController.setTargetHeading(targetHeading);
-    }
-
-    public void Aim(Translation2d aimingVector, double scalar) {
-        currentState = State.AIMING;
-        this.aimingVector = aimingVector;
-        this.rotationScalar = scalar;
-        update();
-    }
-
-    public void Aim(Pose2d aimingVector) {
-        currentState = State.ALIGNMENT;
-        this.aimingVector = aimingVector.getTranslation();
-        targetHeading = aimingVector.getRotation();
-        headingController.setTargetHeading(targetHeading);
-        update();
-    }
-
-    public void Aim(Translation2d aimingVector, Rotation2d rotation) {
-        currentState = State.ALIGNMENT;// SETS HEADING TO 0or 180
-        this.aimingVector = aimingVector;
-        targetHeading = rotation;
-        headingController.setTargetHeading(rotation);
-        update();
-
+        headingController.setTargetHeading(Rotation2d.fromDegrees(r));
     }
 
     public void updateOdometry(double timestamp) {// uses sent input to commad modules and correct for rotatinol drift
@@ -429,31 +403,6 @@ public class SwerveDrive extends Subsystem {
         };
     }
 
-    public Request objectTargetRequest(boolean fixedRotation) {
-        return new Request() {
-
-            @Override
-            public void act() {
-                setState(State.ALIGNMENT);
-                Aim(targetObject(fixedRotation));
-            }
-
-            @Override
-            public void initialize() {
-                vision.setPipeline(0);
-            }
-
-            @Override
-            public boolean isFinished() {
-                Translation2d translation = targetObject(fixedRotation).getTranslation();
-                if (translation.within(.3) && vision.hasTarget()) {
-                    aimingVector = new Translation2d();
-                }
-                return translation.within(.3) && vision.hasTarget();
-            }
-
-        };
-    }
     public synchronized ChassisSpeeds getSetPoint(){
         var desiredThrottleSpeed = translationVector.x() * Constants.SwerveMaxspeedMPS;
         var desiredStrafeSpeed = translationVector.y() * Constants.SwerveMaxspeedMPS;
@@ -482,6 +431,17 @@ public class SwerveDrive extends Subsystem {
         }
         lastTimeStamp = currentTime;
         return new Pose2d(new Translation2d(yError, xError).inverse(), Rotation2d.fromDegrees(180));
+    }
+
+    public void snapToPoint(Pose2d targetPoint){
+        if(mAutoAlignMotionPlanner != null){
+            if(currentState != State.ALIGNMENT){
+                mAutoAlignMotionPlanner.reset();
+                setState(State.ALIGNMENT);
+            }
+        }
+        mAutoAlignMotionPlanner.setTargetPoint(targetPoint);
+        robotState.setDisplaySetpointPose(targetPoint);
     }
 
     public Pose2d targetObject(boolean fixedRotation) {
@@ -521,69 +481,14 @@ public class SwerveDrive extends Subsystem {
 
     }
 
-    public Request startPathRequest(boolean useAllianceColor) {
-        return new Request() {
-            @Override
-            public void act() {
-                setState(State.TRAJECTORY);
-                startPath(useAllianceColor);
-            }
-        };
-    }
 
 
 
-    public Request waitForTrajectoryRequest() {
-        return new Request() {
-            @Override
-            public boolean isFinished() {
-                return trajectoryFinished;
-            }
-        };
-    }
 
-    // public Request generateTrajectoryRequest(int node) {
-    // return new Request() {
 
-    // @Override
-    // public void act() {
-    // PathPlannerTrajectory trajectory = PathGenerator.generatePath(new
-    // PathConstraints(4, 4),
-    // new Node(Constants.scoresY.get(node), DriverStation.getAlliance() ==
-    // Alliance.Blue ? 2 : 14.71),
-    // Constants.FieldConstants.obstacles);
-    // setTrajectory(trajectory);TODO
-    // }
 
-    // };
 
-    // }
 
-    // public Request generateTrajectoryRequest(Node node) {
-    // return new Request() {
-
-    // @Override
-    // public void act() {
-    // PathPlannerTrajectory trajectory = PathGenerator.generatePath(new
-    // PathConstraints(4, 4), node,
-    // Constants.FieldConstants.obstacles);
-    // setTrajectory(trajectory);
-    // }
-
-    // };
-
-    // }
-
-    public Request setTrajectoryRequest(PathPlannerTrajectory trajectory, double nodes,double initRotation) {
-        return new Request() {
-
-            @Override
-            public void act() {
-                setTrajectory(trajectory, nodes,initRotation);
-            }
-
-        };
-    }
 
     @Override
     public void outputTelemetry() {

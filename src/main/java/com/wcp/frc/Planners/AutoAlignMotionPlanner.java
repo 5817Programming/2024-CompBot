@@ -21,7 +21,7 @@ public class AutoAlignMotionPlanner {
     private ProfileFollower mYController = new ProfileFollower(2.5, 0, 0, 1, 0, 0);
     private ProfileFollower mThetaController = new ProfileFollower(1.5, 0.0, 0.0, 1.0, 0.0, 0.0);
 
-    boolean mAutoAlignComplete = false;
+    private boolean mAutoAlignComplete = false;
 
     private Pose2d mFieldToTargetPoint;
     private OptionalDouble mStartTime;
@@ -55,7 +55,7 @@ public class AutoAlignMotionPlanner {
                 new MotionProfileGoal(odomToTargetPoint.getRotation().getRadians(), 0,
                         IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.03, 0.05),
                 Constants.kHeadingMotionProfileConstraints);
-        double currentRotation = currentFieldToOdom.getRotation().rotateBy(currentFieldToOdom.getRotation())
+        double currentRotation = currentFieldToOdom.getRotation().rotateBy(currentOdomToVehicle.getRotation())
                 .getRadians();
 
         Translation2d currentVelocityFrame = new Translation2d(currentVel.dx, currentVel.dy);

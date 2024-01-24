@@ -17,11 +17,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 /** Add your docs here. */
 public class AutoAlignPointSelector {
 
-    public enum AlignmentRequest{
-        April,
-        Point,
-    }
-
     private static Map<Integer,AprilTag> getTagSet(){
         if(DriverStation.getAlliance().get() ==  Alliance.Red){
             return FieldLayout.Red.kAprilTagMap;
@@ -61,7 +56,7 @@ public class AutoAlignPointSelector {
         return Optional.of(closestPose);
     }
 
-    public static Optional<Pose2d> chooseTargetPoint(Pose2d point, AlignmentRequest alignmentRequest){
+    public static Optional<Pose2d> chooseTargetPoint(Pose2d point){
         Map<Integer, AprilTag> mTagMap = getTagSet();
         Optional<AprilTag> closestAprilTag = getNearestTag(mTagMap, point);
         return Optional.of(closestAprilTag.get().getFieldToTag().transformBy(Pose2d.fromTranslation(closestAprilTag.get().getTagToCenterAlign())));

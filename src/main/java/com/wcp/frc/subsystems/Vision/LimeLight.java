@@ -77,7 +77,7 @@ public class LimeLight extends Subsystem {
       return cameraToTarget;
     }
 
-    public Pose2d getFeildToTag() {
+    public Pose2d getFieldToTag() {
       return fieldToTag;
     }
 

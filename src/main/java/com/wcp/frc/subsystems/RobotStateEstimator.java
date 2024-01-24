@@ -45,7 +45,7 @@ public class RobotStateEstimator extends Subsystem {
     Twist2d measuredVelocity = mOdometry.getVelocity().toTwist2d();
     Twist2d predictedVelocity = mDrive.getSetPoint().toTwist2d();
     RobotState.getInstance().addOdomObservation(timeStamp, mOdometry.getPoseMeters(), measuredVelocity, predictedVelocity);
-
+    
   }
 
   public void resetOdometry(Pose2d initialPose) {

@@ -12,6 +12,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.wcp.frc.Constants;
+import com.wcp.frc.Planners.DriveMotionPlanner;
 import com.wcp.frc.subsystems.Requests.Request;
 import com.wcp.frc.subsystems.Requests.RequestList;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
@@ -24,6 +25,7 @@ public class SuperStructure extends Subsystem {
     public SwerveDrive swerve;
     // public Intake intake;
     public LimeLight vision;
+    public DriveMotionPlanner driveMotionPlanner;
     public Logger logger;
     // public Indexer indexer;
     // public Pivot pivot;
@@ -263,7 +265,7 @@ public class SuperStructure extends Subsystem {
                 logCurrentRequest("trajectory")
         ), true);
         RequestList queue = new RequestList(Arrays.asList(
-                swerve.setTrajectoryRequest(trajectory, nodes,initRotation),
+                .setTrajectoryRequest(trajectory, nodes,initRotation),
                 swerve.startPathRequest(true)), false);
         queue(request);
         queue(queue);
