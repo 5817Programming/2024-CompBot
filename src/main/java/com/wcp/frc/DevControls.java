@@ -4,21 +4,20 @@
 
 package com.wcp.frc;
 
+import java.util.Optional;
+
+import com.wcp.frc.Planners.AutoAlignPointSelector;
+import com.wcp.frc.subsystems.RobotState;
 import com.wcp.frc.subsystems.SuperStructure;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
-import com.wcp.lib.geometry.Translation2d;
+import com.wcp.lib.geometry.Pose2d;
 
-
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 
 
 public class DevControls {
     SuperStructure s;
-
-    double speed;
-    
-    
-
     XboxController Driver;
     XboxController CoDriver;
     SwerveDrive swerve;
@@ -68,15 +67,12 @@ public class DevControls {
     public DevControls() {
         Driver = new XboxController(Ports.XBOX_1);
         CoDriver = new XboxController(Ports.XBOX_2);
-        swerve = SwerveDrive.getInstance();
-
-        
-
-        
+        swerve = SwerveDrive.getInstance();   
     }
 
 
     public void update() {
+        var timestamp = Timer.getFPGATimestamp();
         s = SuperStructure.getInstance();
 
         double driverLeftXInput = Driver.getLeftX();
@@ -124,22 +120,22 @@ public class DevControls {
 
         if(driverStartButton.isPressed())
             swerve.resetGryo(180);
-
         
-
-   
-
-
-       s.requestSwerveInput(new Translation2d(driverLeftYInput, driverLeftXInput), driverRightXInput);
-
-       swerve.sendInput(driverLeftYInput, driverLeftXInput, driverRightXInput);
-
+        swerve.setSpeedPercent(driverLeftTrigger.getValue());
+       
+       if(driverLeftBumper.isPressed()){
+        Optional<Pose2d> targetPoint = AutoAlignPointSelector.chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
+        swerve.snapToPoint(targetPoint.get());
+       } else{
+        swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput);
+       }
       
 
         
 }
 
 public class ButtonCheck{
+        double value;
         double threshold;
         Boolean[] input = new Boolean[2];
             
@@ -157,12 +153,7 @@ public class ButtonCheck{
         } 
 
        public void update(double input){
-            this.input[1] = this.input[0];
-        if(input>threshold)
-            this.input[0] = true;
-        else
-            this.input[0] = false;
-
+           value = input;
        }
 
        public void update(boolean input){
@@ -176,7 +167,9 @@ public class ButtonCheck{
        public boolean isPressed(){
         return input[0] && !input[1];
        }
-
+       public double getValue(){
+        return value;
+       }
        public boolean isReleased(){
         return !input[0] && input[1];
        }

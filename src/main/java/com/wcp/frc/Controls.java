@@ -6,13 +6,11 @@ package com.wcp.frc;
 
 import java.util.Optional;
 
-import com.wcp.frc.Planners.AutoAlignMotionPlanner;
 import com.wcp.frc.Planners.AutoAlignPointSelector;
 import com.wcp.frc.subsystems.RobotState;
 import com.wcp.frc.subsystems.SuperStructure;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
 import com.wcp.lib.geometry.Pose2d;
-import com.wcp.lib.geometry.Translation2d;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;

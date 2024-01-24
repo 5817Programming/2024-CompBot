@@ -27,7 +27,6 @@ import com.wcp.lib.swerve.SwerveTalonDefaultConfig;
 import com.wcp.lib.util.Util;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 /** Add your docs here. */
 public class SwerveDriveModule extends Subsystem {

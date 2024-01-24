@@ -8,7 +8,6 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Map;
 import java.util.Optional;
@@ -96,7 +95,7 @@ public class RobotState {
         poseFromOdom = new InterpolatingTreeMap<>(kObservationBufferSize);
         poseFromOdom.put(new InterpolatingDouble(start_time), initialPose);
         visionPoseComponent = new InterpolatingTreeMap<>(kObservationBufferSize);
-        visionPoseComponent.put(new InterpolatingDouble(start_time), getInitialFieldToOdom().getTranslation());
+        visionPoseComponent.put(new InterpolatingDouble(start_time), getInitialPose().getTranslation());
         PredictedVelocity = Twist2d.identity();
         MeasuredVelocity = Twist2d.identity();
         filteredMeasuredVelocity = new MovingAverageTwist2d(25);
@@ -244,7 +243,7 @@ public class RobotState {
      * Return Initial Vision Offset for Pure Odometry Visualization Purposes
      * @return
      */
-    public synchronized Pose2d getInitialFieldToOdom() {
+    public synchronized Pose2d getInitialPose() {
         if (initialPose.isEmpty()) return Pose2d.identity();
         return Pose2d.fromTranslation(initialPose.get());
     }
@@ -296,6 +295,7 @@ public class RobotState {
         Logger.recordOutput("Vision Pose Component", getVisionPoseComponent(Timer.getFPGATimestamp()).toWPI());
         Logger.recordOutput("Filtered Pose", getKalmanPose(Timer.getFPGATimestamp()).toWPI());
         Logger.recordOutput("SetPoint Pose", mSetpointPose.toWPI());
+        Logger.recordOutput("Vision Pose Erorr", getDisplayVisionPose().toWPI());
    }
 
     public void setDisplaySetpointPose(Pose2d setpoint) {

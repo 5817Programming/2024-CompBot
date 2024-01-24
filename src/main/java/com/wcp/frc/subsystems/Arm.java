@@ -13,8 +13,6 @@ import com.wcp.frc.Ports;
 import com.wcp.frc.subsystems.Requests.Request;
 import com.wcp.lib.swerve.SwerveTalonDefaultConfig;
 
-import edu.wpi.first.wpilibj.Timer;
-
 public class Arm extends Subsystem {
   private PeriodicIO mPeriodicIO = new PeriodicIO();
   private TalonFX pivotMotor = new TalonFX(Ports.Arm);

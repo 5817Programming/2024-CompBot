@@ -5,7 +5,6 @@
 package com.wcp.frc.subsystems.gyros;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.wcp.frc.Constants;
 import com.wcp.frc.Ports;
 
 /** 

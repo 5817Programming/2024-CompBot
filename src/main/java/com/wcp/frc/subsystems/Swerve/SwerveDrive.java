@@ -4,11 +4,8 @@
 
 package com.wcp.frc.subsystems.Swerve;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.swing.text.html.Option;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -34,9 +31,6 @@ import com.wcp.lib.util.PID2d;
 import com.wcp.lib.util.SynchronousPIDF;
 import com.wcp.lib.util.Util;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Time;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -84,7 +78,6 @@ public class SwerveDrive extends Subsystem {
     PID2d VisionPID;
     SynchronousPIDF areaVisionPID;
 
-    private double lastTimestamp = Timer.getFPGATimestamp();
     SwerveKinematics inverseKinematics = new SwerveKinematics();
     RobotStateEstimator robotStateEstimator;
     AutoAlignMotionPlanner mAutoAlignMotionPlanner;

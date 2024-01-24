@@ -5,17 +5,13 @@
 package com.wcp.lib.swerve;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import org.ejml.simple.SimpleMatrix;
 
 import com.wcp.frc.subsystems.Swerve.SwerveDriveModule;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
 
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
@@ -26,14 +22,12 @@ public class SwerveOdometry {
     private double m_previousTimestamp = -1;
 
     private Rotation2d m_previousAngle;
-    private double[] m_PreviousDistances;
 
     public SwerveOdometry(SwerveKinematics kinematics,Pose2d initalPose, double... previousDistances){
         m_kinematics = kinematics;
         m_poseMeters = initalPose;
         m_velocity = new ChassisSpeeds();
         m_previousAngle = initalPose.getRotation();
-        m_PreviousDistances = previousDistances;
     }
 
     public SwerveOdometry(SwerveKinematics kinematics, Pose2d initalPose){
@@ -46,26 +40,25 @@ public class SwerveOdometry {
 
     public Pose2d updateWithSwerveModuleStates(Rotation2d heading, List<SwerveDriveModule> modules, double timestamp){
 
-            var positionModules = Arrays.asList(modules.get(0),modules.get(1),modules.get(2),modules.get(3));
             double x = 0.0;
             double y = 0.0;      
             double averageDistance = 0.0;
             double[] distances = new double[4];
-            for (SwerveDriveModule m : positionModules) {
+            for (SwerveDriveModule m : modules) {
                 m.updatePose(heading);
                 double distance = m.getEstimatedRobotPose().getTranslation().translateBy(m_poseMeters.getTranslation().inverse())
                         .norm();
                 distances[m.moduleID] = distance;
                 averageDistance += distance;
             }
-            averageDistance /= positionModules.size();
+            averageDistance /= modules.size();
 
             m_velocity = m_kinematics.toChassisSpeedWheelConstraints(modules);
 
             int minDevianceIndex = 0;
             double minDeviance = Units.inchesToMeters(100);
             List<SwerveDriveModule> modulesToUse = new ArrayList<>();
-            for (SwerveDriveModule m : positionModules) {
+            for (SwerveDriveModule m : modules) {
                 double deviance = Math.abs(distances[m.moduleID] - averageDistance);
                 if (deviance < minDeviance) {
                     minDeviance = deviance;

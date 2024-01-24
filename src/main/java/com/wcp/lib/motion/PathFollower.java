@@ -3,20 +3,13 @@ package com.wcp.lib.motion;
 
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.path.PathPlannerTrajectory.State;
-import com.wcp.frc.Constants;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
 
-import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.*;
-
-import java.io.Console;
-import java.security.KeyPair;
-import java.sql.Driver;
 
 import org.littletonrobotics.junction.Logger;
 

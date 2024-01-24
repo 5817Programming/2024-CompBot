@@ -3,7 +3,6 @@ package com.wcp.frc.Planners;
 import java.util.OptionalDouble;
 
 import com.wcp.frc.Constants;
-import com.wcp.lib.HeadingController;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Translation2d;
 import com.wcp.lib.geometry.Twist2d;
