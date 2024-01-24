@@ -45,8 +45,6 @@ public class LimeLight extends Subsystem {
 
   private Mat mCameraMatrix = new Mat(3, 3, CV_64FC1);
 
-
-
   private boolean mOutputsHaveChanged = true;
 
   private static HashMap<Integer, AprilTag> mTagMap = FieldLayout.Red.kAprilTagMap;
@@ -141,22 +139,24 @@ public class LimeLight extends Subsystem {
 
   public synchronized Translation2d getCameraToPointTranslation(TargetInfo target, boolean isTopCorner) {
     // Compensate for camera pitch
-    Translation2d xz_plane_translation = new Translation2d(target.getX(), target.getZ()).rotateBy(Rotation2d.fromDegrees(Constants.VisionConstants.HORIZONTAL_PLANE_TO_LENSE.getDegrees()));
+    Translation2d xz_plane_translation = new Translation2d(target.getX(), target.getZ())
+        .rotateBy(Rotation2d.fromDegrees(Constants.VisionConstants.HORIZONTAL_PLANE_TO_LENSE.getDegrees()));
     double x = xz_plane_translation.x();
     double y = target.getY();
     double z = xz_plane_translation.y();
 
-    double offset = isTopCorner ? Units.inchesToMeters(3) : - Units.inchesToMeters(3);
+    double offset = isTopCorner ? Units.inchesToMeters(3) : -Units.inchesToMeters(3);
     // find intersection with the goal
-    double differential_height = mTagMap.get(target.getTagId()).getHeight() - Units.inchesToMeters(Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT_INCHES) + offset;
+    double differential_height = mTagMap.get(target.getTagId()).getHeight()
+        - Units.inchesToMeters(Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT_INCHES) + offset;
     if ((z > 0.0) == (differential_height > 0.0)) {
-        double scaling = differential_height / z;
-        double distance = Math.hypot(x, y) * scaling;
-        Rotation2d angle = new Rotation2d(x, y, true);
-        return new Translation2d(distance * angle.cos(), distance * angle.sin());
+      double scaling = differential_height / z;
+      double distance = Math.hypot(x, y) * scaling;
+      Rotation2d angle = new Rotation2d(x, y, true);
+      return new Translation2d(distance * angle.cos(), distance * angle.sin());
     }
     return null;
-}
+  }
 
   private static final Comparator<Translation2d> ySort = Comparator.comparingDouble(Translation2d::y);
 
@@ -194,32 +194,31 @@ public class LimeLight extends Subsystem {
     return corners;
   }
 
-    public synchronized TargetInfo getRawTargetInfo(Translation2d desiredTargetPixel, int tagId) {
-        if (desiredTargetPixel == null) {
-            return null;
-        } else {
-            double[] undistortedNormalizedPixelValues;
-            UndistortMap undistortMap = new UndistortMap_Limelight_B_640x480();
-    
-            undistortedNormalizedPixelValues = undistortMap.pixelToUndistortedNormalized((int) desiredTargetPixel.x(), (int) desiredTargetPixel.y());
+  public synchronized TargetInfo getRawTargetInfo(Translation2d desiredTargetPixel, int tagId) {
+    if (desiredTargetPixel == null) {
+      return null;
+    } else {
+      double[] undistortedNormalizedPixelValues;
+      UndistortMap undistortMap = new UndistortMap_Limelight_B_640x480();
 
-            double y_pixels = undistortedNormalizedPixelValues[0];
-            double z_pixels = undistortedNormalizedPixelValues[1];
+      undistortedNormalizedPixelValues = undistortMap.pixelToUndistortedNormalized((int) desiredTargetPixel.x(),
+          (int) desiredTargetPixel.y());
 
+      double y_pixels = undistortedNormalizedPixelValues[0];
+      double z_pixels = undistortedNormalizedPixelValues[1];
 
-            //Negate OpenCV Undistorted Pixel Values to Match Robot Frame of Reference
-            //OpenCV: Positive Downward and Right
-            //Robot: Positive Upward and Left
-            double nY = -(y_pixels - mCameraMatrix.get(0, 2)[0]);// -(y_pixels * 2.0 - 1.0);
-            double nZ = -(z_pixels - mCameraMatrix.get(1, 2)[0]);// -(z_pixels * 2.0 - 1.0);
+      // Negate OpenCV Undistorted Pixel Values to Match Robot Frame of Reference
+      // OpenCV: Positive Downward and Right
+      // Robot: Positive Upward and Left
+      double nY = -(y_pixels - mCameraMatrix.get(0, 2)[0]);// -(y_pixels * 2.0 - 1.0);
+      double nZ = -(z_pixels - mCameraMatrix.get(1, 2)[0]);// -(z_pixels * 2.0 - 1.0);
 
-            double y = nY / mCameraMatrix.get(0, 0)[0];
-            double z = nZ / mCameraMatrix.get(1, 1)[0];
+      double y = nY / mCameraMatrix.get(0, 0)[0];
+      double z = nZ / mCameraMatrix.get(1, 1)[0];
 
-            return new TargetInfo(y, z, tagId);
-        }
+      return new TargetInfo(y, z, tagId);
     }
-
+  }
 
   public int getTagId() {
     return mPeriodicIO.tagId;
@@ -286,9 +285,7 @@ public class LimeLight extends Subsystem {
     public double stream = 0;
     public double snapshot = 0;
     public int tagId = 0;
-
     public boolean seesTarget = false;
-
     public int givenPipeline = 0;
 
   }

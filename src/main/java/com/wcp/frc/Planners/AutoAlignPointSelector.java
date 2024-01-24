@@ -10,6 +10,7 @@ import java.util.Optional;
 import com.wcp.frc.Field.AprilTag;
 import com.wcp.frc.Field.FieldLayout;
 import com.wcp.lib.geometry.Pose2d;
+import com.wcp.lib.geometry.Rotation2d;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -56,9 +57,32 @@ public class AutoAlignPointSelector {
         return Optional.of(closestPose);
     }
 
+    private static Optional<Pose2d> getNearestAlignment(AprilTag tag, Pose2d point) {//TODO set the rotation 2ds to be perpendicular to the apriltags
+        if (tag.isScoring()) {
+            Pose2d center = tag.getFieldToTag().transformBy(Pose2d.fromTranslation(tag.getTagToCenterAlign()));
+            center = new Pose2d(center.getTranslation(), Rotation2d.fromDegrees(180));
+            return Optional.of(center);
+        } else {
+            Pose2d left = tag.getFieldToTag().transformBy(Pose2d.fromTranslation(tag.getTagToLeftAlign()));
+            left = new Pose2d(left.getTranslation(), Rotation2d.fromDegrees(0));
+            Pose2d right = tag.getFieldToTag().transformBy(Pose2d.fromTranslation(tag.getTagToRightAlign()));
+            right = new Pose2d(right.getTranslation(), Rotation2d.fromDegrees(0));
+            Pose2d center = tag.getFieldToTag().transformBy(Pose2d.fromTranslation(tag.getTagToCenterAlign()));
+            center = new Pose2d(center.getTranslation(), Rotation2d.fromDegrees(0));
+            return minimizeDistance(point, new Pose2d[]{left,right,center});
+        }
+    }
+
     public static Optional<Pose2d> chooseTargetPoint(Pose2d point){
         Map<Integer, AprilTag> mTagMap = getTagSet();
         Optional<AprilTag> closestAprilTag = getNearestTag(mTagMap, point);
-        return Optional.of(closestAprilTag.get().getFieldToTag().transformBy(Pose2d.fromTranslation(closestAprilTag.get().getTagToCenterAlign())));
+        Optional<Pose2d> targetPose = Optional.empty();
+
+        targetPose = getNearestAlignment(closestAprilTag.get(), point);
+
+        if(targetPose.isPresent() && targetPose.get().distance(point) > 2){
+            return Optional.empty();
+        }
+        return targetPose;
     }
 }

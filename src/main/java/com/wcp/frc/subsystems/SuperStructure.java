@@ -248,7 +248,7 @@ public class SuperStructure extends Subsystem {
     public void intakePercent(double percentage) {
         RequestList request = new RequestList(Arrays.asList(
             // intake.setIntakePercentRequest(percentage)
-                ), true);
+        ), true);
 
         queue(request);
     }
