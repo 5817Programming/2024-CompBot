@@ -7,10 +7,7 @@ package com.wcp.lib.swerve;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ejml.simple.SimpleMatrix;
-
 import com.wcp.frc.Constants;
-import com.wcp.frc.subsystems.Swerve.SwerveDriveModule;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
@@ -18,23 +15,13 @@ import com.wcp.lib.geometry.Translation2d;
 /** Add your docs here. */
 public class SwerveKinematics {
 
-
+    public SwerveKinematics() {
+        updateModuleRotationVectors();
+    }
     
     private final int kNumberOfModules = Constants.kModulePositions.size();
     private List<Translation2d> moduleRotationVectors;
-    private final Translation2d[] m_modules;
-    private final Rotation2d[] m_rotations;
 
-
-    public SwerveKinematics() {
-        updateModuleRotationVectors();
-        m_modules = Constants.modulePositions;
-        m_rotations = new Rotation2d[kNumberOfModules];
-
-        for (int i = 0; i < kNumberOfModules; i++) {
-            m_rotations[i] = new Rotation2d(m_modules[i].x(), m_modules[i].y(), true);
-        }
-    }
     
     public void updateModuleRotationVectors() {
         int numberOfModules = kNumberOfModules;
@@ -45,7 +32,6 @@ public class SwerveKinematics {
         }
         moduleRotationVectors = vectorList;
     }
-    
     /**
      * 
      * @param translationVector -A vector that that is usually represented by the translational stick on the controller
@@ -74,43 +60,5 @@ public class SwerveKinematics {
         }
         return driveVectors;
         
-    }
-    
-        public ChassisSpeeds toChassisSpeedWheelConstraints(List<SwerveDriveModule> modules) {
-
-        var constraintsMatrix = new SimpleMatrix(kNumberOfModules * 2, 3);
-        for (int i = 0; i < kNumberOfModules; i++) {
-            var module = modules.get(i).getSwerveModuleState();
-
-            var beta =
-                    module.angle.rotateBy(
-                            m_rotations[i].inverse()).rotateBy(Rotation2d.fromRadians(Math.PI / 2.0));
-
-            //System.out.println(module);
-            constraintsMatrix.setRow(i*2, 0,
-                    module.angle.cos(),
-                    module.angle.sin(),
-                    -m_modules[i].norm()*beta.cos());
-            constraintsMatrix.setRow(i*2 + 1, 0,
-                    -module.angle.sin(),
-                    module.angle.cos(),
-                    m_modules[i].norm()*beta.sin());
-        }
-        //System.out.println(constraintsMatrix);
-
-        var psuedoInv = constraintsMatrix.pseudoInverse();
-
-        var enforcedConstraints = new SimpleMatrix(kNumberOfModules*2, 1);
-        for (int i = 0; i < kNumberOfModules; i++) {
-            enforcedConstraints.setRow(i*2, 0, modules.get(i).getSwerveModuleState().speedMetersPerSecond);
-            enforcedConstraints.setRow(i*2 + 1, 0, 0);
-        }
-        //System.out.println(enforcedConstraints);
-
-        var chassisSpeedsVector = psuedoInv.mult(enforcedConstraints);
-        return new ChassisSpeeds(
-                chassisSpeedsVector.get(0, 0),
-                chassisSpeedsVector.get(1, 0),
-                chassisSpeedsVector.get(2, 0));
     }
 }

@@ -48,21 +48,21 @@ public class SwerveOdometry {
                 m.updatePose(heading);
                 double distance = m.getEstimatedRobotPose().getTranslation().translateBy(m_poseMeters.getTranslation().inverse())
                         .norm();
-                distances[m.moduleID] = distance;
+                distances[0] = distance;
                 averageDistance += distance;
             }
             averageDistance /= modules.size();
 
-            m_velocity = m_kinematics.toChassisSpeedWheelConstraints(modules);
+            // m_velocity = m_kinematics.toChassisSpeedWheelConstraints(modules);
 
             int minDevianceIndex = 0;
             double minDeviance = Units.inchesToMeters(100);
             List<SwerveDriveModule> modulesToUse = new ArrayList<>();
             for (SwerveDriveModule m : modules) {
-                double deviance = Math.abs(distances[m.moduleID] - averageDistance);
+                double deviance = Math.abs(distances[0] - averageDistance);
                 if (deviance < minDeviance) {
                     minDeviance = deviance;
-                    minDevianceIndex = m.moduleID;
+                    minDevianceIndex = 0;
                 }
                 if (deviance <= 10000) {
                     modulesToUse.add(m);

@@ -7,6 +7,7 @@ package com.wcp.frc;
 import java.util.Arrays;
 import java.util.List;
 
+import com.wcp.lib.UndistortConstants;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
@@ -132,10 +133,10 @@ public class Constants {
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = kMaxAccelerationMetersPerSecondSquared /
     Math.hypot(mRobotBaseLength / 2.0, mRobotBaseWidth / 2.0);
 
-    public static final double kFrontRightStartingEncoderPosition = -300; // -354.950352
-    public static final double kFrontLeftStartingEncoderPosition = -280; // -263.094811
-    public static final double kRearLeftStartingEncoderPosition = -360; // -121.094031
-    public static final double kRearRightStartingEncoderPosition = -261; // -355.170825
+    public static final double kFrontRightStartingEncoderPosition = -304; // -354.950352
+    public static final double kFrontLeftStartingEncoderPosition = -277; // -263.094811
+    public static final double kRearLeftStartingEncoderPosition = -355; // -121.094031
+    public static final double kRearRightStartingEncoderPosition = -265; // -355.170825
 
     public static final class ShooterConstants {
         public static final double HANDOFF = 0;
@@ -222,10 +223,19 @@ public class Constants {
                 Rotation2d.fromDegrees(0));
 
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);
-        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(-35);
+        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(35);
 
         public static final double IMAGE_CAPTURE_LATENCY = 11.0;
+       
 
+        public static final UndistortConstants UNDISTORT_CONSTANTS =  new UndistortConstants(
+                                new double[]{0.13077097, -0.43223309, 0.00216471, -0.00145679, 0.36181027},
+                                new double[][]{{0.81755082, 0., 0.45041716},
+                                        {0., 1.09093867, 0.52956206},
+                                        {0., 0., 1.}}
+                        );
+        public static final int kResolutionWidth = 0;
+        public static final int kResolutionHeight = 0;
     }
 
     public static final class LightConstants {

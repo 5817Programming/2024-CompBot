@@ -79,7 +79,6 @@ public class SwerveDrive extends Subsystem {
     SynchronousPIDF areaVisionPID;
 
     SwerveKinematics inverseKinematics = new SwerveKinematics();
-    RobotStateEstimator robotStateEstimator;
     AutoAlignMotionPlanner mAutoAlignMotionPlanner;
     DriveMotionPlanner mDriveMotionPlanner;
     RobotState robotState;
@@ -117,11 +116,8 @@ public class SwerveDrive extends Subsystem {
 
         gyro = Pigeon.getInstance();
         vision = LimeLight.getInstance();
-        robotStateEstimator = RobotStateEstimator.getInstance();
         robotState = RobotState.getInstance();
 
-        mAutoAlignMotionPlanner = new AutoAlignMotionPlanner();
-        mDriveMotionPlanner = new DriveMotionPlanner();
     }
 
 

@@ -34,9 +34,10 @@ public class DriveMotionPlanner{
     double lastTimestamp = 0;
     Pose2d poseMeters;
     
-    public DriveMotionPlanner(){
+    public DriveMotionPlanner(SwerveDrive swerve){
+        this.swerve = swerve;
         pathFollower = PathFollower.getInstance();
-        swerve = SwerveDrive.getInstance();
+        // swerve = SwerveDrive.getInstance();
     }
     public Rotation2d getTargetHeading(){
         return targetHeading;

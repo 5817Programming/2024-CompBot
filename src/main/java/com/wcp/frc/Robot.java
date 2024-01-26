@@ -12,10 +12,13 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 
+import com.wcp.frc.subsystems.RobotState;
+import com.wcp.frc.subsystems.RobotStateEstimator;
 import com.wcp.frc.subsystems.SuperStructure;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
 import com.wcp.frc.subsystems.Vision.LimeLight;
 import com.wcp.frc.subsystems.gyros.Gyro;
+import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.motion.PathFollower;
 import com.wcp.frc.Autos.AutoBase;
 import com.wcp.frc.Autos.M5;
@@ -71,18 +74,20 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
 
     swerve = SwerveDrive.getInstance();
-    swerve.zeroModules();
     controls = Controls.getInstance();
-    swerve = SwerveDrive.getInstance();
     vision = LimeLight.getInstance();
+    swerve.zeroModules();
     subsystemManager = new SubsystemManager();
     subsystemManager.addSystems(Arrays.asList(
         SwerveDrive.getInstance(),
         SuperStructure.getInstance(), 
-        LimeLight.getInstance()
-        // Shooter.getInstance()
+        LimeLight.getInstance(),
+        RobotStateEstimator.getInstance()        // Shooter.getInstance()
         // Intake.getInstance()
         ));
+
+    RobotStateEstimator.getInstance().resetOdometry(Pose2d.identity());
+    RobotState.getInstance().resetKalmanFilters();
     }
 
   @Override
@@ -92,6 +97,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     subsystemManager.writeSubsystemsPeriodicOutputs();
     subsystemManager.outputSystemsTelemetry();
     CommandScheduler.getInstance().run();
+    Logger.recordOutput("timestamp", Timer.getFPGATimestamp());
   }
 
   /**

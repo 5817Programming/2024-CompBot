@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
 import com.wcp.frc.Constants;
@@ -24,6 +25,7 @@ import com.wcp.lib.Vision.UndistortMap_Limelight_B_640x480;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
+import com.wcp.lib.util.InterpolatingUndisortMap;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
@@ -34,6 +36,9 @@ import edu.wpi.first.wpilibj.Timer;
 import static org.opencv.core.CvType.CV_64FC1;
 
 public class LimeLight extends Subsystem {
+    static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
   public static LimeLight instance = null;
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
   NetworkTableEntry tx = table.getEntry("tx");
@@ -44,10 +49,11 @@ public class LimeLight extends Subsystem {
   PeriodicIO mPeriodicIO = new PeriodicIO();
 
   private Mat mCameraMatrix = new Mat(3, 3, CV_64FC1);
+  private Mat mDistortionCoeffients = new Mat(1, 5, CV_64FC1);
 
   private boolean mOutputsHaveChanged = true;
 
-  private static HashMap<Integer, AprilTag> mTagMap = FieldLayout.Red.kAprilTagMap;
+  private static HashMap<Integer, AprilTag> mTagMap = FieldLayout.Blue.kAprilTagMap;
 
   public static LimeLight getInstance() {
     if (instance == null)
@@ -55,6 +61,16 @@ public class LimeLight extends Subsystem {
     return instance;
   }
 
+  private LimeLight() {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            mCameraMatrix.put(i, j, Constants.VisionConstants.UNDISTORT_CONSTANTS.getCameraMatrix()[i][j]);
+        }
+    }
+    for (int i = 0; i < 5; i++) {
+        mDistortionCoeffients.put(0, i, Constants.VisionConstants.UNDISTORT_CONSTANTS.getCameraDistortion()[i]);
+    }
+}
   public static class VisionUpdate {
     private double timestamp;
     private Translation2d cameraToTarget;
@@ -199,24 +215,23 @@ public class LimeLight extends Subsystem {
       return null;
     } else {
       double[] undistortedNormalizedPixelValues;
-      UndistortMap undistortMap = new UndistortMap_Limelight_B_640x480();
+      UndistortMap undistortMap =  new InterpolatingUndisortMap((int)1280.0, (int)960.0, new UndistortMap_Limelight_B_640x480());
 
-      undistortedNormalizedPixelValues = undistortMap.pixelToUndistortedNormalized((int) desiredTargetPixel.x(),
-          (int) desiredTargetPixel.y());
+      // undistortedNormalizedPixelValues = undistortMap.pixelToUndistortedNormalized((int) desiredTargetPixel.x(), (int) desiredTargetPixel.y());
 
-      double y_pixels = undistortedNormalizedPixelValues[0];
-      double z_pixels = undistortedNormalizedPixelValues[1];
+      // double y_pixels = undistortedNormalizedPixelValues[0];
+      // double z_pixels = undistortedNormalizedPixelValues[1];
 
       // Negate OpenCV Undistorted Pixel Values to Match Robot Frame of Reference
       // OpenCV: Positive Downward and Right
-      // Robot: Positive Upward and Left
-      double nY = -(y_pixels - mCameraMatrix.get(0, 2)[0]);// -(y_pixels * 2.0 - 1.0);
-      double nZ = -(z_pixels - mCameraMatrix.get(1, 2)[0]);// -(z_pixels * 2.0 - 1.0);
+      // // Robot: Positive Upward and Left
+      // double nY = -(y_pixels - mCameraMatrix.get(0, 2)[0]);// -(y_pixels * 2.0 - 1.0);
+      // double nZ = -(z_pixels - mCameraMatrix.get(1, 2)[0]);// -(z_pixels * 2.0 - 1.0);
 
-      double y = nY / mCameraMatrix.get(0, 0)[0];
-      double z = nZ / mCameraMatrix.get(1, 1)[0];
+      // double y = nY / mCameraMatrix.get(0, 0)[0];
+      // double z = nZ / mCameraMatrix.get(1, 1)[0];
 
-      return new TargetInfo(y, z, tagId);
+      return new TargetInfo(1, 1, tagId);
     }
   }
 

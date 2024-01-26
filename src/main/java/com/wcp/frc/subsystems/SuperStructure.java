@@ -16,6 +16,7 @@ import com.wcp.frc.Planners.DriveMotionPlanner;
 import com.wcp.frc.subsystems.Requests.Request;
 import com.wcp.frc.subsystems.Requests.RequestList;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
+
 import com.wcp.frc.subsystems.Vision.LimeLight;
 import com.wcp.lib.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
@@ -240,7 +241,6 @@ public class SuperStructure extends Subsystem {
     public void idleState() {
         currentRequestLog = "idle";
         RequestList request = new RequestList(Arrays.asList(
-                swerve.openLoopRequest(swerveControls, swerveRotation),
                 vision.pipleLineRequest(Constants.VisionConstants.APRIL_PIPLINE)), true);
         idleRequests = request;
     }

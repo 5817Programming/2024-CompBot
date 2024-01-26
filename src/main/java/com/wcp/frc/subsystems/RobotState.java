@@ -151,11 +151,8 @@ public class RobotState {
     }
 
     public synchronized void addOdomObservations(double timestamp, Pose2d poseFromOdom, Twist2d measured_velocity, Twist2d predicted_velocity) {
-        try {
             mKalmanFilter.predict(VecBuilder.fill(0.0, 0.0), .01);
-        } catch (Exception e) {
-            DriverStation.reportError("QR Decomposition failed: ", e.getStackTrace());
-        }
+
         addPoseObservation(timestamp, poseFromOdom);
 
         MeasuredVelocity = measured_velocity;

@@ -121,14 +121,9 @@ public class Controls {
         if(driverStartButton.isPressed())
             swerve.resetGryo(180);
         
-        swerve.setSpeedPercent(driverLeftTrigger.getValue());
        
-       if(driverLeftBumper.isPressed()){
-        Optional<Pose2d> targetPoint = AutoAlignPointSelector.chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
-        swerve.snapToPoint(targetPoint.get());
-       } else{
         swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput);
-       }
+    
       
 
         
