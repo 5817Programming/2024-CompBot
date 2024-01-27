@@ -117,6 +117,8 @@ public class SwerveDrive extends Subsystem {
         gyro = Pigeon.getInstance();
         vision = LimeLight.getInstance();
         robotState = RobotState.getInstance();
+        mDriveMotionPlanner =  DriveMotionPlanner.getInstance();
+        
 
     }
 
@@ -287,7 +289,7 @@ public class SwerveDrive extends Subsystem {
                 break;
 
             case TRAJECTORY:
-                mDriveMotionPlanner.updateTrajectory();
+                mDriveMotionPlanner.updateTrajectory(poseMeters);
                 Translation2d translationCorrection = mDriveMotionPlanner.updateFollowedTranslation2d(timeStamp).scale(1);
                 headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading());
                 rotationCorrection = headingController.getRotationCorrection(getRobotHeading(), timeStamp);
@@ -484,10 +486,6 @@ public class SwerveDrive extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        Logger.recordOutput("Odometry", poseMeters.toWPI());
-        modules.forEach((m) -> {
-            m.outputTelemetry();
-        });
     }
 
     @Override

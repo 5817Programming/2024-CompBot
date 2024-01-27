@@ -15,6 +15,7 @@ import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 import com.wcp.frc.Constants;
+import com.wcp.frc.subsystems.Swerve.SwerveDrive;
 import com.wcp.frc.subsystems.Vision.VisionPoseAcceptor;
 import com.wcp.frc.subsystems.Vision.LimeLight.VisionUpdate;
 import com.wcp.lib.geometry.Pose2d;
@@ -87,7 +88,7 @@ public class RobotState {
     private MovingAverageTwist2d filteredMeasuredVelocity;
 
     private RobotState() {
-        reset(0.0, Pose2d.identity());
+        reset(0.0, Pose2d.fromTranslation(new Translation2d(0,0)));
     }
 
 
@@ -183,12 +184,10 @@ public class RobotState {
             double visionTimestamp = mLatestVisionUpdate.get().getTimestamp();
             
             Pose2d odomToVehicle = getPoseFromOdom(visionTimestamp);
-
             //Rotating Camera by Yaw Offset
-            Pose2d cameraToTag = Pose2d.fromTranslation(mLatestVisionUpdate.get().getCameraToTarget().rotateBy(Constants.VisionConstants.cameraYawOffset));
-
+            Pose2d cameraToTag = Pose2d.fromTranslation(mLatestVisionUpdate.get().getCameraToTarget().rotateBy(Constants.VisionConstants.cameraYawOffset.flip()));
             //Getting Vehicle to Tag in Field Frame
-            Pose2d vehicleToTag = Pose2d.fromTranslation(Constants.VisionConstants.ROBOT_TO_CAMERA.transformBy(cameraToTag).getTranslation().rotateBy(odomToVehicle.getRotation()));
+            Pose2d vehicleToTag = Pose2d.fromTranslation(Constants.VisionConstants.ROBOT_TO_CAMERA.transformBy(cameraToTag).getTranslation().rotateBy(SwerveDrive.getInstance().getRobotHeading().inverse()));
 
             //Getting Field to Vehicle via Vehicle to Tag
             Pose2d visionFieldToVehicle = mLatestVisionUpdate.get().getFieldToTag().transformBy(vehicleToTag.inverse());
@@ -208,13 +207,8 @@ public class RobotState {
 
             } else if (DriverStation.isEnabled()) { 
                 var visionOdomError = visionFieldToVehicle.getTranslation().translateBy(odomToVehicle.getTranslation().inverse());
-                if(DriverStation.isAutonomous()) {
-                    final double kMaxDistanceToAccept = 2.0;
-                    if (visionOdomError.inverse().translateBy(visionPoseComponent.lastEntry().getValue()).norm() > kMaxDistanceToAccept) {
-                        System.out.println("Invalid vision update!");
-                        return;
-                    }
-                }
+                Logger.recordOutput("visionOdomError", visionOdomError.toWPI());
+
 
                 mDisplayVisionPose = visionFieldToVehicle;
                 try {
@@ -255,7 +249,7 @@ public class RobotState {
     }
 
     public synchronized Translation2d getLatestVisionPoseComponent() {
-        return getVisionPoseComponent(visionPoseComponent.lastKey().value);
+        return getAbsoluteVisionPoseComponent(visionPoseComponent.lastKey().value);
     }
 
     /**
@@ -266,7 +260,7 @@ public class RobotState {
     public synchronized Pose2d getKalmanPose(double timestamp) {
         Pose2d poseFromOdom = getPoseFromOdom(timestamp);
 
-        Translation2d kalmanPoseOffset = getVisionPoseComponent(timestamp);
+        Translation2d kalmanPoseOffset = getAbsoluteVisionPoseComponent(timestamp);
         return new Pose2d(kalmanPoseOffset.translateBy(poseFromOdom.getTranslation()), poseFromOdom.getRotation());
 
     }
@@ -288,11 +282,13 @@ public class RobotState {
 
     public void outputTelemetry() {
         Logger.recordOutput("Robot Velocity", getMeasuredVelocity().toString());
-        Logger.recordOutput("PoseFromOdometry",  getPoseFromOdom(Timer.getFPGATimestamp()).toWPI());
-        Logger.recordOutput("Vision Pose Component", getVisionPoseComponent(Timer.getFPGATimestamp()).toWPI());
+        Logger.recordOutput("PoseFromOdometry",  getLatestPoseFromOdom().getValue().toWPI());
+        Logger.recordOutput("Vision Pose Component", getAbsoluteVisionPoseComponent(Timer.getFPGATimestamp()).toWPI());
         Logger.recordOutput("Filtered Pose", getKalmanPose(Timer.getFPGATimestamp()).toWPI());
         Logger.recordOutput("SetPoint Pose", mSetpointPose.toWPI());
-        Logger.recordOutput("Vision Pose Erorr", getDisplayVisionPose().toWPI());
+        Logger.recordOutput("Vision Pose", getDisplayVisionPose().toWPI());
+        Logger.recordOutput("x hat", mKalmanFilter.getXhat(0));
+
    }
 
     public void setDisplaySetpointPose(Pose2d setpoint) {

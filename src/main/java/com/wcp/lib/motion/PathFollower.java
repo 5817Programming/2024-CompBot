@@ -44,6 +44,7 @@ public class PathFollower{
 
   public void setTrajectory(PathPlannerTrajectory trajectory, double nodes) {
     resetTimer();
+    this.nodes = nodes;
     this.transformedTrajectory = trajectory;
   }
 

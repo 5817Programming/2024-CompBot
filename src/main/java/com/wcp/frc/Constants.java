@@ -8,12 +8,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.wcp.lib.UndistortConstants;
+import com.wcp.lib.Vision.UndistortMap;
+import com.wcp.lib.Vision.UndistortMap_Limelight_B_640x480;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
 import com.wcp.lib.motion.MotionProfileConstraints;
 import com.wcp.lib.util.InterpolatingDouble;
 import com.wcp.lib.util.InterpolatingTreeMap;
+import com.wcp.lib.util.InterpolatingUndisortMap;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -219,11 +222,11 @@ public class Constants {
         public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 0;
         public static final double LIMELIGHT_MOUNT_ANGLE_DEGREES = 0;
 
-        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(-0.27621, 0),
+        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(0, 0),
                 Rotation2d.fromDegrees(0));
 
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);
-        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(35);
+        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(30);
 
         public static final double IMAGE_CAPTURE_LATENCY = 11.0;
        
@@ -236,6 +239,7 @@ public class Constants {
                         );
         public static final int kResolutionWidth = 0;
         public static final int kResolutionHeight = 0;
+        public static final UndistortMap UNDISTORTMAP = new InterpolatingUndisortMap((int)1280.0, (int)960.0, new UndistortMap_Limelight_B_640x480());
     }
 
     public static final class LightConstants {

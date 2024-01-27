@@ -96,6 +96,7 @@ public class SwerveOdometry {
     }
     
     public void resetPosition(Pose2d pose, List<SwerveDriveModule> modules){
+        m_poseMeters = pose;
         modules.forEach((m) -> m.resetPose(pose));
     }
 }

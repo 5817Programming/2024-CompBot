@@ -16,16 +16,21 @@ import com.wcp.frc.subsystems.RobotState;
 import com.wcp.frc.subsystems.RobotStateEstimator;
 import com.wcp.frc.subsystems.SuperStructure;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
+import com.wcp.frc.subsystems.Swerve.SwerveDrive.State;
 import com.wcp.frc.subsystems.Vision.LimeLight;
 import com.wcp.frc.subsystems.gyros.Gyro;
 import com.wcp.lib.geometry.Pose2d;
+import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.motion.PathFollower;
 import com.wcp.frc.Autos.AutoBase;
 import com.wcp.frc.Autos.M5;
 import com.wcp.frc.Autos.M5Safe;
 import com.wcp.frc.Autos.M6;
 import com.wcp.frc.Autos.M7;
+import com.wcp.frc.Autos.NS3;
 import com.wcp.frc.Autos.NS5;
+import com.wcp.frc.Autos.S3;
+import com.wcp.frc.Autos.S5;
 import com.wcp.frc.Autos.Shoot;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -52,13 +57,15 @@ public class Robot extends LoggedRobot {
 HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @Override
   public void robotInit() {
-    // autos.put("2PieceNB", new TwoPieceLeft());
-    // autos.put("1PieceBalanceCommunityMid", new OnePieceBalanceCommunityMid());
-    // autos.put("1PieceB", new OnePieceRight());
-    // autos.put("1PieceBalanceB",new OnePieceBalanceRight());
-    // autos.put("1PieceBalanceNB", new OnePieceLeftBalance());
-    // autos.put("2PieceB", new TwoPieceRight());TODO
-
+    // autos.put("M7", new M7());
+    // autos.put("M6", new M6());
+    // autos.put("M5", new M5());
+    // autos.put("M5 safe",new M5Safe());
+    // autos.put("NS5", new NS5());
+    // autos.put("NS3", new NS3());
+    // autos.put("S5", new S5());
+    // autos.put("S3", new S3());
+    RobotState.getInstance().resetKalmanFilters();
     for(HashMap.Entry<String, AutoBase> entry : autos.entrySet()) {
       String N = entry.getKey();
       AutoBase A = entry.getValue();
@@ -85,9 +92,6 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
         RobotStateEstimator.getInstance()        // Shooter.getInstance()
         // Intake.getInstance()
         ));
-
-    RobotStateEstimator.getInstance().resetOdometry(Pose2d.identity());
-    RobotState.getInstance().resetKalmanFilters();
     }
 
   @Override
@@ -123,20 +127,16 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
 
   @Override
   public void autonomousInit() {
+
     swerve = SwerveDrive.getInstance();
+    swerve.fieldzeroSwerve();
     swerve.zeroModules();
 
     
-    swerve.fieldzeroSwerve();
-    swerve.sendInput(0, 0,0);
-    swerve.stop();
-
-    startime = Timer.getFPGATimestamp();
-    
-    if(autoChooser.getSelected() != null){
-      autoChooser.getSelected().runAuto();
-    }else{
-    }
+    // if(autoChooser.getSelected() != null){
+    //   autoChooser.getSelected().runAuto();
+    // }else{
+    // }
     new NS5().runAuto();
 
   }
@@ -155,6 +155,9 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve.fieldzeroSwerve();
     swerve.zeroModules();
 
+    RobotStateEstimator.getInstance().resetOdometry(new Pose2d(16,5, new Rotation2d()));
+    RobotState.getInstance().resetKalmanFilters();
+    
 
 
 

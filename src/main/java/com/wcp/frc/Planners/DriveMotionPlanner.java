@@ -4,10 +4,15 @@
 
 package com.wcp.frc.Planners;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.wcp.frc.subsystems.RobotState;
+import com.wcp.frc.subsystems.RobotStateEstimator;
 import com.wcp.frc.subsystems.Requests.Request;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
+import com.wcp.frc.subsystems.gyros.Gyro;
+import com.wcp.frc.subsystems.gyros.Pigeon;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
@@ -29,13 +34,17 @@ public class DriveMotionPlanner{
     Pose2d drivingpose = new Pose2d();
     PathPlannerTrajectory trajectoryDesired;
     PathFollower pathFollower;
-    PID2d OdometryPID = new PID2d(new SynchronousPIDF(0.003,0,0),new SynchronousPIDF(0.003,0,0));//TODO
-    SwerveDrive swerve;
+    PID2d OdometryPID = new PID2d(new SynchronousPIDF(1,0,0),new SynchronousPIDF(1,0,0));
     double lastTimestamp = 0;
     Pose2d poseMeters;
-    
-    public DriveMotionPlanner(SwerveDrive swerve){
-        this.swerve = swerve;
+    public static DriveMotionPlanner instance = null;
+
+    public static DriveMotionPlanner getInstance() {// if doesnt have an instance of swerve will make a new one
+        if (instance == null)
+            instance = new DriveMotionPlanner();
+        return instance;
+    }
+    public DriveMotionPlanner(){
         pathFollower = PathFollower.getInstance();
         // swerve = SwerveDrive.getInstance();
     }
@@ -48,13 +57,16 @@ public class DriveMotionPlanner{
         pathFollower.setTrajectory(trajectory, nodes);
         poseMeters = pathFollower.getInitial(trajectory,initRotation);
         Pose2d newpose = (pathFollower.getInitial(trajectory,initRotation));
-        RobotState.getInstance().reset(Timer.getFPGATimestamp(), newpose);
-    }
+        Pigeon.getInstance().setAngle(initRotation);
+        RobotState.getInstance().resetKalmanFilters();
+        RobotStateEstimator.getInstance().resetOdometry(newpose);
+   }
 
     public void startPath(boolean useAllianceColor) {
         trajectoryStarted = true;
         this.useAllianceColor = useAllianceColor;
         pathFollower.startTimer();
+    
 
     }
 
@@ -72,8 +84,8 @@ public class DriveMotionPlanner{
         };
     }
 
-      public void updateTrajectory() {
-        Pose2d desiredPose = pathFollower.getDesiredPose2d(useAllianceColor, swerve.getPoseMeters());
+      public void updateTrajectory(Pose2d pose) {
+        Pose2d desiredPose = pathFollower.getDesiredPose2d(useAllianceColor, RobotState.getInstance().getLatestKalmanPose());
         targetHeading = desiredPose.getRotation().inverse();
         targetFollowTranslation = desiredPose.getTranslation();
     }
@@ -81,7 +93,7 @@ public class DriveMotionPlanner{
 
         public Translation2d updateFollowedTranslation2d(double timestamp) {
         double dt = timestamp - lastTimestamp;
-        Translation2d currentRobotPositionFromStart = poseMeters.getTranslation();
+        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestKalmanPose().getTranslation();
         OdometryPID.x().setOutputRange(-.9, .9);
         OdometryPID.y().setOutputRange(-.9, .9);
         double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.x(),
@@ -93,6 +105,7 @@ public class DriveMotionPlanner{
             trajectoryFinished = true;
             return new Translation2d();
         }
+        Logger.recordOutput("effort towards desired pose", new Translation2d(xError,yError).toWPI()); 
         return new Translation2d(xError, -yError);
     }
     // public Request generateTrajectoryRequest(int node) {

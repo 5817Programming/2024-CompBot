@@ -7,6 +7,7 @@ package com.wcp.frc.subsystems;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
+import com.wcp.lib.geometry.Translation2d;
 import com.wcp.lib.geometry.Twist2d;
 import com.wcp.lib.swerve.SwerveOdometry;
 
@@ -48,17 +49,10 @@ public class RobotStateEstimator extends Subsystem {
   }
 
   public void resetOdometry(Pose2d initialPose) {
-    synchronized(RobotStateEstimator.this){
       mOdometry.resetPosition(initialPose, mDrive.getModules());
-      RobotState.getInstance().reset(Timer.getFPGATimestamp(),initialPose);
-    }
-  } 
+      RobotState.getInstance().reset(Timer.getFPGATimestamp(), initialPose);
 
-  public void resetGyro(Rotation2d rotation){
-    synchronized(RobotStateEstimator.this){
-      mOdometry.resetPosition(new Pose2d(mOdometry.getPoseMeters().getTranslation(), rotation), mDrive.getModules());
-    }
-  }
+  } 
 
   @Override
   public void outputTelemetry() {
@@ -67,7 +61,6 @@ public class RobotStateEstimator extends Subsystem {
 
   @Override
   public void stop() {
-    // TODO Auto-generated method stub
   }
 
 }

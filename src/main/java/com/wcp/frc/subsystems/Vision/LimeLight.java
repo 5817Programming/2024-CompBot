@@ -53,7 +53,7 @@ public class LimeLight extends Subsystem {
 
   private boolean mOutputsHaveChanged = true;
 
-  private static HashMap<Integer, AprilTag> mTagMap = FieldLayout.Blue.kAprilTagMap;
+  private static HashMap<Integer, AprilTag> mTagMap = FieldLayout.Red.kAprilTagMap;
 
   public static LimeLight getInstance() {
     if (instance == null)
@@ -215,23 +215,23 @@ public class LimeLight extends Subsystem {
       return null;
     } else {
       double[] undistortedNormalizedPixelValues;
-      UndistortMap undistortMap =  new InterpolatingUndisortMap((int)1280.0, (int)960.0, new UndistortMap_Limelight_B_640x480());
+      UndistortMap undistortMap =  Constants.VisionConstants.UNDISTORTMAP;
 
-      // undistortedNormalizedPixelValues = undistortMap.pixelToUndistortedNormalized((int) desiredTargetPixel.x(), (int) desiredTargetPixel.y());
+      undistortedNormalizedPixelValues = undistortMap.pixelToUndistortedNormalized((int) desiredTargetPixel.x(), (int) desiredTargetPixel.y());
 
-      // double y_pixels = undistortedNormalizedPixelValues[0];
-      // double z_pixels = undistortedNormalizedPixelValues[1];
+      double y_pixels = undistortedNormalizedPixelValues[0];
+      double z_pixels = undistortedNormalizedPixelValues[1];
 
       // Negate OpenCV Undistorted Pixel Values to Match Robot Frame of Reference
       // OpenCV: Positive Downward and Right
       // // Robot: Positive Upward and Left
-      // double nY = -(y_pixels - mCameraMatrix.get(0, 2)[0]);// -(y_pixels * 2.0 - 1.0);
-      // double nZ = -(z_pixels - mCameraMatrix.get(1, 2)[0]);// -(z_pixels * 2.0 - 1.0);
+      double nY = -(y_pixels - mCameraMatrix.get(0, 2)[0]);// -(y_pixels * 2.0 - 1.0);
+      double nZ = -(z_pixels - mCameraMatrix.get(1, 2)[0]);// -(z_pixels * 2.0 - 1.0);
 
-      // double y = nY / mCameraMatrix.get(0, 0)[0];
-      // double z = nZ / mCameraMatrix.get(1, 1)[0];
+      double y = nY / mCameraMatrix.get(0, 0)[0];
+      double z = nZ / mCameraMatrix.get(1, 1)[0];
 
-      return new TargetInfo(1, 1, tagId);
+      return new TargetInfo(y, z, tagId);
     }
   }
 

@@ -16,7 +16,7 @@ import com.wcp.frc.Planners.DriveMotionPlanner;
 import com.wcp.frc.subsystems.Requests.Request;
 import com.wcp.frc.subsystems.Requests.RequestList;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
-
+import com.wcp.frc.subsystems.Swerve.SwerveDrive.State;
 import com.wcp.frc.subsystems.Vision.LimeLight;
 import com.wcp.lib.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
@@ -28,6 +28,7 @@ public class SuperStructure extends Subsystem {
     public LimeLight vision;
     public DriveMotionPlanner driveMotionPlanner;
     public Logger logger;
+    public DriveMotionPlanner dMotionPlanner;
     // public Indexer indexer;
     // public Pivot pivot;
     // public Shooter shooter;
@@ -37,6 +38,7 @@ public class SuperStructure extends Subsystem {
     public SuperStructure() {
         swerve = SwerveDrive.getInstance();
         vision = LimeLight.getInstance();
+        driveMotionPlanner = DriveMotionPlanner.getInstance();
         // intake = Intake.getInstance();
         // indexer = Indexer.getInstance();
         // pivot = Pivot.getInstance();
@@ -241,7 +243,7 @@ public class SuperStructure extends Subsystem {
     public void idleState() {
         currentRequestLog = "idle";
         RequestList request = new RequestList(Arrays.asList(
-                vision.pipleLineRequest(Constants.VisionConstants.APRIL_PIPLINE)), true);
+        logCurrentRequest("bjkabwa")), true);
         idleRequests = request;
     }
 
@@ -253,15 +255,16 @@ public class SuperStructure extends Subsystem {
         queue(request);
     }
 
-    public void trajectoryState(PathPlannerTrajectory trajectory, double nodes,double initRotation) { //TODO MIKEY FIX THIS SHIT PLEASE
-    //     RequestList request = new RequestList(Arrays.asList(
-    //             logCurrentRequest("trajectory")
-    //     ), true);
-    //     RequestList queue = new RequestList(Arrays.asList(
-    //             .setTrajectoryRequest(trajectory, nodes,initRotation),
-    //             swerve.startPathRequest(true)), false);
-    //     queue(request);
-    //     queue(queue);
+    public void trajectoryState(PathPlannerTrajectory trajectory, double nodes,double initRotation) { 
+        RequestList request = new RequestList(Arrays.asList(
+                logCurrentRequest("trajectory")
+        ), true);
+        RequestList queue = new RequestList(Arrays.asList(
+                driveMotionPlanner.setTrajectoryRequest(trajectory, nodes,initRotation),
+                swerve.setStateRequest(State.TRAJECTORY),
+                driveMotionPlanner.startPathRequest(true)), false);
+        queue(request);
+        queue(queue);
     } 
 
     public void intakeState(boolean Override){
@@ -287,11 +290,11 @@ public class SuperStructure extends Subsystem {
         }
     }
 
-    public void waitForTrajectoryState(double PercentageToRun) { //TODO MIKEY FIX THIS SHIT PLEASE
-    //     RequestList request = new RequestList(Arrays.asList(
-    //             swerve.waitForTrajectoryRequest(PercentageToRun)),
-    //             false);
-    //     queue(request);
+    public void waitForTrajectoryState(double PercentageToRun) { 
+        RequestList request = new RequestList(Arrays.asList(
+                driveMotionPlanner.waitForTrajectoryRequest(PercentageToRun)),
+                false);
+        queue(request);
     }
 
 

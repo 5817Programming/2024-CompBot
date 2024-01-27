@@ -111,38 +111,33 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.75,
-      "rotationDegrees": 23.815060413561792,
+      "rotationDegrees": -156.18,
       "rotateFast": true
     },
     {
       "waypointRelativePos": 2.65,
-      "rotationDegrees": 0,
+      "rotationDegrees": 180.0,
       "rotateFast": true
     },
     {
       "waypointRelativePos": 3.6499999999999995,
-      "rotationDegrees": 18.018072373248604,
+      "rotationDegrees": -161.98,
       "rotateFast": true
     },
     {
       "waypointRelativePos": 4.55,
-      "rotationDegrees": 9.74,
+      "rotationDegrees": -170.26,
       "rotateFast": true
     },
     {
       "waypointRelativePos": 5.2,
-      "rotationDegrees": -15.511282925315607,
+      "rotationDegrees": 164.49,
       "rotateFast": true
     },
     {
       "waypointRelativePos": 5.95,
-      "rotationDegrees": 18.43494882292201,
+      "rotationDegrees": -161.57,
       "rotateFast": true
-    },
-    {
-      "waypointRelativePos": 0.0,
-      "rotationDegrees": 62.07439853774159,
-      "rotateFast": false
     }
   ],
   "constraintZones": [
@@ -184,7 +179,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 59.036243467860785,
+    "rotation": -120.96000000000001,
     "velocity": 0
   },
   "useDefaultConstraints": false

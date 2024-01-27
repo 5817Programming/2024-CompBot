@@ -97,7 +97,7 @@ public class SwerveDriveModule extends Subsystem {
 
         driveMotor.setNeutralMode(NeutralModeValue.Brake);
         rotationMotor.setNeutralMode(NeutralModeValue.Brake);
-
+        driveMotor.setPosition(0);
 
     }
 
@@ -235,9 +235,9 @@ public class SwerveDriveModule extends Subsystem {
     
 
     public void resetModulePositionToAbsolute() {
+                driveMotor.setPosition(0);
                 double offset = getModuleAbsolutePosition() - encoderOffset;
                 rotationMotor.setPosition(degreesToRotations(offset));
-                System.out.print(this.name + offset);
         
             
 
@@ -315,6 +315,7 @@ public class SwerveDriveModule extends Subsystem {
         Logger.recordOutput(this.name + " A", Constants.kWheelCircumference);
         Logger.recordOutput(this.name + "Drive Control Mode", mPeriodicIO.driveControlMode);
         Logger.recordOutput(this.name + "Rotation Control Mode", mPeriodicIO.rotationControlMode);
+        Logger.recordOutput(this.name + "modulePose2d", Pose2d.fromTranslation(position).toWPI());
     
 
 
