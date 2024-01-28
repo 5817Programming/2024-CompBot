@@ -137,7 +137,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     //   autoChooser.getSelected().runAuto();
     // }else{
     // }
-    new NS5().runAuto();
+    new M6().runAuto();
 
   }
 

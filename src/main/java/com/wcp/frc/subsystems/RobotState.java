@@ -158,7 +158,7 @@ public class RobotState {
 
         MeasuredVelocity = measured_velocity;
         filteredMeasuredVelocity.add(MeasuredVelocity);
-        PredictedVelocity = predicted_velocity;
+        PredictedVelocity = new Twist2d(predicted_velocity.dx, -predicted_velocity.dy, predicted_velocity.dtheta);
     }
 
     public synchronized Twist2d getPredictedVelocity() {
@@ -187,7 +187,7 @@ public class RobotState {
             //Rotating Camera by Yaw Offset
             Pose2d cameraToTag = Pose2d.fromTranslation(mLatestVisionUpdate.get().getCameraToTarget().rotateBy(Constants.VisionConstants.cameraYawOffset.flip()));
             //Getting Vehicle to Tag in Field Frame
-            Pose2d vehicleToTag = Pose2d.fromTranslation(Constants.VisionConstants.ROBOT_TO_CAMERA.transformBy(cameraToTag).getTranslation().rotateBy(SwerveDrive.getInstance().getRobotHeading().inverse()));
+            Pose2d vehicleToTag = Pose2d.fromTranslation(Constants.VisionConstants.ROBOT_TO_CAMERA.transformBy(cameraToTag).getTranslation().rotateBy(odomToVehicle.getRotation().inverse()));
 
             //Getting Field to Vehicle via Vehicle to Tag
             Pose2d visionFieldToVehicle = mLatestVisionUpdate.get().getFieldToTag().transformBy(vehicleToTag.inverse());
@@ -209,7 +209,13 @@ public class RobotState {
                 var visionOdomError = visionFieldToVehicle.getTranslation().translateBy(odomToVehicle.getTranslation().inverse());
                 Logger.recordOutput("visionOdomError", visionOdomError.toWPI());
 
-
+                if(DriverStation.isAutonomous()) {
+                    final double kMaxDistanceToAccept = .5;
+                    if (visionOdomError.norm() > kMaxDistanceToAccept) {
+                        System.out.println("Invalid vision update!");
+                        return;
+                    }
+                }
                 mDisplayVisionPose = visionFieldToVehicle;
                 try {
                     mKalmanFilter.correct(VecBuilder.fill(0.0, 0.0), VecBuilder.fill(visionOdomError.getTranslation().x(), visionOdomError.getTranslation().y()));

@@ -14,7 +14,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 public class M6 extends AutoBase{
     SuperStructure s = SuperStructure.getInstance();
     SwerveDrive swerve = SwerveDrive.getInstance();
-    double initRotation = 0;
+    double initRotation = 180;
     PathPlannerTrajectory path = PathPlannerPath.fromPathFile("M6").getTrajectory(new ChassisSpeeds(),  Rotation2d.fromDegrees(initRotation));
 
     @Override

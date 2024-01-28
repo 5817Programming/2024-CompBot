@@ -173,6 +173,9 @@ public class Rotation2d implements IRotation2d<Rotation2d> {
             return fromRadians(getRadians() + other.getRadians());
         }
     }
+    public Rotation2d rotateBy(final double other){
+        return this.rotateBy(fromDegrees(other));
+    }
 
     @Override
     public Rotation2d mirror() {

@@ -6,10 +6,12 @@ package com.wcp.frc;
 
 import java.util.Optional;
 
+import com.ctre.phoenix6.signals.MagnetHealthValue;
 import com.wcp.frc.Planners.AutoAlignPointSelector;
 import com.wcp.frc.subsystems.RobotState;
 import com.wcp.frc.subsystems.SuperStructure;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
+import com.wcp.frc.subsystems.Swerve.SwerveDrive.State;
 import com.wcp.lib.geometry.Pose2d;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -127,7 +129,7 @@ public class DevControls {
         Optional<Pose2d> targetPoint = AutoAlignPointSelector.chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
         swerve.snapToPoint(targetPoint.get());
        } else{
-        swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput);
+        swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput,State.MANUAL);
        }
       
 

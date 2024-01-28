@@ -10,6 +10,7 @@ import com.wcp.frc.Planners.AutoAlignPointSelector;
 import com.wcp.frc.subsystems.RobotState;
 import com.wcp.frc.subsystems.SuperStructure;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
+import com.wcp.frc.subsystems.Swerve.SwerveDrive.State;
 import com.wcp.lib.geometry.Pose2d;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -120,9 +121,12 @@ public class Controls {
 
         if(driverStartButton.isPressed())
             swerve.resetGryo(180);
-        
-       
-        swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput);
+
+        if(driverLeftTrigger.getValue()>0.2){
+             swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput,State.AIMING);
+        }else{
+            swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput,State.MANUAL);
+        }
     
       
 

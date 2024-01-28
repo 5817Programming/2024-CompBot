@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
 import org.opencv.core.Core;
@@ -113,14 +114,20 @@ public class LimeLight extends Subsystem {
 
     if (mPeriodicIO.seesTarget) {
       if (mTagMap.keySet().contains(tagId) && cameraToTarget != null) {
+            mPeriodicIO.visionUpdate = Optional.of(new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, tagId));
         RobotState.getInstance().addVisionUpdate(
-            new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, tagId));
+            mPeriodicIO.visionUpdate.get()
+            );
+
       } else {
         RobotState.getInstance().addVisionUpdate(null);
+        mPeriodicIO.visionUpdate = null;
       }
     }
   }
-
+  public Optional<VisionUpdate> getLatestVisionUpdate(){
+    return mPeriodicIO.visionUpdate;
+  }
   public synchronized Translation2d getCameraToTargetTranslation() {
     // Get all Corners Normalized
     List<TargetInfo> targetPoints = getTarget();
@@ -302,6 +309,7 @@ public class LimeLight extends Subsystem {
     public int tagId = 0;
     public boolean seesTarget = false;
     public int givenPipeline = 0;
+    public Optional<VisionUpdate> visionUpdate = null;
 
   }
 

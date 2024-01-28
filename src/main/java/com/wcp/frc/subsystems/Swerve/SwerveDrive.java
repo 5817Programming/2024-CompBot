@@ -4,16 +4,21 @@
 
 package com.wcp.frc.subsystems.Swerve;
 
+import static org.opencv.core.CvType.makeType;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
 
 import com.wcp.frc.Constants;
 import com.wcp.frc.Options;
 import com.wcp.frc.Ports;
+import com.wcp.frc.Planners.AimingPlanner;
 import com.wcp.frc.Planners.AutoAlignMotionPlanner;
 import com.wcp.frc.Planners.DriveMotionPlanner;
+import com.wcp.frc.Planners.AimingPlanner.AimingRequest;
 import com.wcp.frc.subsystems.RobotState;
 import com.wcp.frc.subsystems.RobotStateEstimator;
 import com.wcp.frc.subsystems.Subsystem;
@@ -81,6 +86,7 @@ public class SwerveDrive extends Subsystem {
     SwerveKinematics inverseKinematics = new SwerveKinematics();
     AutoAlignMotionPlanner mAutoAlignMotionPlanner;
     DriveMotionPlanner mDriveMotionPlanner;
+    AimingPlanner mAimingPlanner;
     RobotState robotState;
     public HeadingController headingController = new HeadingController();
 
@@ -118,6 +124,7 @@ public class SwerveDrive extends Subsystem {
         vision = LimeLight.getInstance();
         robotState = RobotState.getInstance();
         mDriveMotionPlanner =  DriveMotionPlanner.getInstance();
+        mAimingPlanner = new AimingPlanner();
         
 
     }
@@ -156,8 +163,8 @@ public class SwerveDrive extends Subsystem {
     }
 
     //
-    public void sendInput(double x, double y, double rotation) {
-        setState(State.MANUAL);
+    public void sendInput(double x, double y, double rotation,State state) {
+        setState(state);
         translationVector = new Translation2d(x, y).scale(speedPercent);
         if (Math.abs(rotation) <= rotationDeadband) {
             rotation = 0;
@@ -265,9 +272,10 @@ public class SwerveDrive extends Subsystem {
         double timeStamp = Timer.getFPGATimestamp();
         poseMeters = robotState.getKalmanPose(timeStamp);
         drivingPose = Pose2d.fromRotation(getRobotHeading());
+        double rotationCorrection;
         switch (currentState) {
             case MANUAL:
-                double rotationCorrection = headingController.updateRotationCorrection(drivingPose.getRotation(),
+                rotationCorrection = headingController.updateRotationCorrection(drivingPose.getRotation(),
                         timeStamp);
                 if (translationVector.norm() == 0 || rotationScalar != 0) {
                     rotationCorrection = 0;
@@ -299,8 +307,13 @@ public class SwerveDrive extends Subsystem {
                 break;
 
             case AIMING:
+            Pose2d demandedAngle;
+                    demandedAngle = mAimingPlanner.updateAiming(timeStamp, RobotState.getInstance().getLatestPoseFromOdom().getValue(), Pose2d.fromTranslation(RobotState.getInstance().getLatestVisionPoseComponent()), AimingRequest.Odometry, vision.getLatestVisionUpdate(), headingController);
+   
+            Logger.recordOutput("angleDemand", demandedAngle.getRotation().getDegrees());
                 commandModules(
-                        inverseKinematics.updateDriveVectors(aimingVector, rotationScalar, drivingPose, robotCentric));
+                        inverseKinematics.updateDriveVectors(translationVector,
+                        demandedAngle.getRotation().getDegrees()+rotationScalar, drivingPose, robotCentric));
                 break;
 
             case OFF:
@@ -466,8 +479,7 @@ public class SwerveDrive extends Subsystem {
 
             @Override
             public void act() {
-                setState(State.MANUAL);
-                sendInput(x.x(), x.y(), r);
+                sendInput(x.x(), x.y(), r,State.MANUAL);
 
             }
 
@@ -486,6 +498,7 @@ public class SwerveDrive extends Subsystem {
 
     @Override
     public void outputTelemetry() {
+        Logger.recordOutput("State", getState());
     }
 
     @Override

@@ -58,8 +58,9 @@ public class DriveMotionPlanner{
         poseMeters = pathFollower.getInitial(trajectory,initRotation);
         Pose2d newpose = (pathFollower.getInitial(trajectory,initRotation));
         Pigeon.getInstance().setAngle(initRotation);
-        RobotState.getInstance().resetKalmanFilters();
         RobotStateEstimator.getInstance().resetOdometry(newpose);
+        RobotState.getInstance().resetKalmanFilters();
+
    }
 
     public void startPath(boolean useAllianceColor) {
@@ -85,7 +86,7 @@ public class DriveMotionPlanner{
     }
 
       public void updateTrajectory(Pose2d pose) {
-        Pose2d desiredPose = pathFollower.getDesiredPose2d(useAllianceColor, RobotState.getInstance().getLatestKalmanPose());
+        Pose2d desiredPose = pathFollower.getDesiredPose2d(useAllianceColor, RobotState.getInstance().getPoseFromOdom(Timer.getFPGATimestamp()));
         targetHeading = desiredPose.getRotation().inverse();
         targetFollowTranslation = desiredPose.getTranslation();
     }
@@ -93,7 +94,7 @@ public class DriveMotionPlanner{
 
         public Translation2d updateFollowedTranslation2d(double timestamp) {
         double dt = timestamp - lastTimestamp;
-        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestKalmanPose().getTranslation();
+        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestPoseFromOdom().getValue().getTranslation();
         OdometryPID.x().setOutputRange(-.9, .9);
         OdometryPID.y().setOutputRange(-.9, .9);
         double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.x(),
