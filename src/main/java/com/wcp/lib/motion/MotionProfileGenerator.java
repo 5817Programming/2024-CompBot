@@ -28,7 +28,7 @@ public class MotionProfileGenerator {
                                                              IMotionProfileGoal goal_state,
                                                              MotionState prev_state) {
         if (goal_state instanceof MotionProfileGoal) {
-            return generateProfile(constraints, (MotionProfileGoal)goal_state, prev_state);
+            return generateProfile(constraints, (MotionProfileGoal) goal_state, prev_state);
         } else {
             return generateProfile(constraints, (LinearTimeVaryingMotionProfileGoal)goal_state, prev_state);
         }

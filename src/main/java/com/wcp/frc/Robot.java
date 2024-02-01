@@ -21,7 +21,6 @@ import com.wcp.frc.subsystems.Vision.LimeLight;
 import com.wcp.frc.subsystems.gyros.Gyro;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
-import com.wcp.lib.motion.PathFollower;
 import com.wcp.frc.Autos.AutoBase;
 import com.wcp.frc.Autos.M5;
 import com.wcp.frc.Autos.M5Safe;
@@ -175,7 +174,6 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   public void disabledInit() {
     subsystemManager.stopSubsystems();
     SuperStructure.getInstance().clearQueues();
-    PathFollower.getInstance().resetTimer();
   }
 
   /** This function is called periodically when disabled. */

@@ -123,7 +123,7 @@ public class SwerveDrive extends Subsystem {
         gyro = Pigeon.getInstance();
         vision = LimeLight.getInstance();
         robotState = RobotState.getInstance();
-        mDriveMotionPlanner =  DriveMotionPlanner.getInstance();
+        mDriveMotionPlanner =  new DriveMotionPlanner();
         mAimingPlanner = new AimingPlanner();
         
 
@@ -301,13 +301,14 @@ public class SwerveDrive extends Subsystem {
                 break;
 
             case TRAJECTORY:
-                mDriveMotionPlanner.updateTrajectory(poseMeters);
-                Translation2d translationCorrection = mDriveMotionPlanner.updateFollowedTranslation2d(timeStamp).scale(1);
-                headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading());
-                rotationCorrection = headingController.getRotationCorrection(getRobotHeading(), timeStamp);
-                desiredRotationScalar = rotationCorrection;
-                commandModules(inverseKinematics.updateDriveVectors(translationCorrection, rotationCorrection, poseMeters,
-                        robotCentric));
+                targetChassisSpeeds = updateDriveMotionPlanner();
+                commandModuleVelocitys(inverseKinematics.updateDriveVectors(new Translation2d(
+                    targetChassisSpeeds.vxMetersPerSecond,
+                    targetChassisSpeeds.vyMetersPerSecond),
+                    targetChassisSpeeds.omegaRadiansPerSecond,
+                    poseMeters,
+                    robotCentric
+                    ));
                 break;
 
             case AIMING:
@@ -325,7 +326,6 @@ public class SwerveDrive extends Subsystem {
                 break;
 
             case SNAP:
-                headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading());
                 rotationCorrection = headingController.getRotationCorrection(getRobotHeading(), timeStamp);
                 desiredRotationScalar = rotationCorrection;
                 commandModules(inverseKinematics.updateDriveVectors(translationVector, rotationCorrection, poseMeters,
@@ -334,6 +334,14 @@ public class SwerveDrive extends Subsystem {
 
         }
 
+    }
+
+    public ChassisSpeeds updateDriveMotionPlanner(){
+        final double now = Timer.getFPGATimestamp();
+        var fieldToOdometry = robotState.getAbsoluteVisionPoseComponent(now);
+        var odomToVehicle = robotState.getPoseFromOdom(now);
+        ChassisSpeeds output = mDriveMotionPlanner.updateAutoAlign(now, odomToVehicle, Pose2d.fromTranslation(fieldToOdometry), robotState.getMeasuredVelocity());
+        return output;
     }
 
     public ChassisSpeeds updateAutoAlign(){

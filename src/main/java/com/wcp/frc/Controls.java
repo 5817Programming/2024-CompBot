@@ -70,7 +70,7 @@ public class Controls {
         Driver = new XboxController(Ports.XBOX_1);
         CoDriver = new XboxController(Ports.XBOX_2);
         swerve = SwerveDrive.getInstance();   
-        autoAlignPointSelector
+        autoAlignPointSelector = new AutoAlignPointSelector();
     }
 
 

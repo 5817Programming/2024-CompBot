@@ -38,7 +38,6 @@ public class SuperStructure extends Subsystem {
     public SuperStructure() {
         swerve = SwerveDrive.getInstance();
         vision = LimeLight.getInstance();
-        driveMotionPlanner = DriveMotionPlanner.getInstance();
         // intake = Intake.getInstance();
         // indexer = Indexer.getInstance();
         // pivot = Pivot.getInstance();
@@ -260,9 +259,8 @@ public class SuperStructure extends Subsystem {
                 logCurrentRequest("trajectory")
         ), true);
         RequestList queue = new RequestList(Arrays.asList(
-                driveMotionPlanner.setTrajectoryRequest(trajectory, nodes,initRotation),
-                swerve.setStateRequest(State.TRAJECTORY),
-                driveMotionPlanner.startPathRequest(true)), false);
+                swerve.setStateRequest(State.TRAJECTORY)
+                ), false);
         queue(request);
         queue(queue);
     } 
@@ -290,12 +288,7 @@ public class SuperStructure extends Subsystem {
         }
     }
 
-    public void waitForTrajectoryState(double PercentageToRun) { 
-        RequestList request = new RequestList(Arrays.asList(
-                driveMotionPlanner.waitForTrajectoryRequest(PercentageToRun)),
-                false);
-        queue(request);
-    }
+
 
 
     public Request logCurrentRequest(String newLog) {
