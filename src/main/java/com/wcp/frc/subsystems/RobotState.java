@@ -144,7 +144,7 @@ public class RobotState {
 
     public synchronized Pose2d getPredictedPoseFromOdometry(double lookahead_time) {
         return getLatestPoseFromOdom().getValue()
-                .transformBy(Pose2d.exp(PredictedVelocity.scaled(lookahead_time)));
+                .transformBy(Pose2d.projectTwist(PredictedVelocity.scaled(lookahead_time)));
     }
 
     public synchronized void addPoseObservation(double timestamp, Pose2d observation) {
@@ -154,8 +154,8 @@ public class RobotState {
     public synchronized void addOdomObservations(double timestamp, Pose2d poseFromOdom, Twist2d measured_velocity, Twist2d predicted_velocity) {
             mKalmanFilter.predict(VecBuilder.fill(0.0, 0.0), .01);
 
+              
         addPoseObservation(timestamp, poseFromOdom);
-
         MeasuredVelocity = measured_velocity;
         filteredMeasuredVelocity.add(MeasuredVelocity);
         PredictedVelocity = new Twist2d(predicted_velocity.dx, -predicted_velocity.dy, predicted_velocity.dtheta);

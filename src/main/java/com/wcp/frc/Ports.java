@@ -13,7 +13,7 @@ public class Ports {
     public static final int FRONT_RIGHT_DRIVE = 12; // 1
 
     public static final int FRONT_LEFT_ROTATION = 6; // 19
-    public static final int FRONT_LEFT_DRIVE = 9; // 18
+    public static final int FRONT_LEFT_DRIVE = 0; // 18
 
     public static final int REAR_LEFT_ROTATION = 8; // 10
     public static final int REAR_LEFT_DRIVE = 7; // 11

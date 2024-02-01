@@ -77,6 +77,10 @@ public class Pose2d implements IPose2d<Pose2d> {
                 new Rotation2d(cos_theta, sin_theta, false));
     }
 
+    public static Pose2d projectTwist(final Twist2d delta){
+        return new Pose2d(new Translation2d(delta.dx,delta.dy),new Rotation2d());
+    }
+
     /**
      * Logical inverse of the above.
      */

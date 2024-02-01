@@ -191,6 +191,10 @@ public class SwerveDrive extends Subsystem {
 
     }
 
+    public void setAlignment(Pose2d pose){
+        
+    }
+
 
 
     public void parkMode() {
@@ -499,7 +503,9 @@ public class SwerveDrive extends Subsystem {
     @Override
     public void outputTelemetry() {
         Logger.recordOutput("State", getState());
-    }
+        modules.forEach((m) -> m.outputTelemetry());
+
+        }
 
     @Override
     public void stop() {// stops everything

@@ -26,11 +26,9 @@ import edu.wpi.first.wpilibj.Timer;
 /** Add your docs here. */
 public class AimingPlanner {
 
-    private boolean mAimingComplete = false;
     private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mShotTimeMap = Constants.ShooterConstants.SHOT_TRAVEL_TIME_TREE_MAP;
 
-    private Pose2d mFieldToSpeaker= new Pose2d(16.28,5.54,new Rotation2d());
-    private OptionalDouble mStartingTime;
+    private Pose2d mFieldToSpeaker= new Pose2d(16.28,5.45,new Rotation2d());
     private Optional<VisionUpdate> mVisionUpdate;
     private AimingRequest mAimingRequest;
 

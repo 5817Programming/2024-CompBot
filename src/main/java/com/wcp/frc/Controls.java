@@ -22,6 +22,7 @@ public class Controls {
     XboxController Driver;
     XboxController CoDriver;
     SwerveDrive swerve;
+    AutoAlignPointSelector autoAlignPointSelector;
 
     ButtonCheck driverLeftTrigger = new ButtonCheck(.5);
     ButtonCheck driverRightTrigger = new ButtonCheck(.5);
@@ -69,6 +70,7 @@ public class Controls {
         Driver = new XboxController(Ports.XBOX_1);
         CoDriver = new XboxController(Ports.XBOX_2);
         swerve = SwerveDrive.getInstance();   
+        autoAlignPointSelector
     }
 
 
@@ -124,7 +126,12 @@ public class Controls {
 
         if(driverLeftTrigger.getValue()>0.2){
              swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput,State.AIMING);
-        }else{
+        }
+        else if(driverRightTrigger.getValue()>.2){
+            
+            swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput,State.ALIGNMENT);
+        }
+        else{
             swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput,State.MANUAL);
         }
     
