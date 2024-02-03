@@ -16,13 +16,11 @@ import com.wcp.lib.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 
-
 public class Controls {
     SuperStructure s;
     XboxController Driver;
     XboxController CoDriver;
     SwerveDrive swerve;
-    AutoAlignPointSelector autoAlignPointSelector;
 
     ButtonCheck driverLeftTrigger = new ButtonCheck(.5);
     ButtonCheck driverRightTrigger = new ButtonCheck(.5);
@@ -41,7 +39,6 @@ public class Controls {
     ButtonCheck driverDpadDown = new ButtonCheck();
     ButtonCheck driverBackButtonDown = new ButtonCheck();
 
-
     ButtonCheck coDriverStart = new ButtonCheck();
     ButtonCheck coDriverAButton = new ButtonCheck();
     ButtonCheck coDriverBButton = new ButtonCheck();
@@ -55,11 +52,8 @@ public class Controls {
     ButtonCheck coDriverRightStickDown = new ButtonCheck();
     ButtonCheck coDriverBackButton = new ButtonCheck();
 
-
-
-
-
     private static Controls instance = null;
+
     public static Controls getInstance() {
         if (instance == null)
             instance = new Controls();
@@ -69,10 +63,8 @@ public class Controls {
     public Controls() {
         Driver = new XboxController(Ports.XBOX_1);
         CoDriver = new XboxController(Ports.XBOX_2);
-        swerve = SwerveDrive.getInstance();   
-        autoAlignPointSelector
+        swerve = SwerveDrive.getInstance();
     }
-
 
     public void update() {
         var timestamp = Timer.getFPGATimestamp();
@@ -82,109 +74,109 @@ public class Controls {
         double driverLeftYInput = Driver.getLeftY();
         double driverRightXInput = Driver.getRightX();
 
-
-
         double coDriverLeftX = CoDriver.getLeftX();
         double coDriverLeftY = CoDriver.getLeftY();
         double coDriverRightY = CoDriver.getRightY();
         double coDriverRightX = CoDriver.getRightX();
 
-         driverLeftTrigger.update(Driver.getLeftTriggerAxis());
-         driverRightTrigger.update(Driver.getRightTriggerAxis());
-         driverLeftBumper.update(Driver.getLeftBumper());
-         driverRightBumper.update(Driver.getRightBumper());
-         driverLeftStick.update(Driver.getLeftStickButton());
-         driverAButton.update(Driver.getAButton());
-         driverXButton.update(Driver.getXButton());
-         driverYButton.update(Driver.getYButton());
-         driverBButton.update(Driver.getBButton());
-         driverRightStickDown.update(Driver.getRightStickButton());
-         driverStartButton.update(Driver.getStartButton());
-         driverDpadLeft.update(Driver.getPOV() == 270);
-         driverDpadUp.update(Driver.getPOV() == 0);
-         driverDpadRight.update(Driver.getPOV() == 90);
-         driverDpadDown.update(Driver.getPOV() == 180);
-    
-    
-         coDriverStart.update(CoDriver.getStartButton());
-         coDriverAButton.update(CoDriver.getAButton());
-         coDriverBButton.update(CoDriver.getBButton());
-         coDriverYButton.update(CoDriver.getYButton());
-         coDriverXButton.update(CoDriver.getXButton());
-         codriverLeftBumper.update(CoDriver.getLeftBumper());
-         codriverRightBumper.update(CoDriver.getRightBumper());
-         coDriverLeftTrigger.update(CoDriver.getLeftTriggerAxis());
-         coDriverRightTrigger.update(CoDriver.getRightTriggerAxis());
-         coDriverLeftStickDown.update(CoDriver.getLeftStickButton());
-         coDriverRightStickDown.update(CoDriver.getLeftStickButtonPressed());
-         coDriverBackButton.update(CoDriver.getBackButton());
+        driverLeftTrigger.update(Driver.getLeftTriggerAxis());
+        driverRightTrigger.update(Driver.getRightTriggerAxis());
+        driverLeftBumper.update(Driver.getLeftBumper());
+        driverRightBumper.update(Driver.getRightBumper());
+        driverLeftStick.update(Driver.getLeftStickButton());
+        driverAButton.update(Driver.getAButton());
+        driverXButton.update(Driver.getXButton());
+        driverYButton.update(Driver.getYButton());
+        driverBButton.update(Driver.getBButton());
+        driverRightStickDown.update(Driver.getRightStickButton());
+        driverStartButton.update(Driver.getStartButton());
+        driverDpadLeft.update(Driver.getPOV() == 270);
+        driverDpadUp.update(Driver.getPOV() == 0);
+        driverDpadRight.update(Driver.getPOV() == 90);
+        driverDpadDown.update(Driver.getPOV() == 180);
 
+        coDriverStart.update(CoDriver.getStartButton());
+        coDriverAButton.update(CoDriver.getAButton());
+        coDriverBButton.update(CoDriver.getBButton());
+        coDriverYButton.update(CoDriver.getYButton());
+        coDriverXButton.update(CoDriver.getXButton());
+        codriverLeftBumper.update(CoDriver.getLeftBumper());
+        codriverRightBumper.update(CoDriver.getRightBumper());
+        coDriverLeftTrigger.update(CoDriver.getLeftTriggerAxis());
+        coDriverRightTrigger.update(CoDriver.getRightTriggerAxis());
+        coDriverLeftStickDown.update(CoDriver.getLeftStickButton());
+        coDriverRightStickDown.update(CoDriver.getLeftStickButtonPressed());
+        coDriverBackButton.update(CoDriver.getBackButton());
 
-
-        if(driverStartButton.isPressed())
+        if (driverStartButton.isPressed())
             swerve.resetGryo(180);
 
-        if(driverLeftTrigger.getValue()>0.2){
-             swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput,State.AIMING);
+        if (driverLeftTrigger.getValue() > 0.2) {
+            swerve.sendInput(-driverLeftYInput, driverLeftXInput, -driverRightXInput, State.AIMING);
+        } else if (driverRightTrigger.getValue() > .2) {
+            Optional<Pose2d> targetSnap = AutoAlignPointSelector
+                    .chooseTargetPoint(RobotState.getInstance().getAbosoluteKalmanPose(timestamp));
+            if (targetSnap.isEmpty()) {
+            swerve.sendInput(-driverLeftYInput, driverLeftXInput, -driverRightXInput, State.MANUAL);
+            } else {
+                swerve.setAlignment(targetSnap.get());
+                swerve.sendInput(-driverLeftYInput, driverLeftXInput, -driverRightXInput, State.ALIGNMENT);
+            }
+        } else {
+            swerve.sendInput(-driverLeftYInput, driverLeftXInput, -driverRightXInput, State.MANUAL);
         }
-        else if(driverRightTrigger.getValue()>.2){
-            
-            swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput,State.ALIGNMENT);
-        }
-        else{
-            swerve.sendInput(driverLeftYInput, -driverLeftXInput, -driverRightXInput,State.MANUAL);
-        }
-    
-      
 
-        
-}
+    }
 
-public class ButtonCheck{
+    public class ButtonCheck {
         double value;
         double threshold;
         Boolean[] input = new Boolean[2];
-            
-        public ButtonCheck(double threshold){
+
+        public ButtonCheck(double threshold) {
             this.threshold = threshold;
-            for(int i = 0; i < 1; i++){
+            for (int i = 0; i < 1; i++) {
                 input[i] = false;
             }
-        } 
-        public ButtonCheck(){
+        }
+
+        public ButtonCheck() {
             this.threshold = 0;
-            for(int i = 0; i < 1; i++){
+            for (int i = 0; i < 1; i++) {
                 input[i] = false;
             }
-        } 
+        }
 
-       public void update(double input){
-           value = input;
-       }
+        public void update(double input) {
+            value = input;
+        }
 
-       public void update(boolean input){
+        public void update(boolean input) {
             this.input[1] = this.input[0];
-            if(input)
+            if (input)
                 this.input[0] = true;
             else
                 this.input[0] = false;
-       }
+        }
 
-       public boolean isPressed(){
-        return input[0] && !input[1];
-       }
-       public double getValue(){
-        return value;
-       }
-       public boolean isReleased(){
-        return !input[0] && input[1];
-       }
+        public boolean isPressed() {
+            return input[0] && !input[1];
+        }
 
-       public boolean isActive(){
-         return input[0];
-       }
-       public void setThreshhold(double threshold){
-         this.threshold = threshold;
-       }
-       }
+        public double getValue() {
+            return value;
+        }
+
+        public boolean isReleased() {
+            return !input[0] && input[1];
+        }
+
+        public boolean isActive() {
+            return input[0];
+        }
+
+        public void setThreshhold(double threshold) {
+            this.threshold = threshold;
+        }
+    }
 }

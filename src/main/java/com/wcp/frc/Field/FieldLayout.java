@@ -16,22 +16,22 @@ public class FieldLayout {
         // From CAD: 46.2534 cm
         // From step layout marking: 46.2788 cm
         // Old value: 46.272  cm
-        private static final Translation2d kTag1ToCenterAlign = new Translation2d(0.77, 0.0);
-        private static final Translation2d kTag1ToRightAlign = new Translation2d(0.77, -0.55);
-        private static final Translation2d kTag1ToLeftAlign = new Translation2d(0.77, 0.55);
+        private static final Pose2d kTag1ToCenterAlign = new Pose2d(-3, 0.0, Rotation2d.fromDegrees(0));
+        private static final Pose2d kTag1ToRightAlign = new Pose2d(3, -0.55, Rotation2d.fromDegrees(0));
+        private static final Pose2d kTag1ToLeftAlign = new Pose2d(3, 0.55, Rotation2d.fromDegrees(0));
 
-        private static final Translation2d kTag2ToCenterAlign = new Translation2d(0.77, 0.0);
-        private static final Translation2d kTag2ToRightAlign = new Translation2d(0.77, -0.55);
-        private static final Translation2d kTag2ToLeftAlign = new Translation2d(0.77, 0.55);
+        private static final Pose2d kTag2ToCenterAlign = new Pose2d(0.77, 0.0, Rotation2d.fromDegrees(0));
+        private static final Pose2d kTag2ToRightAlign = new Pose2d(0.77, -0.55, Rotation2d.fromDegrees(0));
+        private static final Pose2d kTag2ToLeftAlign = new Pose2d(0.77, 0.55, Rotation2d.fromDegrees(0));
 
-        private static final Translation2d kTag3ToCenterAlign = new Translation2d(0.77, 0.0);
-        private static final Translation2d kTag3ToRightAlign = new Translation2d(0.77, -0.55);
-        private static final Translation2d kTag3ToLeftAlign = new Translation2d(0.77, 0.55);
+        private static final Pose2d kTag3ToCenterAlign = new Pose2d(0.77, 0.0, Rotation2d.fromDegrees(0));
+        private static final Pose2d kTag3ToRightAlign = new Pose2d(0.77, -0.55, Rotation2d.fromDegrees(0));
+        private static final Pose2d kTag3ToLeftAlign = new Pose2d(0.77, 0.55, Rotation2d.fromDegrees(0));
 
-        private static final Translation2d kTag5ToCenterAlign = new Translation2d(0.77, 0.0);
-        private static final Translation2d kTag5ToRightAlign = new Translation2d(0.77, -0.55);
-        private static final Translation2d kTag5ToLeftAlign = new Translation2d(0.77, 0.55);
-        public static final AprilTag kAprilTag1 = new AprilTag(
+        private static final Pose2d kTag5ToCenterAlign = new Pose2d(0, -0.5, Rotation2d.fromDegrees(90));
+        private static final Pose2d kTag5ToRightAlign = new Pose2d(0.77, -0.55, Rotation2d.fromDegrees(0));
+        private static final Pose2d kTag5ToLeftAlign = new Pose2d(0.77, 0.55, Rotation2d.fromDegrees(0));
+        public static final AprilTag kAprilTag4 = new AprilTag(
                 4,
                 1.355852,
                 new Pose2d(
@@ -40,13 +40,27 @@ public class FieldLayout {
                 ),
                 true,
                 kTag1ToCenterAlign,
-                kTag1ToLeftAlign,
-                kTag1ToRightAlign
+                kTag1ToCenterAlign,
+                kTag1ToCenterAlign
         );
+        public static final AprilTag kAprilTag5 = new AprilTag(
+                    5,
+                    1.355852,
+                    new Pose2d(
+                            new Translation2d(14.67,8.12),
+                            Rotation2d.fromDegrees(0)
+                    ),
+                    true,
+                    kTag5ToCenterAlign,
+                    kTag5ToCenterAlign,
+                    kTag5ToCenterAlign
+            );
 
 
         static {
-        kAprilTagMap.put(4, kAprilTag1);
+        kAprilTagMap.put(4, kAprilTag4);
+        kAprilTagMap.put(5, kAprilTag5);
+
         }
 
 

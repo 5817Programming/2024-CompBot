@@ -155,7 +155,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve.fieldzeroSwerve();
     swerve.zeroModules();
 
-    RobotStateEstimator.getInstance().resetOdometry(new Pose2d(16,5, new Rotation2d()));
+    RobotStateEstimator.getInstance().resetOdometry(new Pose2d(15.24,5.54, new Rotation2d()));
     RobotState.getInstance().resetKalmanFilters();
     
 

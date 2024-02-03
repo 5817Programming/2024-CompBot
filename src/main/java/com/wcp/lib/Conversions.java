@@ -18,8 +18,7 @@ public static double degreesToRotations(double degrees, double gearRatio){
 
 public static double RPMToFalcon(double RPM, double gearRation){
     double motorRPM = RPM*gearRation;
-    double senseorCounts = motorRPM*(2048/600);
-    return senseorCounts;
+    return motorRPM;
 
 }
 // public static double falconToRPM(double velocitycounts, double gearRatio){

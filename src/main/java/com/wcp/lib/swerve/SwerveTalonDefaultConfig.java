@@ -31,11 +31,12 @@ public class SwerveTalonDefaultConfig {
 
 
 
-        driveConfigs.Slot0.kD=( 3.6);
-        driveConfigs.Slot0.kV = 1023.0 / Constants.kSwerveDriveMaxSpeed;
-        driveConfigs.Slot1.kP = 0;
-        driveConfigs.Slot1.kI = 0.0;
-        driveConfigs.Slot1.kD = 0;
+        driveConfigs.Slot0.kV = .12;
+        driveConfigs.Slot0.kS = .25;
+        driveConfigs.Slot0.kA = .01;
+        driveConfigs.Slot0.kP = .11;
+        driveConfigs.Slot0.kI = 0;
+        driveConfigs.Slot0.kD = 0;
         driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 
 
         driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));

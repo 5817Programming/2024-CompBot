@@ -31,7 +31,7 @@ public class AutoAlignPointSelector {
         Optional<AprilTag> closestTag = Optional.empty();
         for(int i:TagMap.keySet()){
             AprilTag currentTag = TagMap.get(i);
-            double distance = currentTag.getFieldToTag().transformBy(Pose2d.fromTranslation(currentTag.getTagToCenterAlign())).distance(point);
+            double distance = currentTag.getFieldToTag().transformBy((currentTag.getTagToCenterAlign())).distance(point);
             if(distance < closestDistance){
                 closestDistance = distance;
                 closestTag = Optional.of(TagMap.get(i));
@@ -59,16 +59,12 @@ public class AutoAlignPointSelector {
 
     private static Optional<Pose2d> getNearestAlignment(AprilTag tag, Pose2d point) {//TODO set the rotation 2ds to be perpendicular to the apriltags
         if (tag.isScoring()) {
-            Pose2d center = tag.getFieldToTag().transformBy(Pose2d.fromTranslation(tag.getTagToCenterAlign()));
-            center = new Pose2d(center.getTranslation(), Rotation2d.fromDegrees(180));
+            Pose2d center = tag.getFieldToTag().transformBy((tag.getTagToCenterAlign()));
             return Optional.of(center);
         } else {
-            Pose2d left = tag.getFieldToTag().transformBy(Pose2d.fromTranslation(tag.getTagToLeftAlign()));
-            left = new Pose2d(left.getTranslation(), Rotation2d.fromDegrees(0));
-            Pose2d right = tag.getFieldToTag().transformBy(Pose2d.fromTranslation(tag.getTagToRightAlign()));
-            right = new Pose2d(right.getTranslation(), Rotation2d.fromDegrees(0));
-            Pose2d center = tag.getFieldToTag().transformBy(Pose2d.fromTranslation(tag.getTagToCenterAlign()));
-            center = new Pose2d(center.getTranslation(), Rotation2d.fromDegrees(0));
+            Pose2d left = tag.getFieldToTag().transformBy((tag.getTagToLeftAlign()));
+            Pose2d right = tag.getFieldToTag().transformBy((tag.getTagToRightAlign()));
+            Pose2d center = tag.getFieldToTag().transformBy((tag.getTagToCenterAlign()));
             return minimizeDistance(point, new Pose2d[]{left,right,center});
         }
     }
@@ -80,7 +76,7 @@ public class AutoAlignPointSelector {
 
         targetPose = getNearestAlignment(closestAprilTag.get(), point);
 
-        if(targetPose.isPresent() && targetPose.get().distance(point) > 2){
+        if(!targetPose.isPresent()){
             return Optional.empty();
         }
         return targetPose;

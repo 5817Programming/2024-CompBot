@@ -40,6 +40,7 @@ public class HeadingController {
         return getRotationCorrection(heading, timestamp);
     }
 
+
     public boolean atTarget(){
         return atTarget;
     }
@@ -55,6 +56,9 @@ public class HeadingController {
             correctionForce = .017* Math.signum(correctionForce);
         }
         return correctionForce;
+    }
+    public double getTargetHeading(){
+        return targetHeading.getDegrees();
     }
 
 }

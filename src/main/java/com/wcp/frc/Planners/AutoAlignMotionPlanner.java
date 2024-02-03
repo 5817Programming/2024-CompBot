@@ -2,8 +2,12 @@ package com.wcp.frc.Planners;
 
 import java.util.OptionalDouble;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.wcp.frc.Constants;
+import com.wcp.lib.HeadingController;
 import com.wcp.lib.geometry.Pose2d;
+import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.geometry.Translation2d;
 import com.wcp.lib.geometry.Twist2d;
 import com.wcp.lib.motion.IMotionProfileGoal;
@@ -39,8 +43,8 @@ public class AutoAlignMotionPlanner {
     }
 
     public synchronized ChassisSpeeds updateAutoAlign(double timestamp, Pose2d currentOdomToVehicle,
-            Pose2d currentFieldToOdom, Twist2d currentVel) {
-        var odomToTargetPoint = currentFieldToOdom.inverse().transformBy(mFieldToTargetPoint);
+            Pose2d currentFieldToOdom, Twist2d currentVel, HeadingController headingController, Rotation2d currentHeading) {
+                var odomToTargetPoint = currentFieldToOdom.inverse().transformBy(mFieldToTargetPoint);
 
         mXController.setGoalAndConstraints(
                 new MotionProfileGoal(odomToTargetPoint.getTranslation().x(), 0,
@@ -54,41 +58,35 @@ public class AutoAlignMotionPlanner {
                 new MotionProfileGoal(odomToTargetPoint.getRotation().getRadians(), 0,
                         IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.03, 0.05),
                 Constants.kHeadingMotionProfileConstraints);
-        double currentRotation = currentFieldToOdom.getRotation().rotateBy(currentOdomToVehicle.getRotation())
-                .getRadians();
+
 
         Translation2d currentVelocityFrame = new Translation2d(currentVel.dx, currentVel.dy);
         Translation2d currentVelocityOdometryFrame = currentVelocityFrame.rotateBy(currentOdomToVehicle.getRotation());
 
-        if (odomToTargetPoint.getRotation().getRadians() - currentRotation > Math.PI) {
-            currentRotation += 2 * Math.PI;
-        } else if (odomToTargetPoint.getRotation().getRadians() - currentRotation < -Math.PI) {
-            currentRotation -= 2 * Math.PI;
-        }
 
-        double xOutput = mXController.update(
+        double xOutput = -mXController.update(
                 new MotionState(timestamp, currentOdomToVehicle.getTranslation().x(), currentVelocityOdometryFrame.x(),
                         0.0),
                 timestamp + .01);
-        double yOutput = mYController.update(
+        double yOutput = -mYController.update(
                 new MotionState(timestamp, currentOdomToVehicle.getTranslation().y(), currentVelocityOdometryFrame.y(),
                         0.0),
                 timestamp + .01);
-        double thetaOutput = mThetaController
-                .update(new MotionState(timestamp, currentRotation, currentVel.dtheta, 0.0), timestamp + .01);
+                headingController.setTargetHeading(mFieldToTargetPoint.getRotation());
+        double thetaOutput = headingController.getRotationCorrection(currentHeading.flip(), timestamp);
 
+        Translation2d output = new Translation2d(xOutput,yOutput).rotateBy(currentHeading);
         ChassisSpeeds setPoint;
 
-        boolean thetaWithinDeadband = mThetaController.onTarget();
         boolean yOutputWithinDeadband = mYController.onTarget();
         boolean xOutputWithinDeadband = mXController.onTarget();
 
         setPoint = ChassisSpeeds.fromFieldRelativeSpeeds(
-                xOutputWithinDeadband ? 0.0 : xOutput,
-                yOutputWithinDeadband ? 0.0 : yOutput,
-                thetaWithinDeadband ? 0.0 : thetaOutput,
-                currentFieldToOdom.getRotation().rotateBy(currentOdomToVehicle.getRotation()));
-        mAutoAlignComplete = yOutputWithinDeadband && xOutputWithinDeadband && thetaWithinDeadband;
+                xOutputWithinDeadband ? 0.0 : output.x(),
+                yOutputWithinDeadband ? 0.0 : output.y(),
+                thetaOutput,
+                currentFieldToOdom.getRotation().rotateBy(currentHeading));
+        mAutoAlignComplete = yOutputWithinDeadband && xOutputWithinDeadband;
 
         if (mStartTime.isPresent() && mAutoAlignComplete) {
             System.out.println("Alignment took " + (Timer.getFPGATimestamp() - mStartTime.getAsDouble()));

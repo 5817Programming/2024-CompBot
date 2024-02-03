@@ -10,13 +10,13 @@ public class AprilTag {
     private Pose2d fieldToTag;
     private boolean isScoring;
 
-    private Translation2d tagToLeftAlign;
+    private Pose2d tagToLeftAlign;
 
-    private Translation2d tagToRightAlign;
+    private Pose2d tagToRightAlign;
 
-    private Translation2d tagToCenterAlign;
+    private Pose2d tagToCenterAlign;
 
-    public AprilTag(int id, double height, Pose2d fieldToTag, boolean isScoring, Translation2d tagToCenterAlign, Translation2d tagToLeftAlign, Translation2d tagToRightAlign) {
+    public AprilTag(int id, double height, Pose2d fieldToTag, boolean isScoring, Pose2d tagToCenterAlign, Pose2d tagToLeftAlign, Pose2d tagToRightAlign) {
         this.id = id;
         this.height = height;
         this.fieldToTag = fieldToTag;
@@ -42,15 +42,15 @@ public class AprilTag {
         return isScoring;
     }
 
-    public Translation2d getTagToCenterAlign() {
+    public Pose2d getTagToCenterAlign() {
         return tagToCenterAlign;
     }
 
-    public Translation2d getTagToLeftAlign() {
+    public Pose2d getTagToLeftAlign() {
         return tagToLeftAlign;
     }
 
-    public Translation2d getTagToRightAlign() {
+    public Pose2d getTagToRightAlign() {
         return tagToRightAlign;
     }
 }

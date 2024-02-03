@@ -93,7 +93,7 @@ public class SwerveDrive extends Subsystem {
 
     double currentSpeed = 0;
     double bestDistance;
-
+    boolean stateHasChanged = false;
     double lastTimeStamp = 0;
 
     public SwerveDrive() {
@@ -124,6 +124,7 @@ public class SwerveDrive extends Subsystem {
         vision = LimeLight.getInstance();
         robotState = RobotState.getInstance();
         mDriveMotionPlanner =  DriveMotionPlanner.getInstance();
+        mAutoAlignMotionPlanner = new AutoAlignMotionPlanner();
         mAimingPlanner = new AimingPlanner();
         
 
@@ -147,6 +148,8 @@ public class SwerveDrive extends Subsystem {
     }
 
     public void setState(State desiredState) {
+        if(desiredState != currentState)
+            stateHasChanged = true;
         currentState = desiredState;
     }
 
@@ -192,7 +195,8 @@ public class SwerveDrive extends Subsystem {
     }
 
     public void setAlignment(Pose2d pose){
-        
+        mAutoAlignMotionPlanner.setTargetPoint(pose);
+        robotState.setDisplaySetpointPose(pose);
     }
 
 
@@ -225,13 +229,15 @@ public class SwerveDrive extends Subsystem {
             if (Util.shouldReverse(moduleVectors.get(i).direction(),
                     Rotation2d.fromDegrees(modules.get(i).getModuleAngle()))) {
                 modules.get(i).setModuleAngle(moduleVectors.get(i).direction().getDegrees() + 180);
-                modules.get(i).setDriveOpenLoop(-moduleVectors.get(i).norm());
+                modules.get(i).setDriveVelocity(-moduleVectors.get(i).norm());
             } else {
                 modules.get(i).setModuleAngle(moduleVectors.get(i).direction().getDegrees());
-                modules.get(i).setDriveOpenLoop(moduleVectors.get(i).norm());
+                modules.get(i).setDriveVelocity(moduleVectors.get(i).norm());
 
             }
         }
+
+        Logger.recordOutput("drive vector", moduleVectors.get(0).norm());
     }
 
     public void commandModuleDrivePowers(double power) {
@@ -279,6 +285,9 @@ public class SwerveDrive extends Subsystem {
         double rotationCorrection;
         switch (currentState) {
             case MANUAL:
+                if(stateHasChanged){
+                    headingController.setTargetHeading(getRobotHeading());
+                }
                 rotationCorrection = headingController.updateRotationCorrection(drivingPose.getRotation(),
                         timeStamp);
                 if (translationVector.norm() == 0 || rotationScalar != 0) {
@@ -290,11 +299,14 @@ public class SwerveDrive extends Subsystem {
                 break;
 
             case ALIGNMENT:
+                if (stateHasChanged) {
+                    mAutoAlignMotionPlanner.reset();
+                }
                 ChassisSpeeds targetChassisSpeeds = updateAutoAlign();
                 commandModuleVelocitys(inverseKinematics.updateDriveVectors(new Translation2d(
                     targetChassisSpeeds.vxMetersPerSecond,
-                    targetChassisSpeeds.vyMetersPerSecond),
-                    targetChassisSpeeds.omegaRadiansPerSecond,
+                    -targetChassisSpeeds.vyMetersPerSecond),
+                    targetChassisSpeeds.omegaRadiansPerSecond*12,
                     poseMeters,
                     robotCentric
                     ));
@@ -333,14 +345,14 @@ public class SwerveDrive extends Subsystem {
                 break;
 
         }
-
+        stateHasChanged = false;
     }
 
     public ChassisSpeeds updateAutoAlign(){
         final double now = Timer.getFPGATimestamp();
         var fieldToOdometry = robotState.getAbsoluteVisionPoseComponent(now);
         var odomToVehicle = robotState.getPoseFromOdom(now);
-        ChassisSpeeds output = mAutoAlignMotionPlanner.updateAutoAlign(now, odomToVehicle, Pose2d.fromTranslation(fieldToOdometry), robotState.getMeasuredVelocity());
+        ChassisSpeeds output = mAutoAlignMotionPlanner.updateAutoAlign(now, odomToVehicle, Pose2d.fromTranslation(fieldToOdometry), robotState.getMeasuredVelocity(),headingController, getRobotHeading());
         return output;
     }
 
@@ -349,9 +361,8 @@ public class SwerveDrive extends Subsystem {
         headingController.setTargetHeading(Rotation2d.fromDegrees(r));
     }
 
-    public void updateOdometry(double timestamp) {// uses sent input to commad modules and correct for rotatinol drift
-
-        lastUpdateTimestamp = timestamp;
+    public void updateOdometry(double timestamp) {
+                lastUpdateTimestamp = timestamp;
 
     }
 
@@ -504,8 +515,10 @@ public class SwerveDrive extends Subsystem {
     public void outputTelemetry() {
         Logger.recordOutput("State", getState());
         modules.forEach((m) -> m.outputTelemetry());
-
+        Logger.recordOutput("Heading", getRobotHeading().getDegrees());
+        Logger.recordOutput("Desired Heading", headingController.getTargetHeading());
         }
+
 
     @Override
     public void stop() {// stops everything

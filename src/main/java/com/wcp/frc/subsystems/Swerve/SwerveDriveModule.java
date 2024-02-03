@@ -8,6 +8,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -174,7 +175,7 @@ public class SwerveDriveModule extends Subsystem {
 
     public void setDriveVelocity(double velocity) {
         mPeriodicIO.driveControlMode = ControlMode.Velocity;
-        mPeriodicIO.driveDemand = velocity;
+        mPeriodicIO.driveDemand = (velocity/Constants.kWheelCircumference)*Options.driveRatio;
     }
 
     public SwerveModuleState getSwerveModuleState(){
@@ -301,7 +302,7 @@ public class SwerveDriveModule extends Subsystem {
   }
 
   public void runVelocity(double velocity, TalonFX motor){
-    motor.setControl(new VelocityDutyCycle(velocity).withEnableFOC(true).withSlot(0));
+    motor.setControl(new MotionMagicVelocityVoltage(velocity).withSlot(0).withEnableFOC(true));
   }
     @Override
     public void outputTelemetry() {
