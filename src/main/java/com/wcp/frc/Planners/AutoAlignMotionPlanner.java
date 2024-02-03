@@ -45,7 +45,7 @@ public class AutoAlignMotionPlanner {
     public synchronized ChassisSpeeds updateAutoAlign(double timestamp, Pose2d currentOdomToVehicle,
             Pose2d currentFieldToOdom, Twist2d currentVel, HeadingController headingController, Rotation2d currentHeading) {
                 var odomToTargetPoint = currentFieldToOdom.inverse().transformBy(mFieldToTargetPoint);
-
+                Logger.recordOutput("offsetTargetPoint", odomToTargetPoint.toWPI());
         mXController.setGoalAndConstraints(
                 new MotionProfileGoal(odomToTargetPoint.getTranslation().x(), 0,
                         IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 0.08, 0.05),
@@ -73,18 +73,18 @@ public class AutoAlignMotionPlanner {
                         0.0),
                 timestamp + .01);
                 headingController.setTargetHeading(mFieldToTargetPoint.getRotation());
-        double thetaOutput = headingController.getRotationCorrection(currentHeading.flip(), timestamp);
+        double thetaOutput = headingController.getRotationCorrection(currentHeading, timestamp);
 
         Translation2d output = new Translation2d(xOutput,yOutput).rotateBy(currentHeading);
         ChassisSpeeds setPoint;
-
+                Logger.recordOutput("autoalignoutputs", output.toWPI());
         boolean yOutputWithinDeadband = mYController.onTarget();
         boolean xOutputWithinDeadband = mXController.onTarget();
-
+        
         setPoint = ChassisSpeeds.fromFieldRelativeSpeeds(
                 xOutputWithinDeadband ? 0.0 : output.x(),
                 yOutputWithinDeadband ? 0.0 : output.y(),
-                thetaOutput,
+                 thetaOutput,
                 currentFieldToOdom.getRotation().rotateBy(currentHeading));
         mAutoAlignComplete = yOutputWithinDeadband && xOutputWithinDeadband;
 

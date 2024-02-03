@@ -12,7 +12,7 @@ import org.littletonrobotics.junction.Logger;
 import com.wcp.frc.Constants;
 import com.wcp.frc.subsystems.RobotState;
 import com.wcp.frc.subsystems.Requests.Request;
-import com.wcp.frc.subsystems.Vision.LimeLight.VisionUpdate;
+import com.wcp.frc.subsystems.Vision.OdometryLimeLight.VisionUpdate;
 import com.wcp.frc.subsystems.gyros.Pigeon;
 import com.wcp.lib.HeadingController;
 import com.wcp.lib.geometry.Pose2d;

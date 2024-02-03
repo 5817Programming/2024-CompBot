@@ -36,12 +36,12 @@ import edu.wpi.first.wpilibj.Timer;
 
 import static org.opencv.core.CvType.CV_64FC1;
 
-public class LimeLight extends Subsystem {
+public class OdometryLimeLight extends Subsystem {
     static {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
-  public static LimeLight instance = null;
-  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+  public static OdometryLimeLight instance = null;
+  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-up");
   NetworkTableEntry tx = table.getEntry("tx");
   NetworkTableEntry ty = table.getEntry("ty");
   NetworkTableEntry ta = table.getEntry("ta");
@@ -56,13 +56,13 @@ public class LimeLight extends Subsystem {
 
   private static HashMap<Integer, AprilTag> mTagMap = FieldLayout.Red.kAprilTagMap;
 
-  public static LimeLight getInstance() {
+  public static OdometryLimeLight getInstance() {
     if (instance == null)
-      instance = new LimeLight();
+      instance = new OdometryLimeLight();
     return instance;
   }
 
-  private LimeLight() {
+  private OdometryLimeLight() {
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             mCameraMatrix.put(i, j, Constants.VisionConstants.UNDISTORT_CONSTANTS.getCameraMatrix()[i][j]);

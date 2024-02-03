@@ -17,7 +17,7 @@ import com.wcp.frc.subsystems.Requests.Request;
 import com.wcp.frc.subsystems.Requests.RequestList;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive.State;
-import com.wcp.frc.subsystems.Vision.LimeLight;
+import com.wcp.frc.subsystems.Vision.OdometryLimeLight;
 import com.wcp.lib.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.Timer;
 public class SuperStructure extends Subsystem {
     public SwerveDrive swerve;
     // public Intake intake;
-    public LimeLight vision;
+    public OdometryLimeLight vision;
     public DriveMotionPlanner driveMotionPlanner;
     public Logger logger;
     public DriveMotionPlanner dMotionPlanner;
@@ -37,7 +37,7 @@ public class SuperStructure extends Subsystem {
 
     public SuperStructure() {
         swerve = SwerveDrive.getInstance();
-        vision = LimeLight.getInstance();
+        vision = OdometryLimeLight.getInstance();
         driveMotionPlanner = DriveMotionPlanner.getInstance();
         // intake = Intake.getInstance();
         // indexer = Indexer.getInstance();

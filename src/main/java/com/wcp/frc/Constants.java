@@ -216,13 +216,13 @@ public class Constants {
 
     public static final class VisionConstants {
         public static final int APRIL_PIPLINE = 0;
-        public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 25;
+        public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 13;
 
         public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(-.4064,0),
                 Rotation2d.fromDegrees(0));
 
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);
-        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(20.5);
+        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(33);
 
         public static final double IMAGE_CAPTURE_LATENCY = 11.0;
        

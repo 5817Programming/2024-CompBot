@@ -17,7 +17,7 @@ import org.littletonrobotics.junction.Logger;
 import com.wcp.frc.Constants;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
 import com.wcp.frc.subsystems.Vision.VisionPoseAcceptor;
-import com.wcp.frc.subsystems.Vision.LimeLight.VisionUpdate;
+import com.wcp.frc.subsystems.Vision.OdometryLimeLight.VisionUpdate;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Translation2d;
 import com.wcp.lib.geometry.Twist2d;

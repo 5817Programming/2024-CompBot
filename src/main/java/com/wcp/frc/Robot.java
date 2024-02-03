@@ -17,7 +17,8 @@ import com.wcp.frc.subsystems.RobotStateEstimator;
 import com.wcp.frc.subsystems.SuperStructure;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive;
 import com.wcp.frc.subsystems.Swerve.SwerveDrive.State;
-import com.wcp.frc.subsystems.Vision.LimeLight;
+import com.wcp.frc.subsystems.Vision.ObjectLimeLight;
+import com.wcp.frc.subsystems.Vision.OdometryLimeLight;
 import com.wcp.frc.subsystems.gyros.Gyro;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
@@ -49,7 +50,7 @@ public class Robot extends LoggedRobot {
   SubsystemManager subsystemManager;
   SwerveDrive swerve;
   double yaw;
-  LimeLight vision;
+  OdometryLimeLight vision;
   
   Gyro pigeon;
   public SendableChooser<AutoBase> autoChooser = new SendableChooser<>();
@@ -82,14 +83,15 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
 
     swerve = SwerveDrive.getInstance();
     controls = Controls.getInstance();
-    vision = LimeLight.getInstance();
+    vision = OdometryLimeLight.getInstance();
     swerve.zeroModules();
     subsystemManager = new SubsystemManager();
     subsystemManager.addSystems(Arrays.asList(
         SwerveDrive.getInstance(),
         SuperStructure.getInstance(), 
-        LimeLight.getInstance(),
-        RobotStateEstimator.getInstance()        // Shooter.getInstance()
+        OdometryLimeLight.getInstance(),
+        RobotStateEstimator.getInstance(),
+        ObjectLimeLight.getInstance()       // Shooter.getInstance()
         // Intake.getInstance()
         ));
     }

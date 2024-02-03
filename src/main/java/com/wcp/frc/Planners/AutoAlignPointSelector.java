@@ -7,6 +7,8 @@ package com.wcp.frc.Planners;
 import java.util.Map;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.wcp.frc.Field.AprilTag;
 import com.wcp.frc.Field.FieldLayout;
 import com.wcp.lib.geometry.Pose2d;
@@ -27,6 +29,7 @@ public class AutoAlignPointSelector {
     }
 
     private static Optional<AprilTag> getNearestTag(Map<Integer, AprilTag> TagMap, Pose2d point){
+        Logger.recordOutput("jagklawgj", point.toWPI()); 
         double closestDistance = Integer.MAX_VALUE;
         Optional<AprilTag> closestTag = Optional.empty();
         for(int i:TagMap.keySet()){
@@ -72,8 +75,8 @@ public class AutoAlignPointSelector {
     public static Optional<Pose2d> chooseTargetPoint(Pose2d point){
         Map<Integer, AprilTag> mTagMap = getTagSet();
         Optional<AprilTag> closestAprilTag = getNearestTag(mTagMap, point);
-        Optional<Pose2d> targetPose = Optional.empty();
-
+        Optional<Pose2d> targetPose = Optional.empty(); 
+        Logger.recordOutput("clsest tag id", closestAprilTag.get().getId());
         targetPose = getNearestAlignment(closestAprilTag.get(), point);
 
         if(!targetPose.isPresent()){

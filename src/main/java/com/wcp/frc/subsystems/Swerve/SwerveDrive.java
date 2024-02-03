@@ -18,12 +18,14 @@ import com.wcp.frc.Ports;
 import com.wcp.frc.Planners.AimingPlanner;
 import com.wcp.frc.Planners.AutoAlignMotionPlanner;
 import com.wcp.frc.Planners.DriveMotionPlanner;
+import com.wcp.frc.Planners.TargetPiecePlanner;
 import com.wcp.frc.Planners.AimingPlanner.AimingRequest;
 import com.wcp.frc.subsystems.RobotState;
 import com.wcp.frc.subsystems.RobotStateEstimator;
 import com.wcp.frc.subsystems.Subsystem;
 import com.wcp.frc.subsystems.Requests.Request;
-import com.wcp.frc.subsystems.Vision.LimeLight;
+import com.wcp.frc.subsystems.Vision.ObjectLimeLight;
+import com.wcp.frc.subsystems.Vision.OdometryLimeLight;
 import com.wcp.frc.subsystems.gyros.Pigeon;
 import com.wcp.lib.Conversions;
 import com.wcp.lib.HeadingController;
@@ -60,7 +62,8 @@ public class SwerveDrive extends Subsystem {
 
 
     Pigeon gyro;
-    LimeLight vision;
+    OdometryLimeLight odometryVision;
+    ObjectLimeLight objectVision;
     Logger logger;
     Pose2d drivingPose;
 
@@ -87,6 +90,7 @@ public class SwerveDrive extends Subsystem {
     AutoAlignMotionPlanner mAutoAlignMotionPlanner;
     DriveMotionPlanner mDriveMotionPlanner;
     AimingPlanner mAimingPlanner;
+    TargetPiecePlanner mTargetPiecePlanner;
     RobotState robotState;
     public HeadingController headingController = new HeadingController();
 
@@ -121,12 +125,13 @@ public class SwerveDrive extends Subsystem {
         distanceTraveled = 0;
 
         gyro = Pigeon.getInstance();
-        vision = LimeLight.getInstance();
+        odometryVision = OdometryLimeLight.getInstance();
+        objectVision = ObjectLimeLight.getInstance();
         robotState = RobotState.getInstance();
         mDriveMotionPlanner =  DriveMotionPlanner.getInstance();
         mAutoAlignMotionPlanner = new AutoAlignMotionPlanner();
         mAimingPlanner = new AimingPlanner();
-        
+        mTargetPiecePlanner = new TargetPiecePlanner();
 
     }
 
@@ -136,6 +141,7 @@ public class SwerveDrive extends Subsystem {
         MANUAL,
         TRAJECTORY,
         OFF,
+        TARGETOBJECT,
         AIMING,
         ALIGNMENT,
         SNAP,
@@ -321,10 +327,15 @@ public class SwerveDrive extends Subsystem {
                 commandModules(inverseKinematics.updateDriveVectors(translationCorrection, rotationCorrection, poseMeters,
                         robotCentric));
                 break;
-
+            case TARGETOBJECT:
+                rotationCorrection = mTargetPiecePlanner.updateAiming(timeStamp, objectVision.getLatestVisionUpdate(), headingController, getRobotHeading());
+                commandModules(
+                        inverseKinematics.updateDriveVectors(translationVector,
+                        rotationCorrection+rotationScalar, drivingPose, robotCentric));
+                break;
             case AIMING:
             Pose2d demandedAngle;
-                    demandedAngle = mAimingPlanner.updateAiming(timeStamp, RobotState.getInstance().getLatestPoseFromOdom().getValue(), Pose2d.fromTranslation(RobotState.getInstance().getLatestVisionPoseComponent()), AimingRequest.Odometry, vision.getLatestVisionUpdate(), headingController);
+                    demandedAngle = mAimingPlanner.updateAiming(timeStamp, RobotState.getInstance().getLatestPoseFromOdom().getValue(), Pose2d.fromTranslation(RobotState.getInstance().getLatestVisionPoseComponent()), AimingRequest.Odometry, odometryVision.getLatestVisionUpdate(), headingController);
    
             Logger.recordOutput("angleDemand", demandedAngle.getRotation().getDegrees());
                 commandModules(
@@ -439,11 +450,11 @@ public class SwerveDrive extends Subsystem {
 
         double currentTime = Timer.getFPGATimestamp();
         double dt = currentTime - lastTimeStamp;
-        if (vision.hasTarget()) {
+        if (odometryVision.hasTarget()) {
             VisionPID.x().setOutputRange(-.2, .2);
             VisionPID.y().setOutputRange(-.2, .2);
 
-            xError = VisionPID.x().calculate(vision.getX(), dt);
+            xError = VisionPID.x().calculate(odometryVision.getX(), dt);
             yError = VisionPID.y().calculate(0 - .05, dt); //TODO REIMPLEMENTVISION
         }
 
@@ -471,14 +482,14 @@ public class SwerveDrive extends Subsystem {
         double yError = 0;
         double currentTime = Timer.getFPGATimestamp();
         double dt = currentTime - lastTimeStamp;
-        if (vision.hasTarget()) {
+        if (odometryVision.hasTarget()) {
             VisionPID.x().setOutputRange(-.2, .2);
             areaVisionPID.setOutputRange(-.2, .2);
             VisionPID.x().setOutputMagnitude(.03);
             areaVisionPID.setOutputMagnitude(.02);
 
-            xError = VisionPID.x().calculate(vision.getX(), dt);
-            yError = areaVisionPID.calculate(vision.getArea() - 20, dt);
+            xError = VisionPID.x().calculate(odometryVision.getX(), dt);
+            yError = areaVisionPID.calculate(odometryVision.getArea() - 20, dt);
         }
         else {
             xError = 0;

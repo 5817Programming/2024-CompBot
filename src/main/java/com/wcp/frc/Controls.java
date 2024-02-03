@@ -72,7 +72,7 @@ public class Controls {
 
         double driverLeftXInput = Driver.getLeftX();
         double driverLeftYInput = Driver.getLeftY();
-        double driverRightXInput = Driver.getRightX();
+        double driverRightXInput = Driver.getRightX()*2;//TODO do this right
 
         double coDriverLeftX = CoDriver.getLeftX();
         double coDriverLeftY = CoDriver.getLeftY();
@@ -115,13 +115,17 @@ public class Controls {
             swerve.sendInput(-driverLeftYInput, driverLeftXInput, -driverRightXInput, State.AIMING);
         } else if (driverRightTrigger.getValue() > .2) {
             Optional<Pose2d> targetSnap = AutoAlignPointSelector
-                    .chooseTargetPoint(RobotState.getInstance().getAbosoluteKalmanPose(timestamp));
+                    .chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
             if (targetSnap.isEmpty()) {
             swerve.sendInput(-driverLeftYInput, driverLeftXInput, -driverRightXInput, State.MANUAL);
             } else {
                 swerve.setAlignment(targetSnap.get());
                 swerve.sendInput(-driverLeftYInput, driverLeftXInput, -driverRightXInput, State.ALIGNMENT);
             }
+            
+        }
+        else if(driverLeftBumper.isActive()){
+            swerve.sendInput(-driverLeftYInput, driverLeftXInput, -driverRightXInput, State.TARGETOBJECT);
         } else {
             swerve.sendInput(-driverLeftYInput, driverLeftXInput, -driverRightXInput, State.MANUAL);
         }
