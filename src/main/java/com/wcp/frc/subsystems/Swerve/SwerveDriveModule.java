@@ -16,6 +16,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.wcp.frc.Constants;
 import com.wcp.frc.Options;
 import com.wcp.frc.Ports;
+import com.wcp.frc.subsystems.Music;
 import com.wcp.frc.subsystems.Subsystem;
 import com.wcp.frc.subsystems.encoders.Encoder;
 import com.wcp.frc.subsystems.encoders.MagEncoder;

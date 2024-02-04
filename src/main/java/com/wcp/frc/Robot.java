@@ -12,6 +12,7 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 
+import com.wcp.frc.subsystems.Music;
 import com.wcp.frc.subsystems.RobotState;
 import com.wcp.frc.subsystems.RobotStateEstimator;
 import com.wcp.frc.subsystems.SuperStructure;
@@ -23,6 +24,8 @@ import com.wcp.frc.subsystems.gyros.Gyro;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
 import com.wcp.lib.motion.PathFollower;
+import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.wcp.frc.Autos.AutoBase;
 import com.wcp.frc.Autos.M5;
 import com.wcp.frc.Autos.M5Safe;
@@ -51,18 +54,18 @@ public class Robot extends LoggedRobot {
   SwerveDrive swerve;
   double yaw;
   OdometryLimeLight vision;
-  
+  Music music;
   Gyro pigeon;
   public SendableChooser<AutoBase> autoChooser = new SendableChooser<>();
 
 HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @Override
   public void robotInit() {
-    // autos.put("M7", new M7());
-    // autos.put("M6", new M6());
-    // autos.put("M5", new M5());
-    // autos.put("M5 safe",new M5Safe());
-    // autos.put("NS5", new NS5());
+    autos.put("M7", new M7());
+    autos.put("M6", new M6());
+    autos.put("M5", new M5());
+    autos.put("M5 safe",new M5Safe());
+    autos.put("NS5", new NS5());
     // autos.put("NS3", new NS3());
     // autos.put("S5", new S5());
     // autos.put("S3", new S3());
@@ -80,8 +83,8 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
 
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
-
     swerve = SwerveDrive.getInstance();
+    music = Music.getInstance();
     controls = Controls.getInstance();
     vision = OdometryLimeLight.getInstance();
     swerve.zeroModules();
@@ -91,9 +94,12 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
         SuperStructure.getInstance(), 
         OdometryLimeLight.getInstance(),
         RobotStateEstimator.getInstance(),
-        ObjectLimeLight.getInstance()       // Shooter.getInstance()
+        ObjectLimeLight.getInstance(),
+        Music.getInstance()
+               // Shooter.getInstance()
         // Intake.getInstance()
         ));
+
     }
 
   @Override
@@ -190,7 +196,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
-
+    music.play("output.chrp");
   }
 
   /** This function is called periodically during test mode. */

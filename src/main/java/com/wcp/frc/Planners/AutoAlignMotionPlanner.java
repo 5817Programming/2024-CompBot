@@ -5,6 +5,7 @@ import java.util.OptionalDouble;
 import org.littletonrobotics.junction.Logger;
 
 import com.wcp.frc.Constants;
+import com.wcp.frc.subsystems.Music;
 import com.wcp.lib.HeadingController;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
@@ -77,7 +78,7 @@ public class AutoAlignMotionPlanner {
 
         Translation2d output = new Translation2d(xOutput,yOutput).rotateBy(currentHeading);
         ChassisSpeeds setPoint;
-                Logger.recordOutput("autoalignoutputs", output.toWPI());
+                Logger.recordOutput("auto align outputs", output.toWPI());
         boolean yOutputWithinDeadband = mYController.onTarget();
         boolean xOutputWithinDeadband = mXController.onTarget();
         
@@ -89,6 +90,7 @@ public class AutoAlignMotionPlanner {
         mAutoAlignComplete = yOutputWithinDeadband && xOutputWithinDeadband;
 
         if (mStartTime.isPresent() && mAutoAlignComplete) {
+            Music.getInstance().play("output.chrp");
             System.out.println("Alignment took " + (Timer.getFPGATimestamp() - mStartTime.getAsDouble()));
             mStartTime = OptionalDouble.empty();
         }
