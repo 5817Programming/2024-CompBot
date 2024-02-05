@@ -130,8 +130,6 @@ public class SwerveDrive extends Subsystem {
 
     }
 
-
-
     public enum State {
         MANUAL,
         TRAJECTORY,
@@ -228,8 +226,6 @@ public class SwerveDrive extends Subsystem {
 
             }
         }
-
-        Logger.recordOutput("drive vector", moduleVectors.get(0).norm());
     }
 
     public void commandModuleDrivePowers(double power) {
@@ -241,18 +237,6 @@ public class SwerveDrive extends Subsystem {
     public void resetPose(Pose2d newPose) {
         modules.forEach((m) -> m.resetPose(newPose));
     }
-
-
-
-    public void resetOdometry(Pose2d newpose, Rotation2d rotation) {
-        Pose2d newpose2 = new Pose2d(newpose.getTranslation(), rotation);
-        gyro.setAngle(rotation.getDegrees());
-        modules.forEach((m) -> m.resetPose(newpose2));
-
-    }
-
-
-
 
     public void zeroModules() {
         modules.forEach((m) -> {
@@ -365,27 +349,9 @@ public class SwerveDrive extends Subsystem {
         headingController.setTargetHeading(Rotation2d.fromDegrees(r));
     }
 
-    public void updateOdometry(double timestamp) {
-                lastUpdateTimestamp = timestamp;
-
-    }
-
-    public Pose2d getPoseMeters() {
-        return poseMeters;
-    }
-
-    public double getRotationalVelSIM() {
-
-        return desiredRotationScalar;
-    }
-
     public void fieldzeroSwerve() {// starts the zero 180 off
         headingController.setTargetHeading(Rotation2d.fromDegrees(-180));
         gyro.setAngle(-180);
-    }
-
-    public Translation2d getVelocity() {
-        return currentVelocity;
     }
 
     @Override

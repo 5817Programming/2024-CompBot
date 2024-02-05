@@ -126,7 +126,6 @@ public class SwerveDriveModule extends Subsystem {
     }
 
     public void setModuleAngle(double desiredAngle) {
-        // SmartDashboard.putNumber(this.name + " Module Commanded Angle", desiredAngle);// output telemetry
         desiredAngle = Util.placeInAppropriate0To360Scope(getModuleAngle(), desiredAngle);// optimization
         double angleRotations = degreesToRotations(desiredAngle);
         mPeriodicIO.rotationDemand = angleRotations;
@@ -232,17 +231,10 @@ public class SwerveDriveModule extends Subsystem {
         return (rotations*360)/Options.rotationRatio;
     }
 
-
-
-    
-
     public void resetModulePositionToAbsolute() {
                 driveMotor.setPosition(0);
                 double offset = getModuleAbsolutePosition() - encoderOffset;
                 rotationMotor.setPosition(degreesToRotations(offset));
-        
-            
-
     }
 
     public enum ModuleStatus {

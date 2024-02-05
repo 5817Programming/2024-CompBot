@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
+import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
 
@@ -27,14 +28,6 @@ public class Node {
         this.holonomicRotation = holonomicRotation;
         this.neighbors = new ArrayList < > ();
     }
-
-    public Node(SwerveDrive swerve){
-      this.x = swerve.getPoseMeters().getTranslation().x();
-      this.y = swerve.getPoseMeters().getTranslation().y(); 
-      this.holonomicRotation = swerve.getPoseMeters().getRotation();
-      this.neighbors = new ArrayList <>();
-    }
-  
     public Node(Translation2d coordinates, Rotation2d holonomicRotation) {
       this.x = coordinates.x();
       this.y = coordinates.y(); 

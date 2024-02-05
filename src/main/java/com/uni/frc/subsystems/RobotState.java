@@ -46,38 +46,7 @@ public class RobotState {
     }
 
     private static final int kObservationBufferSize = 50;
-
-    /*
-     * RobotState keeps track of the poses of various coordinate frames throughout
-     * the match. A coordinate frame is simply a point and direction in space that
-     * defines an (x,y) coordinate system. Transforms (or poses) keep track of the
-     * spatial relationship between different frames.
-     *
-     * Robot frames of interest (from parent to child):
-     *
-     * 1. Field frame: origin is the right near corner of the playing field.
-     *
-     * 2. Odom frame: origin is where the robot is turned on.
-     *
-     * 3. Vehicle frame: origin is the center of the robot wheelbase, facing
-     * forwards
-     *
-     * 4. Camera frame: origin is the center of the Limelight relative to the
-     * turret.
-     *
-     * 5. Target frame: origin is the center of the vision target, facing outwards
-     * along the normal.
-     *
-     * As a kinematic chain with 5 frames, there are 4 transforms of interest:
-     *
-     * 1. Field-to-odom: This is derived from a fused field-to-vehicle transform incorporating both vision and odometry.
-     *
-     * 2. Odom-to-vehicle: Tracked by integrating encoder and gyro odometry.
-     *
-     * 3. Vehicle-to-camera: This is a constant (per camera).
-     *
-     * 4. Camera-to-target: Measured by the vision system.
-     */
+    
     private Optional<Translation2d> initialPose = Optional.empty();
     private InterpolatingTreeMap<InterpolatingDouble, Pose2d> poseFromOdom;
     private InterpolatingTreeMap<InterpolatingDouble, Translation2d> visionPoseComponent;
