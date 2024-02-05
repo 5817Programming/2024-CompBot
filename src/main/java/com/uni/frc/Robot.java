@@ -77,10 +77,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     }
 
     SmartDashboard.putData("Autonomous routine", autoChooser);
-    
-    Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
     new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
-
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
     swerve = SwerveDrive.getInstance();
@@ -112,24 +109,6 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     Logger.recordOutput("timestamp", Timer.getFPGATimestamp());
   }
 
-  /**
-   * This autonomous (along with the chooser code above) shows how to select
-   * between different
-   * autonomous modes using the dashboard. The sendable chooser code works with
-   * the Java
-   * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the
-   * chooser code and
-   * uncomment the getString line to get the auto name from the text box below the
-   * Gyro
-   *
-   * <p>
-   * You can add additional auto modes by adding additional comparisons to the
-   * switch structure
-   * below with additional strings. If using the SendableChooser make sure to add
-   * them to the
-   * chooser code above as well.
-   */
-
   double startime;
 
 
@@ -158,7 +137,6 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    SuperStructure.getInstance().idleState();
     swerve = SwerveDrive.getInstance();
     swerve.fieldzeroSwerve();
     swerve.zeroModules();
@@ -202,7 +180,5 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    DevControls.getInstance().update();
-
   }
 }

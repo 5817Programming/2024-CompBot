@@ -21,7 +21,6 @@ import com.uni.frc.Planners.DriveMotionPlanner;
 import com.uni.frc.Planners.TargetPiecePlanner;
 import com.uni.frc.Planners.AimingPlanner.AimingRequest;
 import com.uni.frc.subsystems.RobotState;
-import com.uni.frc.subsystems.RobotStateEstimator;
 import com.uni.frc.subsystems.Subsystem;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.frc.subsystems.Vision.ObjectLimeLight;
@@ -34,8 +33,6 @@ import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
 import com.uni.lib.swerve.ChassisSpeeds;
 import com.uni.lib.swerve.SwerveKinematics;
-import com.uni.lib.util.PID2d;
-import com.uni.lib.util.SynchronousPIDF;
 import com.uni.lib.util.Util;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -83,8 +80,6 @@ public class SwerveDrive extends Subsystem {
     double lastUpdateTimestamp = 0;
 
 
-    PID2d VisionPID;
-    SynchronousPIDF areaVisionPID;
 
     SwerveKinematics inverseKinematics = new SwerveKinematics();
     AutoAlignMotionPlanner mAutoAlignMotionPlanner;
@@ -172,7 +167,7 @@ public class SwerveDrive extends Subsystem {
     }
 
     //
-    public void sendInput(double x, double y, double rotation,State state) {
+    public void sendInput(double x, double y, double rotation, State state) {
         setState(state);
         translationVector = new Translation2d(x, y).scale(speedPercent);
         if (Math.abs(rotation) <= rotationDeadband) {
@@ -203,15 +198,6 @@ public class SwerveDrive extends Subsystem {
     public void setAlignment(Pose2d pose){
         mAutoAlignMotionPlanner.setTargetPoint(pose);
         robotState.setDisplaySetpointPose(pose);
-    }
-
-
-
-    public void parkMode() {
-        rotationScalar = .5;
-        rotationScalar *= 0.01;
-        this.update();
-        this.commandModuleDrivePowers(0);
     }
 
     public void commandModules(List<Translation2d> moduleVectors) {
@@ -335,7 +321,14 @@ public class SwerveDrive extends Subsystem {
                 break;
             case AIMING:
             Pose2d demandedAngle;
-                    demandedAngle = mAimingPlanner.updateAiming(timeStamp, RobotState.getInstance().getLatestPoseFromOdom().getValue(), Pose2d.fromTranslation(RobotState.getInstance().getLatestVisionPoseComponent()), AimingRequest.Odometry, odometryVision.getLatestVisionUpdate(), headingController, robotState.getSmoothedVelocity());
+                    demandedAngle = mAimingPlanner.updateAiming(
+                        timeStamp,
+                        RobotState.getInstance().getLatestPoseFromOdom().getValue(),
+                        Pose2d.fromTranslation(RobotState.getInstance().getLatestVisionPoseComponent()),
+                        AimingRequest.Odometry,
+                        odometryVision.getLatestVisionUpdate(),
+                        headingController,
+                        robotState.getSmoothedVelocity());
    
             Logger.recordOutput("angleDemand", demandedAngle.getRotation().getDegrees());
                 commandModules(
@@ -444,28 +437,6 @@ public class SwerveDrive extends Subsystem {
     }
 
 
-    public Pose2d targetApril() {
-        double xError = 0;
-        double yError = 0;
-
-        double currentTime = Timer.getFPGATimestamp();
-        double dt = currentTime - lastTimeStamp;
-        if (odometryVision.hasTarget()) {
-            VisionPID.x().setOutputRange(-.2, .2);
-            VisionPID.y().setOutputRange(-.2, .2);
-
-            xError = VisionPID.x().calculate(odometryVision.getX(), dt);
-            yError = VisionPID.y().calculate(0 - .05, dt); //TODO REIMPLEMENTVISION
-        }
-
-        else {
-            xError = 0;
-            yError = 0;
-        }
-        lastTimeStamp = currentTime;
-        return new Pose2d(new Translation2d(yError, xError).inverse(), Rotation2d.fromDegrees(180));
-    }
-
     public void snapToPoint(Pose2d targetPoint){
         if(mAutoAlignMotionPlanner != null){
             if(currentState != State.ALIGNMENT){
@@ -476,51 +447,6 @@ public class SwerveDrive extends Subsystem {
         mAutoAlignMotionPlanner.setTargetPoint(targetPoint);
         robotState.setDisplaySetpointPose(targetPoint);
     }
-
-    public Pose2d targetObject(boolean fixedRotation) {
-        double xError = 0;
-        double yError = 0;
-        double currentTime = Timer.getFPGATimestamp();
-        double dt = currentTime - lastTimeStamp;
-        if (odometryVision.hasTarget()) {
-            VisionPID.x().setOutputRange(-.2, .2);
-            areaVisionPID.setOutputRange(-.2, .2);
-            VisionPID.x().setOutputMagnitude(.03);
-            areaVisionPID.setOutputMagnitude(.02);
-
-            xError = VisionPID.x().calculate(odometryVision.getX(), dt);
-            yError = areaVisionPID.calculate(odometryVision.getArea() - 20, dt);
-        }
-        else {
-            xError = 0;
-            yError = 0;
-        }
-        lastTimeStamp = currentTime;
-        return new Pose2d(new Translation2d(yError, -xError).inverse(),
-                (fixedRotation ? new Rotation2d() : getRobotHeading()));
-    }
-
-    public Request openLoopRequest(Translation2d x, double r) {
-        return new Request() {
-
-            @Override
-            public void act() {
-                sendInput(x.x(), x.y(), r,State.MANUAL);
-
-            }
-
-        };
-
-    }
-
-
-
-
-
-
-
-
-
 
     @Override
     public void outputTelemetry() {

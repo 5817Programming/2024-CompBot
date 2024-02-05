@@ -7,12 +7,9 @@ package com.uni.frc.Planners;
 import java.util.Map;
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.uni.frc.Field.AprilTag;
 import com.uni.frc.Field.FieldLayout;
 import com.uni.lib.geometry.Pose2d;
-import com.uni.lib.geometry.Rotation2d;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -59,7 +56,7 @@ public class AutoAlignPointSelector {
         return Optional.of(closestPose);
     }
 
-    private static Optional<Pose2d> getNearestAlignment(AprilTag tag, Pose2d point) {//TODO set the rotation 2ds to be perpendicular to the apriltags
+    private static Optional<Pose2d> getNearestAlignment(AprilTag tag, Pose2d point) {
         if (tag.isScoring()) {
             Pose2d center = tag.getFieldToTag().transformBy((tag.getTagToCenterAlign()));
             return Optional.of(center);

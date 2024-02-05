@@ -6,6 +6,9 @@ package com.uni.frc.subsystems.gyros;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.uni.frc.Ports;
+import com.uni.lib.geometry.Twist2d;
+
+import edu.wpi.first.units.Units;
 
 /** 
  * This class is used as an extention of the original pidgeon class
@@ -39,6 +42,13 @@ public class Pigeon extends Gyro {
         pigeon.setYaw(angle);
         // pigeon.setFusedHeading(-angle * 64.0, Constants.kCANTimeoutMs);
 
+    }
+
+    public Twist2d getVelocity(){
+        var x = pigeon.getAccelerationX().getValue()*9.80665;
+        var y = pigeon.getAccelerationX().getValue()*9.80665;
+        var dt = pigeon.getAngularVelocityZWorld().getValue();
+        return new Twist2d(x, y, dt);
     }
 
     @Override

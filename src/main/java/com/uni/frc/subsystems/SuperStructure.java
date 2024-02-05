@@ -44,7 +44,6 @@ public class SuperStructure extends Subsystem {
         // indexer = Indexer.getInstance();
         // pivot = Pivot.getInstance();
         // shooter = Shooter.getInstance();
-        idleState();
         queuedRequests = new ArrayList<>();
 
     }
@@ -59,8 +58,6 @@ public class SuperStructure extends Subsystem {
 
     private RequestList activeRequests;
     private RequestList idleRequests;
-    private Translation2d swerveControls = new Translation2d();
-    private double swerveRotation = 0;
     Request currentRequest;
 
     private boolean newRequests;
@@ -206,7 +203,6 @@ public class SuperStructure extends Subsystem {
                 if (!queuedRequests.isEmpty()) {
                     setActiveRequests(queuedRequests.remove(0));
                 } else {
-                    idleState();
                     for (Iterator<Request> iterator = idleRequests.getRequests().iterator(); iterator.hasNext();) {
                         Request request = iterator.next();
                         boolean allowed = request.allowed();
@@ -235,13 +231,6 @@ public class SuperStructure extends Subsystem {
         queue(request);
     }
 
-
-    public void idleState() {
-        currentRequestLog = "idle";
-        RequestList request = new RequestList(Arrays.asList(
-        logCurrentRequest("bjkabwa")), true);
-        idleRequests = request;
-    }
 
     public void intakePercent(double percentage) {
         RequestList request = new RequestList(Arrays.asList(

@@ -11,24 +11,24 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.uni.frc.Constants;
 import com.uni.frc.Ports;
 import com.uni.frc.subsystems.Requests.Request;
-import com.uni.lib.swerve.SwerveTalonDefaultConfig;
+import com.uni.lib.TalonConfigs;
 
-public class Arm extends Subsystem {
+public class Wrist extends Subsystem {
   private PeriodicIO mPeriodicIO = new PeriodicIO();
   private TalonFX pivotMotor = new TalonFX(Ports.Arm);
   private TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
   private State currentState;
   private boolean stateChanged;
-  public static Arm instance = null;
+  public static Wrist instance = null;
 
-  public static Arm getInstance() {// if doesnt have an instance of swerve will make a new one
+  public static Wrist getInstance() {// if doesnt have an instance of swerve will make a new one
     if (instance == null)
-      instance = new Arm();
+      instance = new Wrist();
     return instance;
   }
 
   /** Creates a new pivot. */
-  public Arm() {
+  public Wrist() {
     configMotors();
     currentState = State.MAXDOWN;
     stateChanged = false;
@@ -61,7 +61,7 @@ public class Arm extends Subsystem {
   }
 
   public void configMotors() {
-    pivotConfig = SwerveTalonDefaultConfig.driveConfigs();
+    pivotConfig = TalonConfigs.swerveDriveConfig();
     pivotMotor.getConfigurator().apply(pivotConfig);
   }
 

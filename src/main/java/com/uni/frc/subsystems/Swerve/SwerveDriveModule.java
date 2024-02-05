@@ -21,11 +21,11 @@ import com.uni.frc.subsystems.Subsystem;
 import com.uni.frc.subsystems.encoders.Encoder;
 import com.uni.frc.subsystems.encoders.MagEncoder;
 import com.uni.lib.Conversions;
+import com.uni.lib.TalonConfigs;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
 import com.uni.lib.swerve.SwerveModuleState;
-import com.uni.lib.swerve.SwerveTalonDefaultConfig;
 import com.uni.lib.util.Util;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -91,8 +91,8 @@ public class SwerveDriveModule extends Subsystem {
     TalonFXConfiguration rotationConfigs = new TalonFXConfiguration();
 
     public void configMotors(){
-        driveConfigs = SwerveTalonDefaultConfig.driveConfigs();
-        rotationConfigs = SwerveTalonDefaultConfig.motionMagicConfig();
+        driveConfigs = TalonConfigs.swerveDriveConfig();
+        rotationConfigs = TalonConfigs.swerveRotationConfig();
 
         driveMotor.getConfigurator().apply(driveConfigs);
         rotationMotor.getConfigurator().apply(rotationConfigs);
