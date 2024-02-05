@@ -4,37 +4,22 @@
 
 package com.wcp.frc.subsystems.Vision;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
+
 
 import com.wcp.frc.Constants;
-import com.wcp.frc.Field.AprilTag;
-import com.wcp.frc.Field.FieldLayout;
-import com.wcp.frc.subsystems.RobotState;
+
 import com.wcp.frc.subsystems.Subsystem;
 import com.wcp.frc.subsystems.Requests.Request;
-import com.wcp.lib.Vision.TargetInfo;
-import com.wcp.lib.Vision.UndistortMap;
-import com.wcp.lib.Vision.UndistortMap_Limelight_B_640x480;
-import com.wcp.lib.geometry.Pose2d;
-import com.wcp.lib.geometry.Rotation2d;
-import com.wcp.lib.geometry.Translation2d;
-import com.wcp.lib.util.InterpolatingUndisortMap;
 
-import edu.wpi.first.math.util.Units;
+import com.wcp.lib.geometry.Translation2d;
+
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 
-import static org.opencv.core.CvType.CV_64FC1;
 
 public class ObjectLimeLight extends Subsystem {
 

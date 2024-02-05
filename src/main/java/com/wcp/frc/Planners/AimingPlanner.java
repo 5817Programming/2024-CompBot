@@ -17,7 +17,7 @@ import com.wcp.frc.subsystems.gyros.Pigeon;
 import com.wcp.lib.HeadingController;
 import com.wcp.lib.geometry.Pose2d;
 import com.wcp.lib.geometry.Rotation2d;
-
+import com.wcp.lib.geometry.Twist2d;
 import com.wcp.lib.util.InterpolatingDouble;
 import com.wcp.lib.util.InterpolatingTreeMap;
 
@@ -31,52 +31,47 @@ public class AimingPlanner {
     private Pose2d mFieldToSpeaker= new Pose2d(16.28,5.45,new Rotation2d());
     private Optional<VisionUpdate> mVisionUpdate;
     private AimingRequest mAimingRequest;
+    private double lastVisionTimestamp;
 
     public enum AimingRequest{
         Odometry,
         LimeLight,
     }
-    public AimingPlanner(){
-    }
-
-
 
     public AimingRequest getAimingRequest(){
         return mAimingRequest;
     }
 
-    public Pose2d updateAiming(double timeStamp, Pose2d currentOdomToRobot, Pose2d visionPoseComponent, AimingRequest request,Optional<VisionUpdate> visionUpdate, HeadingController headingController){
+    public Pose2d updateAiming(double timeStamp, Pose2d currentOdomToRobot, Pose2d visionPoseComponent, AimingRequest request,Optional<VisionUpdate> visionUpdate, HeadingController headingController, Twist2d currentVelocity){
         Pose2d targetPose = new Pose2d();
         mAimingRequest = request;
         if(mAimingRequest == AimingRequest.LimeLight && mVisionUpdate.isEmpty()){
             System.out.println("No Vision Update For Aiming, Switching To Odometry: AimingUtils");
             mAimingRequest = AimingRequest.Odometry;
+        }else{
+            lastVisionTimestamp = mVisionUpdate.get().getTimestamp();
+        }
+
+        if(timeStamp - lastVisionTimestamp > 10){
+            mAimingRequest = AimingRequest.LimeLight;
         }
         switch (mAimingRequest) {
             case Odometry:
+                double estimatedTimeFrame = 0;
                 Pose2d odomToTargetPoint = visionPoseComponent.inverse().transformBy(mFieldToSpeaker);
-                Logger.recordOutput("odomToTargt", odomToTargetPoint.toWPI());
                 double travelDistance = odomToTargetPoint.transformBy(currentOdomToRobot).getTranslation().norm();
-                InterpolatingDouble estimatedTimeFrame = mShotTimeMap.getInterpolated(new InterpolatingDouble(travelDistance));
-                Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(.5).rotateBy(currentOdomToRobot.getRotation().inverse());
+                if(currentVelocity.norm() < 1.5){
+                estimatedTimeFrame = mShotTimeMap.getInterpolated(new InterpolatingDouble(travelDistance)).value;
+                }
+                Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(estimatedTimeFrame).rotateBy(currentOdomToRobot.getRotation().inverse());
                 Pose2d futureOdomToTargetPoint = poseAtTimeFrame.inverse().transformBy(odomToTargetPoint).inverse();
-                Logger.recordOutput("pose", poseAtTimeFrame.toWPI());
-
                 Rotation2d targetRotation = futureOdomToTargetPoint.getTranslation().getAngle().inverse();
                 targetPose = new Pose2d(futureOdomToTargetPoint.getTranslation(), targetRotation);
                 break;
             case LimeLight:
-                if(mVisionUpdate.isPresent()){
-                Pose2d cameraTotag = Pose2d.fromTranslation(mVisionUpdate.get().getCameraToTarget().rotateBy(Constants.VisionConstants.cameraYawOffset));
-                Pose2d tagToRobot = Pose2d.fromTranslation(Constants.VisionConstants.ROBOT_TO_CAMERA.transformBy(cameraTotag).getTranslation().rotateBy(currentOdomToRobot.getRotation()));
-                targetPose = new Pose2d(tagToRobot.getTranslation(),tagToRobot.getTranslation().getAngle());
-                } else{
-                    System.out.println("How did you get here: AimingUtils 71");
-                }
-        }
-        
-        headingController.setTargetHeading(targetPose.getRotation());
 
+        }
+        headingController.setTargetHeading(targetPose.getRotation());
         double rotationOutput = headingController.updateRotationCorrection(currentOdomToRobot.getRotation(), timeStamp);
 
         targetPose = new Pose2d(

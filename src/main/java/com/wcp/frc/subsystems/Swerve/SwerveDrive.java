@@ -335,7 +335,7 @@ public class SwerveDrive extends Subsystem {
                 break;
             case AIMING:
             Pose2d demandedAngle;
-                    demandedAngle = mAimingPlanner.updateAiming(timeStamp, RobotState.getInstance().getLatestPoseFromOdom().getValue(), Pose2d.fromTranslation(RobotState.getInstance().getLatestVisionPoseComponent()), AimingRequest.Odometry, odometryVision.getLatestVisionUpdate(), headingController);
+                    demandedAngle = mAimingPlanner.updateAiming(timeStamp, RobotState.getInstance().getLatestPoseFromOdom().getValue(), Pose2d.fromTranslation(RobotState.getInstance().getLatestVisionPoseComponent()), AimingRequest.Odometry, odometryVision.getLatestVisionUpdate(), headingController, robotState.getSmoothedVelocity());
    
             Logger.recordOutput("angleDemand", demandedAngle.getRotation().getDegrees());
                 commandModules(

@@ -113,7 +113,7 @@ public class OdometryLimeLight extends Subsystem {
     int tagId = mPeriodicIO.tagId;
 
     if (mPeriodicIO.seesTarget) {
-      if (mTagMap.keySet().contains(tagId) && cameraToTarget != null) {
+      if (mTagMap.keySet().contains(tagId) && cameraToTarget != null && Math.abs(cameraToTarget.getAngle().getDegrees()) < 30 && cameraToTarget.norm() < 3) {
             mPeriodicIO.visionUpdate = Optional.of(new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, tagId));
         RobotState.getInstance().addVisionUpdate(
             mPeriodicIO.visionUpdate.get()
@@ -125,6 +125,8 @@ public class OdometryLimeLight extends Subsystem {
       }
     }
   }
+
+
   public Optional<VisionUpdate> getLatestVisionUpdate(){
     return mPeriodicIO.visionUpdate;
   }
