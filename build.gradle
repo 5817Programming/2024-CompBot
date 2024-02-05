@@ -27,7 +27,7 @@ task(checkAkitInstall, dependsOn: "classes", type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 compileJava.finalizedBy checkAkitInstall
-def ROBOT_MAIN_CLASS = "com.wcp.frc.Main"
+def ROBOT_MAIN_CLASS = "com.uni.frc.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
