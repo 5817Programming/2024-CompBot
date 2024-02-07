@@ -42,11 +42,6 @@ public class OdometryLimeLight extends Subsystem {
     }
   public static OdometryLimeLight instance = null;
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-up");
-  NetworkTableEntry tx = table.getEntry("tx");
-  NetworkTableEntry ty = table.getEntry("ty");
-  NetworkTableEntry ta = table.getEntry("ta");
-  NetworkTableEntry tv = table.getEntry("tv");
-  NetworkTableEntry botpose = table.getEntry("botpose");
   PeriodicIO mPeriodicIO = new PeriodicIO();
 
   private Mat mCameraMatrix = new Mat(3, 3, CV_64FC1);
@@ -76,12 +71,14 @@ public class OdometryLimeLight extends Subsystem {
     private double timestamp;
     private Translation2d cameraToTarget;
     private int tagId;
+    private Translation2d txy;
     private Pose2d fieldToTag;
 
-    public VisionUpdate(double timestamp, Translation2d cameraToTarget, int tagId) {
+    public VisionUpdate(double timestamp, Translation2d cameraToTarget, Translation2d txy,int tagId) {
       this.timestamp = timestamp;
       this.cameraToTarget = cameraToTarget;
       this.fieldToTag = mTagMap.get(tagId).getFieldToTag();
+      this.txy = txy;
     }
 
     public double getTimestamp() {
@@ -90,6 +87,10 @@ public class OdometryLimeLight extends Subsystem {
 
     public Translation2d getCameraToTarget() {
       return cameraToTarget;
+    }
+
+    public Translation2d getTxy(){
+      return txy;
     }
 
     public Pose2d getFieldToTag() {
@@ -109,11 +110,13 @@ public class OdometryLimeLight extends Subsystem {
     mPeriodicIO.seesTarget = table.getEntry("tv").getDouble(0) == 1.0;
     mPeriodicIO.tagId = (int) table.getEntry("tid").getNumber(-1).doubleValue();
     mPeriodicIO.corners = table.getEntry("tcornxy").getNumberArray(new Number[] { 0, 0, 0, 0, 0 });
+    mPeriodicIO.ta = table.getEntry("ta").getDouble(0);
     Translation2d cameraToTarget = getCameraToTargetTranslation();
+    Translation2d txy = new Translation2d();
     int tagId = mPeriodicIO.tagId;
 
     if (mPeriodicIO.seesTarget) {
-      if (mTagMap.keySet().contains(tagId) && cameraToTarget != null && Math.abs(cameraToTarget.getAngle().getDegrees()) < 30 && cameraToTarget.norm() < 3) {
+      if (mTagMap.keySet().contains(tagId) && cameraToTarget != null && mPeriodicIO.ta > .5) {
             mPeriodicIO.visionUpdate = Optional.of(new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, tagId));
         RobotState.getInstance().addVisionUpdate(
             mPeriodicIO.visionUpdate.get()
@@ -248,43 +251,18 @@ public class OdometryLimeLight extends Subsystem {
     return mPeriodicIO.tagId;
   }
 
-  public double getX() {
-    return tx.getDouble(0.0);// gets limelight x
-  }
-
-  public double getY() {
-    return ty.getDouble(0.0);// gets limelight y
-  }
-
-  public double getArea() {
-    return ta.getDouble(0.0);// gets limelight area
-  }
-
-  public double getYaw() {
-    return tx.getDouble(0.0);
-  }
-
-  public boolean hasTarget() {// returns in binary so we convert to boolean
-    double v = tv.getDouble(0.0);
-    if (v == 0.0f) {
-      return false;
-    } else {
-      return true;
-    }
-  }
 
   public Request hasTargetRequest() {
     return new Request() {
       @Override
       public boolean isFinished() {
-        // TODO Auto-generated method stub
-        return hasTarget();
+        return mPeriodicIO.seesTarget;
       }
     };
   }
 
   public double getPivotAngle() {
-    return 0; // TODO
+    return 0;
   }
 
   public void setPipeline(Integer pipeline) {
@@ -312,7 +290,9 @@ public class OdometryLimeLight extends Subsystem {
     public boolean seesTarget = false;
     public int givenPipeline = 0;
     public Optional<VisionUpdate> visionUpdate = null;
-
+    public double ta = 0;
+    public double tx = 0;
+    public double ty = 0;
   }
 
   @Override
@@ -329,10 +309,6 @@ public class OdometryLimeLight extends Subsystem {
 
   @Override
   public void outputTelemetry() {
-    Logger.recordOutput("hasTarget", hasTarget());
-    Logger.recordOutput("tx", tx.getDouble(0.0));
-    Logger.recordOutput("ty", ty.getDouble(0.0));
-    Logger.recordOutput("ta", ta.getDouble(0.0));
   }
 
   @Override

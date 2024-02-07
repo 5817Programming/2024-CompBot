@@ -43,7 +43,7 @@ public class AimingPlanner {
         }else{
             lastVisionTimestamp = mVisionUpdate.get().getTimestamp();
         }
-        if(timeStamp - lastVisionTimestamp > 10 || !visionUpdate.isEmpty() && currentVelocity.norm() < 1.5){
+        if(timeStamp - lastVisionTimestamp > 10 || !visionUpdate.isEmpty() && currentVelocity.norm() < .2){
             mAimingRequest = AimingRequest.LimeLight;
         }
         switch (mAimingRequest) {
@@ -60,7 +60,7 @@ public class AimingPlanner {
                 targetPose = new Pose2d(futureOdomToTargetPoint.getTranslation(), targetRotation);
                 break;
             case LimeLight:
-
+                
         }
         headingController.setTargetHeading(targetPose.getRotation());
         double rotationOutput = headingController.updateRotationCorrection(currentOdomToRobot.getRotation(), timeStamp);

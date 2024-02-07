@@ -95,16 +95,13 @@ public class DriveMotionPlanner{
         Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestPoseFromOdom().getValue().getTranslation();
         OdometryPID.x().setOutputRange(-.9, .9);
         OdometryPID.y().setOutputRange(-.9, .9);
-        double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.x(),
-                dt);
-        double yError = OdometryPID.y().calculate(targetFollowTranslation.y() - currentRobotPositionFromStart.y(),
-                dt);
+        double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.x(), dt);
+        double yError = OdometryPID.y().calculate(targetFollowTranslation.y() - currentRobotPositionFromStart.y(), dt);
         lastTimestamp = timestamp;
         if (Math.abs(xError + yError) / 2 < .1 && PathFollower.getInstance().isFinished()) {
             trajectoryFinished = true;
             return new Translation2d();
         }
-        Logger.recordOutput("effort towards desired pose", new Translation2d(xError,yError).toWPI()); 
         return new Translation2d(xError, -yError);
     }
     // public Request generateTrajectoryRequest(int node) {
