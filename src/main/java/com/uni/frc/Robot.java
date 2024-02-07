@@ -120,11 +120,10 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve.zeroModules();
 
     
-    // if(autoChooser.getSelected() != null){
-    //   autoChooser.getSelected().runAuto();
-    // }else{
-    // }
-    new M6().runAuto();
+    if(autoChooser.getSelected() != null){
+      autoChooser.getSelected().runAuto();
+    }else{
+    }
 
   }
 
@@ -134,7 +133,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
 
   }
 
-  /** This function is called once when teleop is enabled. */
+  /** This function is called once when teleop is enabled. */  
   @Override
   public void teleopInit() {
     swerve = SwerveDrive.getInstance();

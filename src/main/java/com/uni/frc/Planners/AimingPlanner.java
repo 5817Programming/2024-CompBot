@@ -20,7 +20,7 @@ public class AimingPlanner {
 
     private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mShotTimeMap = Constants.ShooterConstants.SHOT_TRAVEL_TIME_TREE_MAP;
 
-    private Pose2d mFieldToSpeaker= new Pose2d(16.28,5.45,new Rotation2d());
+    private Pose2d mFieldToSpeaker= new Pose2d(16.28,5.6,new Rotation2d());
     private Optional<VisionUpdate> mVisionUpdate;
     private AimingRequest mAimingRequest;
     private double lastVisionTimestamp;
