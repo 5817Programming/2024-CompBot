@@ -36,15 +36,16 @@ public class AimingPlanner {
 
     public Pose2d updateAiming(double timeStamp, Pose2d currentOdomToRobot, Pose2d visionPoseComponent, AimingRequest request,Optional<VisionUpdate> visionUpdate, HeadingController headingController, Twist2d currentVelocity){
         Pose2d targetPose = new Pose2d();
+        mVisionUpdate = visionUpdate;
         mAimingRequest = request;
-        if(mAimingRequest == AimingRequest.LimeLight && mVisionUpdate.isEmpty()){
+        if(mAimingRequest == AimingRequest.LimeLight || mVisionUpdate.isEmpty()){
             System.out.println("No Vision Update For Aiming, Switching To Odometry: AimingUtils");
             mAimingRequest = AimingRequest.Odometry;
         }else{
             lastVisionTimestamp = mVisionUpdate.get().getTimestamp();
         }
-        if(timeStamp - lastVisionTimestamp > 10 || !visionUpdate.isEmpty() && currentVelocity.norm() < .2){
-            mAimingRequest = AimingRequest.LimeLight;
+        if(timeStamp - lastVisionTimestamp > 10 || !mVisionUpdate.isEmpty() && currentVelocity.norm() < .2){
+            // mAimingRequest = AimingRequest.LimeLight;
         }
         switch (mAimingRequest) {
             case Odometry:

@@ -120,11 +120,11 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve.zeroModules();
 
     
-    if(autoChooser.getSelected() != null){
-      autoChooser.getSelected().runAuto();
-    }else{
-    }
-
+    // if(autoChooser.getSelected() != null){
+    //   autoChooser.getSelected().runAuto();
+    // }else{
+    // }
+      new M6().runAuto();
   }
 
   /** This function is called periodically during autonomous. */
@@ -140,7 +140,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve.fieldzeroSwerve();
     swerve.zeroModules();
 
-    RobotStateEstimator.getInstance().resetOdometry(new Pose2d(15.24,5.54, new Rotation2d()));
+    RobotStateEstimator.getInstance().resetOdometry(new Pose2d(15.25,5.54, new Rotation2d()));
     RobotState.getInstance().resetKalmanFilters();
     
 

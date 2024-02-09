@@ -21,7 +21,9 @@ public class AutoAlignPointSelector {
         if(DriverStation.getAlliance().get() ==  Alliance.Red){
             return FieldLayout.Red.kAprilTagMap;
         } else{
-            return FieldLayout.Blue.kAprilTagMap;
+            System.out.println("No Blue Map");
+            return FieldLayout.Red.kAprilTagMap;
+            // return FieldLayout.Blue.kAprilTagMap;TODO make blue map
         }
     }
 

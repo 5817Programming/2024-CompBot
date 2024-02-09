@@ -57,7 +57,6 @@ public class SuperStructure extends Subsystem {
     }
 
     private RequestList activeRequests;
-    private RequestList idleRequests;
     Request currentRequest;
 
     private boolean newRequests;
@@ -203,12 +202,6 @@ public class SuperStructure extends Subsystem {
                 if (!queuedRequests.isEmpty()) {
                     setActiveRequests(queuedRequests.remove(0));
                 } else {
-                    for (Iterator<Request> iterator = idleRequests.getRequests().iterator(); iterator.hasNext();) {
-                        Request request = iterator.next();
-                        boolean allowed = request.allowed();
-                        if (allowed)
-                            request.act();
-                    }
                     activeRequestsComplete = true;
 
                 }

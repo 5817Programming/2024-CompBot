@@ -41,7 +41,7 @@ public class OdometryLimeLight extends Subsystem {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
   public static OdometryLimeLight instance = null;
-  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-up");
+  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-down");
   PeriodicIO mPeriodicIO = new PeriodicIO();
 
   private Mat mCameraMatrix = new Mat(3, 3, CV_64FC1);
@@ -109,23 +109,29 @@ public class OdometryLimeLight extends Subsystem {
     mPeriodicIO.givenPipeline = (int) table.getEntry("getpipe").getDouble(0);
     mPeriodicIO.seesTarget = table.getEntry("tv").getDouble(0) == 1.0;
     mPeriodicIO.tagId = (int) table.getEntry("tid").getNumber(-1).doubleValue();
+    mPeriodicIO.tx = table.getEntry("tx").getDouble(0);
+    mPeriodicIO.ty = table.getEntry("ty").getDouble(0);
     mPeriodicIO.corners = table.getEntry("tcornxy").getNumberArray(new Number[] { 0, 0, 0, 0, 0 });
     mPeriodicIO.ta = table.getEntry("ta").getDouble(0);
     Translation2d cameraToTarget = getCameraToTargetTranslation();
-    Translation2d txy = new Translation2d();
+    Translation2d txy = new Translation2d(mPeriodicIO.tx,mPeriodicIO.ty);
     int tagId = mPeriodicIO.tagId;
 
     if (mPeriodicIO.seesTarget) {
-      if (mTagMap.keySet().contains(tagId) && cameraToTarget != null && mPeriodicIO.ta > .5) {
-            mPeriodicIO.visionUpdate = Optional.of(new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, tagId));
+      if (mTagMap.keySet().contains(tagId) && cameraToTarget != null && mPeriodicIO.ta > .15) {
+            mPeriodicIO.visionUpdate = Optional.of(new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, txy, tagId));
         RobotState.getInstance().addVisionUpdate(
             mPeriodicIO.visionUpdate.get()
             );
 
       } else {
-        RobotState.getInstance().addVisionUpdate(null);
-        mPeriodicIO.visionUpdate = null;
+        System.out.println("Tag not in set");
+        mPeriodicIO.visionUpdate = Optional.empty();
       }
+    }
+    else{
+      System.out.println("No target");
+      mPeriodicIO.visionUpdate = Optional.empty();
     }
   }
 
@@ -173,7 +179,7 @@ public class OdometryLimeLight extends Subsystem {
     double y = target.getY();
     double z = xz_plane_translation.y();
 
-    double offset = isTopCorner ? Units.inchesToMeters(3) : -Units.inchesToMeters(3);
+    double offset = isTopCorner ? Units.inchesToMeters(3.25) : -Units.inchesToMeters(3.25);
     // find intersection with the goal
     double differential_height = mTagMap.get(target.getTagId()).getHeight()
         - Units.inchesToMeters(Constants.VisionConstants.LIMELIGHT_LENS_HEIGHT_INCHES) + offset;
@@ -230,13 +236,9 @@ public class OdometryLimeLight extends Subsystem {
       UndistortMap undistortMap =  Constants.VisionConstants.UNDISTORTMAP;
 
       undistortedNormalizedPixelValues = undistortMap.pixelToUndistortedNormalized((int) desiredTargetPixel.x(), (int) desiredTargetPixel.y());
-
       double y_pixels = undistortedNormalizedPixelValues[0];
       double z_pixels = undistortedNormalizedPixelValues[1];
 
-      // Negate OpenCV Undistorted Pixel Values to Match Robot Frame of Reference
-      // OpenCV: Positive Downward and Right
-      // // Robot: Positive Upward and Left
       double nY = -(y_pixels - mCameraMatrix.get(0, 2)[0]);// -(y_pixels * 2.0 - 1.0);
       double nZ = -(z_pixels - mCameraMatrix.get(1, 2)[0]);// -(z_pixels * 2.0 - 1.0);
 
@@ -289,7 +291,7 @@ public class OdometryLimeLight extends Subsystem {
     public int tagId = 0;
     public boolean seesTarget = false;
     public int givenPipeline = 0;
-    public Optional<VisionUpdate> visionUpdate = null;
+    public Optional<VisionUpdate> visionUpdate = Optional.empty();
     public double ta = 0;
     public double tx = 0;
     public double ty = 0;

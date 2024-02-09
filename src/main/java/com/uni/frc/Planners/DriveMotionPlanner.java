@@ -92,7 +92,7 @@ public class DriveMotionPlanner{
 
         public Translation2d updateFollowedTranslation2d(double timestamp) {
         double dt = timestamp - lastTimestamp;
-        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestPoseFromOdom().getValue().getTranslation();
+        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getKalmanPose(timestamp).getTranslation();
         OdometryPID.x().setOutputRange(-.9, .9);
         OdometryPID.y().setOutputRange(-.9, .9);
         double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.x(), dt);

@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.uni.lib.UndistortConstants;
 import com.uni.lib.Vision.UndistortMap;
+import com.uni.lib.Vision.UndistortMap_Limelight_A_640x480;
 import com.uni.lib.Vision.UndistortMap_Limelight_B_640x480;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
@@ -216,25 +217,24 @@ public class Constants {
 
     public static final class VisionConstants {
         public static final int APRIL_PIPLINE = 0;
-        public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 13;
+        public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 12;
 
-        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(-.4064,0),
+        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(.349,0),
                 Rotation2d.fromDegrees(0));
 
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);
-        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(33);
+        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(27);
 
         public static final double IMAGE_CAPTURE_LATENCY = 11.0;
        
 
         public static final UndistortConstants UNDISTORT_CONSTANTS =  new UndistortConstants(
-                                new double[]{0.13077097, -0.43223309, 0.00216471, -0.00145679, 0.36181027},
-                                new double[][]{{0.81755082, 0., 0.45041716},
-                                        {0., 1.09093867, 0.52956206},
-                                        {0., 0., 1.}}
-                        );
-        public static final int kResolutionWidth = 0;
-        public static final int kResolutionHeight = 0;
+                new double[]{0.15545342, -0.46477633, 0.00277053, 0.0030637, 0.39464241},
+                new double[][]{{0.79862571, 0., 0.46119489},
+                        {0., 1.06276288, 0.48098825},
+                        {0., 0., 1.}}
+                );
+
         public static final UndistortMap UNDISTORTMAP = new InterpolatingUndisortMap((int)1280.0, (int)960.0, new UndistortMap_Limelight_B_640x480());
     }
 
