@@ -158,7 +158,7 @@ public class RobotState {
             Pose2d vehicleToTag = Pose2d.fromTranslation(Constants.VisionConstants.ROBOT_TO_CAMERA.transformBy(cameraToTag).getTranslation().rotateBy(odomToVehicle.getRotation().inverse()));
 
             //Getting Field to Vehicle via Vehicle to Tag
-            Pose2d visionFieldToVehicle = mLatestVisionUpdate.get().getFieldToTag().transformBy(vehicleToTag.inverse());
+            Pose2d visionFieldToVehicle = mLatestVisionUpdate.get().getFieldToTag().transformBy(vehicleToTag.inverse()).rotateBy(odomToVehicle.getRotation().inverse());
 
             if (!mPoseAcceptor.shouldAcceptVision(mLatestVisionUpdate.get().getTimestamp(), visionFieldToVehicle, vehicleToTag, MeasuredVelocity)) {
                 return;
@@ -175,15 +175,7 @@ public class RobotState {
 
             } else if (DriverStation.isEnabled()) { 
                 var visionOdomError = visionFieldToVehicle.getTranslation().translateBy(odomToVehicle.getTranslation().inverse());
-                Logger.recordOutput("visionOdomError", visionOdomError.toWPI());
-
-                if(DriverStation.isAutonomous()) {
-                    final double kMaxDistanceToAccept = .5;
-                    if (visionOdomError.norm() > kMaxDistanceToAccept) {
-                        System.out.println("Invalid vision update!");
-                        return;
-                    }
-                }
+                // Logger.recordOutput("visionOdomError", visionOdomError.toWPI());
                 mDisplayVisionPose = visionFieldToVehicle;
                 try {
                     mKalmanFilter.correct(VecBuilder.fill(0.0, 0.0), VecBuilder.fill(visionOdomError.getTranslation().x(), visionOdomError.getTranslation().y()));
@@ -261,8 +253,6 @@ public class RobotState {
         Logger.recordOutput("Filtered Pose", getKalmanPose(Timer.getFPGATimestamp()).toWPI());
         Logger.recordOutput("SetPoint Pose", mSetpointPose.toWPI());
         Logger.recordOutput("Vision Pose", getDisplayVisionPose().toWPI());
-        Logger.recordOutput("x hat", mKalmanFilter.getXhat(0));
-
    }
 
     public void setDisplaySetpointPose(Pose2d setpoint) {

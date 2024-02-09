@@ -14,6 +14,8 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 
 import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.Autos.AutoBase;
 import com.uni.frc.Autos.M5;
 import com.uni.frc.Autos.M5Safe;
@@ -36,6 +38,7 @@ import com.uni.frc.subsystems.gyros.Gyro;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.motion.PathFollower;
+import com.uni.lib.swerve.ChassisSpeeds;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
@@ -118,14 +121,14 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve = SwerveDrive.getInstance();
     swerve.fieldzeroSwerve();
     swerve.zeroModules();
+    RobotState.getInstance().resetKalmanFilters();
 
     
     // if(autoChooser.getSelected() != null){
     //   autoChooser.getSelected().runAuto();
     // }else{
     // }
-      new M6().runAuto();
-  }
+     }
 
   /** This function is called periodically during autonomous. */
   @Override
@@ -141,7 +144,6 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve.zeroModules();
 
     RobotStateEstimator.getInstance().resetOdometry(new Pose2d(15.25,5.54, new Rotation2d()));
-    RobotState.getInstance().resetKalmanFilters();
     
 
 

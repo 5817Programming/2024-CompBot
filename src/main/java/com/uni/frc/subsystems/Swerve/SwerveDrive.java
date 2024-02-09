@@ -289,7 +289,7 @@ public class SwerveDrive extends Subsystem {
                 break;
 
             case TRAJECTORY:
-                mDriveMotionPlanner.updateTrajectory(poseMeters);
+                mDriveMotionPlanner.updateTrajectory();
                 Translation2d translationCorrection = mDriveMotionPlanner.updateFollowedTranslation2d(timeStamp).scale(1);
                 headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading());
                 rotationCorrection = headingController.getRotationCorrection(getRobotHeading(), timeStamp);

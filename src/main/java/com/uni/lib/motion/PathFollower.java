@@ -48,8 +48,7 @@ public class PathFollower{
     this.transformedTrajectory = trajectory;
   }
 
-  public Pose2d getDesiredPose2d(boolean useAllianceColor, Pose2d currentPose2d) {
-    this.currentPose = currentPose2d;
+  public Pose2d getDesiredPose2d(boolean useAllianceColor) {
     this.timer.start();
     double currentTime = this.timer.get();
     State desiredState = transformedTrajectory.sample(currentTime);

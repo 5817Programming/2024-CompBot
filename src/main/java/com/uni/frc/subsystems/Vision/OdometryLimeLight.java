@@ -125,12 +125,10 @@ public class OdometryLimeLight extends Subsystem {
             );
 
       } else {
-        System.out.println("Tag not in set");
         mPeriodicIO.visionUpdate = Optional.empty();
       }
     }
     else{
-      System.out.println("No target");
       mPeriodicIO.visionUpdate = Optional.empty();
     }
   }

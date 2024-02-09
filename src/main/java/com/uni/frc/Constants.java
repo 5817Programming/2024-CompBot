@@ -137,7 +137,7 @@ public class Constants {
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = kMaxAccelerationMetersPerSecondSquared /
     Math.hypot(mRobotBaseLength / 2.0, mRobotBaseWidth / 2.0);
 
-    public static final double kFrontRightStartingEncoderPosition = -304; // -354.950352
+    public static final double kFrontRightStartingEncoderPosition = -86; // -354.950352
     public static final double kFrontLeftStartingEncoderPosition = -160; // -263.094811
     public static final double kRearLeftStartingEncoderPosition = -355; // -121.094031
     public static final double kRearRightStartingEncoderPosition = -265; // -355.170825

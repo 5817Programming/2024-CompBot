@@ -83,8 +83,8 @@ public class DriveMotionPlanner{
         };
     }
 
-      public void updateTrajectory(Pose2d pose) {
-        Pose2d desiredPose = pathFollower.getDesiredPose2d(useAllianceColor, RobotState.getInstance().getPoseFromOdom(Timer.getFPGATimestamp()));
+      public void updateTrajectory() {
+        Pose2d desiredPose = pathFollower.getDesiredPose2d(useAllianceColor);
         targetHeading = desiredPose.getRotation().inverse();
         targetFollowTranslation = desiredPose.getTranslation();
     }
