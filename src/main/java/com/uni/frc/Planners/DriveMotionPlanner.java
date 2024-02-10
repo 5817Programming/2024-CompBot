@@ -14,7 +14,7 @@ import com.uni.frc.subsystems.gyros.Pigeon;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
-import com.uni.lib.motion.PathFollower;
+import com.uni.lib.motion.PathStateGenerator;
 import com.uni.lib.util.PID2d;
 import com.uni.lib.util.SynchronousPIDF;
 
@@ -31,7 +31,7 @@ public class DriveMotionPlanner{
     boolean trajectoryFinished = false;
     Pose2d drivingpose = new Pose2d();
     PathPlannerTrajectory trajectoryDesired;
-    PathFollower pathFollower;
+    PathStateGenerator pathFollower;
     PID2d OdometryPID = new PID2d(new SynchronousPIDF(1.25,0,0),new SynchronousPIDF(1.25,0,0));
     double lastTimestamp = 0;
     Pose2d poseMeters;
@@ -43,7 +43,7 @@ public class DriveMotionPlanner{
         return instance;
     }
     public DriveMotionPlanner(){
-        pathFollower = PathFollower.getInstance();
+        pathFollower = PathStateGenerator.getInstance();
         // swerve = SwerveDrive.getInstance();
     }
     public Rotation2d getTargetHeading(){
@@ -70,7 +70,7 @@ public class DriveMotionPlanner{
     }
 
     public void resetTimer() {
-        PathFollower.getInstance().resetTimer();
+        PathStateGenerator.getInstance().resetTimer();
     }
     public Request setTrajectoryRequest(PathPlannerTrajectory trajectory, double nodes,double initRotation) {
         return new Request() {
@@ -99,7 +99,7 @@ public class DriveMotionPlanner{
         double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.x(), dt);
         double yError = OdometryPID.y().calculate(targetFollowTranslation.y() - currentRobotPositionFromStart.y(), dt);
         lastTimestamp = timestamp;
-        if (Math.abs(xError + yError) / 2 < .1 && PathFollower.getInstance().isFinished()) {
+        if (Math.abs(xError + yError) / 2 < .1 && PathStateGenerator.getInstance().isFinished()) {
             trajectoryFinished = true;
             return new Translation2d();
         }

@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import org.littletonrobotics.junction.Logger;
 
 /** Custom PathPlanner version of SwerveControllerCommand */
-public class PathFollower{
+public class PathStateGenerator{
   private final Timer timer = new Timer();
-  public static PathFollower instance = null;
+  public static PathStateGenerator instance = null;
   private PathPlannerTrajectory transformedTrajectory;
 
   double desiredRotation = 0;
@@ -28,12 +28,12 @@ public class PathFollower{
 
   int EventIndex = 0;
 
-  public PathFollower() {
+  public PathStateGenerator() {
   }
 
-  public static PathFollower getInstance() {// if doesnt have an instance of swerve will make a new one
+  public static PathStateGenerator getInstance() {// if doesnt have an instance of swerve will make a new one
       if (instance == null)
-          instance = new PathFollower();
+          instance = new PathStateGenerator();
       return instance;
   }
 
@@ -65,7 +65,7 @@ public class PathFollower{
   }
 
   public double reflect(double x) {
-    return x + (2 * Math.abs(8.25 - x));
+    return 16.5-x;
   }
 
   public boolean alliance() {

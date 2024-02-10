@@ -37,7 +37,7 @@ import com.uni.frc.subsystems.Vision.OdometryLimeLight;
 import com.uni.frc.subsystems.gyros.Gyro;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
-import com.uni.lib.motion.PathFollower;
+import com.uni.lib.motion.PathStateGenerator;
 import com.uni.lib.swerve.ChassisSpeeds;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -156,7 +156,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   public void disabledInit() {
     subsystemManager.stopSubsystems();
     SuperStructure.getInstance().clearQueues();
-    PathFollower.getInstance().resetTimer();
+    PathStateGenerator.getInstance().resetTimer();
   }
 
   /** This function is called periodically when disabled. */
