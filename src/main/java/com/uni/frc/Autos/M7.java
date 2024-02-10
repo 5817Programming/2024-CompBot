@@ -14,7 +14,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 public class M7 extends AutoBase{
     SuperStructure s = SuperStructure.getInstance();
     SwerveDrive swerve = SwerveDrive.getInstance();
-    double initRotation = 0;
+    double initRotation = 180;
     PathPlannerTrajectory path = PathPlannerPath.fromPathFile("M7").getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
 
     @Override
@@ -22,6 +22,6 @@ public class M7 extends AutoBase{
         s.trajectoryState(path,9,initRotation);
         s.waitForTrajectoryState(0);
         s.intakeState(false);
-        s.waitState(15, false);
+        s.waitState(25, false);
     }
 }

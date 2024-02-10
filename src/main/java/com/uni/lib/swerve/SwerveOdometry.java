@@ -64,9 +64,9 @@ public class SwerveOdometry {
                     minDeviance = deviance;
                     minDevianceIndex = 0;
                 }
-                if (deviance <= 10000) {
-                    modulesToUse.add(m);
-                }
+                if(deviance <= 0.032){
+					modulesToUse.add(m);
+				}
             }
       
             if (modulesToUse.isEmpty()) {

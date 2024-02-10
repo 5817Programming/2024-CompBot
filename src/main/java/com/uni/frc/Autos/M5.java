@@ -14,8 +14,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 public class M5 extends AutoBase{
     SuperStructure s = SuperStructure.getInstance();
     SwerveDrive swerve = SwerveDrive.getInstance();
-    double initRotation = 0;
-    PathPlannerTrajectory path = PathPlannerPath.fromPathFile("NS5").getTrajectory(new ChassisSpeeds(),  Rotation2d.fromDegrees(initRotation));
+    double initRotation = 180;
+    PathPlannerTrajectory path = PathPlannerPath.fromPathFile("M5").getTrajectory(new ChassisSpeeds(),  Rotation2d.fromDegrees(initRotation));
 
     @Override
     public void auto() {

@@ -37,7 +37,7 @@ public class FieldLayout {
         private static final Pose2d kTag3ToLeftAlign = new Pose2d(-3, 0.55, Rotation2d.fromDegrees(0));
 
 
-        private static final Pose2d kTag4ToCenterAlign = new Pose2d(-3, 0.0, Rotation2d.fromDegrees(0));
+        private static final Pose2d kTag4ToCenterAlign = new Pose2d(-1.4, 0.0, Rotation2d.fromDegrees(180));
         private static final Pose2d kTag4ToRightAlign = new Pose2d(3, -0.55, Rotation2d.fromDegrees(0));
         private static final Pose2d kTag4ToLeftAlign = new Pose2d(3, 0.55, Rotation2d.fromDegrees(0));
 

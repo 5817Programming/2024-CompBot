@@ -39,7 +39,7 @@ public class Pigeon extends Gyro {
     }
 
     public void setAngle(double angle) {
-        pigeon.setYaw(angle);
+        pigeon.setYaw(angle-2);
         // pigeon.setFusedHeading(-angle * 64.0, Constants.kCANTimeoutMs);
 
     }

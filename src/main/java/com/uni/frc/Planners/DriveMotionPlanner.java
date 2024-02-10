@@ -32,7 +32,7 @@ public class DriveMotionPlanner{
     Pose2d drivingpose = new Pose2d();
     PathPlannerTrajectory trajectoryDesired;
     PathFollower pathFollower;
-    PID2d OdometryPID = new PID2d(new SynchronousPIDF(1,0,0),new SynchronousPIDF(1,0,0));
+    PID2d OdometryPID = new PID2d(new SynchronousPIDF(1.25,0,0),new SynchronousPIDF(1.25,0,0));
     double lastTimestamp = 0;
     Pose2d poseMeters;
     public static DriveMotionPlanner instance = null;
@@ -92,9 +92,10 @@ public class DriveMotionPlanner{
 
         public Translation2d updateFollowedTranslation2d(double timestamp) {
         double dt = timestamp - lastTimestamp;
-        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getKalmanPose(timestamp).getTranslation();
-        OdometryPID.x().setOutputRange(-.9, .9);
-        OdometryPID.y().setOutputRange(-.9, .9);
+        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestPoseFromOdom().getValue().getTranslation();
+        OdometryPID.x().setOutputRange(-1, 1);
+        OdometryPID.y().setOutputRange(-1, 1);
+        Logger.recordOutput("Desired Pose",Pose2d.fromTranslation( targetFollowTranslation).toWPI());
         double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.x(), dt);
         double yError = OdometryPID.y().calculate(targetFollowTranslation.y() - currentRobotPositionFromStart.y(), dt);
         lastTimestamp = timestamp;

@@ -121,13 +121,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve = SwerveDrive.getInstance();
     swerve.fieldzeroSwerve();
     swerve.zeroModules();
-    RobotState.getInstance().resetKalmanFilters();
-
-    
-    // if(autoChooser.getSelected() != null){
-    //   autoChooser.getSelected().runAuto();
-    // }else{
-    // }
+    new M7().runAuto();
      }
 
   /** This function is called periodically during autonomous. */
