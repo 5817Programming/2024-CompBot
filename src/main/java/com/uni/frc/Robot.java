@@ -12,6 +12,8 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.Autos.AutoBase;
 import com.uni.frc.Autos.M5;
 import com.uni.frc.Autos.M5Safe;
@@ -28,7 +30,13 @@ import com.uni.frc.subsystems.Vision.OdometryLimeLight;
 import com.uni.frc.subsystems.gyros.Gyro;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
+import com.uni.lib.geometry.Translation2d;
+import com.uni.lib.geometry.HeavilyInspired.Node;
+import com.uni.lib.motion.PathGenerator;
 import com.uni.lib.motion.PathStateGenerator;
+import com.uni.lib.swerve.ChassisSpeeds;
+
+import edu.wpi.first.units.Time;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -158,12 +166,15 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
-    music.play("output.chrp");
-    System.out.println(Constants.isCompbot);
   }
+      PathGenerator pathGenerator = new PathGenerator();
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
+        PathPlannerTrajectory genTrag = pathGenerator.generatePath(new Pose2d(0,2,new Rotation2d()).toWPI(), new PathConstraints(4, 4, 540, 760), new Node(new Pose2d(16,3.5, Rotation2d.identity())), new ChassisSpeeds().toWPI());
+
+      Logger.recordOutput("trag",Pose2d.fromTranslation(new Translation2d(genTrag.sample(Timer.getFPGATimestamp()%genTrag.getTotalTimeSeconds()).positionMeters.getX(),genTrag.sample(Timer.getFPGATimestamp()%genTrag.getTotalTimeSeconds()).positionMeters.getY())).toWPI());
+
   }
 }

@@ -95,7 +95,7 @@ public class DriveMotionPlanner{
         Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestPoseFromOdom().getValue().getTranslation();
         OdometryPID.x().setOutputRange(-1, 1);
         OdometryPID.y().setOutputRange(-1, 1);
-        Logger.recordOutput("Desired Pose",Pose2d.fromTranslation( targetFollowTranslation).toWPI());
+        Logger.recordOutput("Desired Pose",Pose2d.fromTranslation(targetFollowTranslation).toWPI());
         double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.x(), dt);
         double yError = OdometryPID.y().calculate(targetFollowTranslation.y() - currentRobotPositionFromStart.y(), dt);
         lastTimestamp = timestamp;

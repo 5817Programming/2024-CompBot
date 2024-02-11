@@ -78,7 +78,9 @@ public class ChassisSpeeds {
             double omegaRadiansPerSecond) {
         return new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
     }
-
+    public edu.wpi.first.math.kinematics.ChassisSpeeds toWPI (){
+        return new edu.wpi.first.math.kinematics.ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
+    }
     public Twist2d toTwist2d() {
         return new Twist2d(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
     }

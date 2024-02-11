@@ -34,6 +34,14 @@ public class Node {
         this.holonomicRotation = pose.getRotation();
         this.neighbors = new ArrayList < > ();
     }
+
+    public Node(edu.wpi.first.math.geometry.Pose2d pose) {
+        this.x = pose.getTranslation().getX();
+        this.y = pose.getTranslation().getY();
+        this.holonomicRotation = Rotation2d.fromDegrees(pose.getRotation().getDegrees());
+        this.neighbors = new ArrayList < > ();
+    }
+
     public Node(Translation2d coordinates, Rotation2d holonomicRotation) {
       this.x = coordinates.x();
       this.y = coordinates.y(); 
@@ -42,8 +50,8 @@ public class Node {
     }
 
 
-
-	public void addNeighbor(Node neighbor) {
+  
+	  public void addNeighbor(Node neighbor) {
         this.neighbors.add(neighbor);
     }
     public double getX(){
@@ -57,6 +65,10 @@ public class Node {
     }
     public Rotation2d getHolRot(){
       return holonomicRotation;
+    }
+    
+    public edu.wpi.first.math.geometry.Pose2d toPose(){
+      return new edu.wpi.first.math.geometry.Pose2d(x,y, edu.wpi.first.math.geometry.Rotation2d.fromDegrees(holonomicRotation.getDegrees()));
     }
     public void setHolRot(double degree){
       this.holonomicRotation = Rotation2d.fromDegrees(degree);
