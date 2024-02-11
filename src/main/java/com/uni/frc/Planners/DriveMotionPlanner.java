@@ -32,7 +32,7 @@ public class DriveMotionPlanner{
     Pose2d drivingpose = new Pose2d();
     PathPlannerTrajectory trajectoryDesired;
     PathStateGenerator pathFollower;
-    PID2d OdometryPID = new PID2d(new SynchronousPIDF(1.25,0,0),new SynchronousPIDF(1.25,0,0));
+    PID2d OdometryPID = new PID2d(new SynchronousPIDF(.5,0,0),new SynchronousPIDF(.5,0,0));
     double lastTimestamp = 0;
     Pose2d poseMeters;
     public static DriveMotionPlanner instance = null;

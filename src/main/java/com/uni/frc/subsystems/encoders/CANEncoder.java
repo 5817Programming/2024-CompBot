@@ -13,7 +13,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 public class CANEncoder extends Encoder{
     CANcoder encoder;
     public CANEncoder(int id) {
-        encoder = new CANcoder(id);
+        encoder = new CANcoder(id,"Minivore");
     }
     @Override
     public double getOutput() {

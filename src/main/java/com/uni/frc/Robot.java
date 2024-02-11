@@ -12,34 +12,23 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 
-import com.ctre.phoenix6.Orchestra;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.Autos.AutoBase;
 import com.uni.frc.Autos.M5;
 import com.uni.frc.Autos.M5Safe;
 import com.uni.frc.Autos.M6;
 import com.uni.frc.Autos.M7;
-import com.uni.frc.Autos.NS3;
 import com.uni.frc.Autos.NS5;
-import com.uni.frc.Autos.S3;
-import com.uni.frc.Autos.S5;
-import com.uni.frc.Autos.Shoot;
 import com.uni.frc.subsystems.Music;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.RobotStateEstimator;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
-import com.uni.frc.subsystems.Swerve.SwerveDrive.State;
 import com.uni.frc.subsystems.Vision.ObjectLimeLight;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight;
 import com.uni.frc.subsystems.gyros.Gyro;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.motion.PathStateGenerator;
-import com.uni.lib.swerve.ChassisSpeeds;
-
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -170,6 +159,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @Override
   public void testInit() {
     music.play("output.chrp");
+    System.out.println(Constants.isCompbot);
   }
 
   /** This function is called periodically during test mode. */

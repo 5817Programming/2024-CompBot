@@ -4,7 +4,10 @@
 
 package com.uni.frc;
 
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 import com.uni.lib.UndistortConstants;
@@ -34,7 +37,7 @@ public class Constants {
      * now we just want the primary one.
      */
     public static final int kPIDLoopIdx = 0;
-
+    public static boolean isCompbot = hasMacAddress("00:80:2F:38:8F:8B");
     /**
      * set to zero to skip waiting for confirmation, set to nonzero to wait and
      * report to DS if action fails.
@@ -92,15 +95,15 @@ public class Constants {
     // Scrub Factors
     public static final boolean kSimulateReversedCarpet = false;
     public static final double[] kWheelScrubFactors = new double[] { 1.0, 1.0, 1.0, 1.0 };
-    public static final double kXScrubFactor = 0.877;
-    public static final double kYScrubFactor = 0.845;
+    public static final double kXScrubFactor = isCompbot?0.935:0.85;
+    public static final double kYScrubFactor = isCompbot?0.93:0.875;
 
     public static final double driveKS = (0.32 / 12);
     public static final double driveKV = (1.51 / 12);
     public static final double driveKA = (0.27 / 12);
 
     public static final double kSwerveMaxspeedMPS = 10;
-    public static final double SwerveMaxspeedMPS = 4.5;
+    public static final double SwerveMaxspeedMPS = 120;
     public static final double kSwerveDriveMaxSpeed = 22000.0; // The theoretical max speed(For the Falcon 500s)
     public static final double kSwerveRotation10VoltMaxSpeed = 1350.0;
 
@@ -137,10 +140,10 @@ public class Constants {
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = kMaxAccelerationMetersPerSecondSquared /
     Math.hypot(mRobotBaseLength / 2.0, mRobotBaseWidth / 2.0);
 
-    public static final double kFrontRightStartingEncoderPosition = -86; // -354.950352
-    public static final double kFrontLeftStartingEncoderPosition = -160; // -263.094811
-    public static final double kRearLeftStartingEncoderPosition = -355; // -121.094031
-    public static final double kRearRightStartingEncoderPosition = -265; // -355.170825
+    public static final double kFrontRightStartingEncoderPosition = isCompbot ? -143.7 : -86; // -354.950352
+    public static final double kFrontLeftStartingEncoderPosition = isCompbot ? 22.36 : -160; // -263.094811
+    public static final double kRearLeftStartingEncoderPosition = isCompbot ? 40.4 : -355; // -121.094031
+    public static final double kRearRightStartingEncoderPosition =isCompbot ? 11.07 : -265; // -355.170825
 
     public static final class ShooterConstants {
         public static final double HANDOFF = 0;
@@ -235,7 +238,7 @@ public class Constants {
                         {0., 0., 1.}}
                 );
 
-        public static final UndistortMap UNDISTORTMAP = new InterpolatingUndisortMap((int)1280.0, (int)960.0, new UndistortMap_Limelight_B_640x480());
+        // public static final UndistortMap UNDISTORTMAP = new InterpolatingUndisortMap((int)1280.0, (int)960.0, new UndistortMap_Limelight_B_640x480());
     }
 
     public static final class LightConstants {
@@ -247,5 +250,40 @@ public class Constants {
     }
 
  
+ /**
+     * Check if this system has a certain mac address in any network device.
+     * @param mac_address Mac address to check.
+     * @return true if some device with this mac address exists on this system.
+     */
+    public static boolean hasMacAddress(final String mac_address) {
+        try {
+            Enumeration<NetworkInterface> nwInterface = NetworkInterface.getNetworkInterfaces();
+            while (nwInterface.hasMoreElements()) {
+                NetworkInterface nis = nwInterface.nextElement();
+                if (nis == null) {
+                    continue;
+                }
+                StringBuilder device_mac_sb = new StringBuilder();
+                System.out.println("hasMacAddress: NIS: " + nis.getDisplayName());
+                byte[] mac = nis.getHardwareAddress();
+                if (mac != null) {
+                    for (int i = 0; i < mac.length; i++) {
+                        device_mac_sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? ":" : ""));
+                    }
+                    String device_mac = device_mac_sb.toString();
+                    System.out.println("hasMacAddress: NIS " + nis.getDisplayName() + " device_mac: " + device_mac);
+                    if (mac_address.equals(device_mac)) {
+                        System.out.println("hasMacAddress: ** Mac address match! " + device_mac);
+                        return true;
+                    }
+                } else {
+                    System.out.println("hasMacAddress: Address doesn't exist or is not accessible");
+                }
+            }
 
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

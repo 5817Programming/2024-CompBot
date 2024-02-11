@@ -1,10 +1,9 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// the WPILib BSD license file in the root dir[]ectory of this project.
 
 package com.uni.frc.subsystems.Swerve;
 
-import static org.opencv.core.CvType.makeType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -227,7 +226,20 @@ public class SwerveDrive extends Subsystem {
             }
         }
     }
+    public void commandModuleVelocitysPercentages(List<Translation2d> moduleVectors){
+         this.moduleVectors = moduleVectors;
+        for (int i = 0; i < moduleVectors.size(); i++) {
+            if (Util.shouldReverse(moduleVectors.get(i).direction(),
+                    Rotation2d.fromDegrees(modules.get(i).getModuleAngle()))) {
+                modules.get(i).setModuleAngle(moduleVectors.get(i).direction().getDegrees() + 180);
+                modules.get(i).setVelocityPercent(-moduleVectors.get(i).norm());
+            } else {
+                modules.get(i).setModuleAngle(moduleVectors.get(i).direction().getDegrees());
+                modules.get(i).setVelocityPercent(moduleVectors.get(i).norm());
 
+            }
+        }
+    }
     public void commandModuleDrivePowers(double power) {
         for (int i = 0; i < modules.size(); i++) {
             modules.get(i).setDriveOpenLoop(power);
@@ -294,7 +306,7 @@ public class SwerveDrive extends Subsystem {
                 headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading());
                 rotationCorrection = headingController.getRotationCorrection(getRobotHeading(), timeStamp);
                 desiredRotationScalar = rotationCorrection;
-                commandModules(inverseKinematics.updateDriveVectors(translationCorrection, rotationCorrection, poseMeters,
+                commandModuleVelocitysPercentages(inverseKinematics.updateDriveVectors(translationCorrection, rotationCorrection, poseMeters,
                         robotCentric));
                 break;
             case TARGETOBJECT:

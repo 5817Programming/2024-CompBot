@@ -18,6 +18,7 @@ import com.uni.frc.Options;
 import com.uni.frc.Ports;
 import com.uni.frc.subsystems.Music;
 import com.uni.frc.subsystems.Subsystem;
+import com.uni.frc.subsystems.encoders.CANEncoder;
 import com.uni.frc.subsystems.encoders.Encoder;
 import com.uni.frc.subsystems.encoders.MagEncoder;
 import com.uni.lib.Conversions;
@@ -71,8 +72,8 @@ public class SwerveDriveModule extends Subsystem {
      */
     public SwerveDriveModule(int rotationMotorPort, int driveMotorPort, int moduleID, double encoderStartingPos,
             Translation2d modulePoseInches, boolean flipEncoder ,Translation2d moduleposemeters){
-        this.rotationMotor = new TalonFX(rotationMotorPort);
-        this.driveMotor = new TalonFX(driveMotorPort);
+        this.rotationMotor = new TalonFX(rotationMotorPort, Constants.isCompbot? "Minivore": "");
+        this.driveMotor = new TalonFX(driveMotorPort, Constants.isCompbot? "Minivore": "");
         this.moduleID = moduleID;
         this.name = "Module " + moduleID;
         this.encoderOffset = encoderStartingPos;
@@ -85,6 +86,9 @@ public class SwerveDriveModule extends Subsystem {
         if (Options.encoderType == "Mag Encoder") {
             rotationMagEncoder = new MagEncoder(Ports.SWERVE_ENCODERS[moduleID]);
         } 
+        else if(Options.encoderType == "CANCoder") {
+         rotationMagEncoder = new CANEncoder(Ports.SWERVE_ENCODERS[moduleID]);
+        }
         configMotors();
     }
     TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
@@ -166,7 +170,10 @@ public class SwerveDriveModule extends Subsystem {
     public double encUnitsToInches(double encUnits){
 		return encUnits/Constants.kSwerveEncUnitsPerInch;
 	}
-
+    public void setVelocityPercent(double percent){
+        mPeriodicIO.driveDemand = percent*Constants.SwerveMaxspeedMPS;
+        mPeriodicIO.driveControlMode = ControlMode.Velocity;
+    }
     
     public void setDriveOpenLoop(double percentOuput) {
         mPeriodicIO.driveControlMode = ControlMode.PercentOuput;
@@ -199,15 +206,11 @@ public class SwerveDriveModule extends Subsystem {
 		double xScrubFactor = Constants.kXScrubFactor;
 		double yScrubFactor = Constants.kYScrubFactor;
         if(Util.epsilonEquals(Math.signum(deltaPosition.x()), 1.0)){
-            xScrubFactor = .85;
+            xScrubFactor = Constants.kXScrubFactor;
 
-        }else{
-            xScrubFactor = .85;
         }
         if(Util.epsilonEquals(Math.signum(deltaPosition.y()), 1.0)){
-            yScrubFactor = .875;
-        }else{
-            yScrubFactor = .875;
+            yScrubFactor = Constants.kYScrubFactor;
         }
 	
 		deltaPosition = new Translation2d(deltaPosition.x() * xScrubFactor,
@@ -291,7 +294,7 @@ public class SwerveDriveModule extends Subsystem {
     motor.setControl(new DutyCycleOut(percent, true, false, false, false));
   }
     public void runMotionMagic(double position, TalonFX motor){
-    motor.setControl(new MotionMagicVoltage(position));
+    motor.setControl(new MotionMagicVoltage(position).withEnableFOC(true));
   }
 
   public void runVelocity(double velocity, TalonFX motor){
@@ -306,11 +309,12 @@ public class SwerveDriveModule extends Subsystem {
         Logger.recordOutput(this.name + " Drive Motor Demand", mPeriodicIO.driveDemand);
         Logger.recordOutput(this.name + " Status", getModuleStatus().toString());
         Logger.recordOutput(this.name + " Drive Position", mPeriodicIO.drivePosition);
+        Logger.recordOutput(this.name + "drive velocity", driveMotor.getVelocity().getValueAsDouble());
         Logger.recordOutput(this.name + " A", Constants.kWheelCircumference);
         Logger.recordOutput(this.name + "Drive Control Mode", mPeriodicIO.driveControlMode);
         Logger.recordOutput(this.name + "Rotation Control Mode", mPeriodicIO.rotationControlMode);
         Logger.recordOutput(this.name + "modulePose2d", Pose2d.fromTranslation(position).toWPI());
-    
+        Logger.recordOutput(this.name + "drive motor voltage consumption", driveMotor.getSupplyCurrent().getValueAsDouble());
 
 
     }

@@ -88,6 +88,10 @@ public class Rotation2d implements IRotation2d<Rotation2d> {
         this(direction.x(), direction.y(), normalize);
     }
 
+    public edu.wpi.first.math.geometry.Rotation2d toWPI(){
+        return edu.wpi.first.math.geometry.Rotation2d.fromRadians(this.getRadians());
+    }
+
     public static Rotation2d fromRadians(double angle_radians) {
         return new Rotation2d(angle_radians, true);
     }

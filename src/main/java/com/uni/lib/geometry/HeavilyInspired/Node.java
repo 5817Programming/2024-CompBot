@@ -28,6 +28,12 @@ public class Node {
         this.holonomicRotation = holonomicRotation;
         this.neighbors = new ArrayList < > ();
     }
+    public Node(Pose2d pose) {
+        this.x = pose.getTranslation().x();
+        this.y = pose.getTranslation().y();
+        this.holonomicRotation = pose.getRotation();
+        this.neighbors = new ArrayList < > ();
+    }
     public Node(Translation2d coordinates, Rotation2d holonomicRotation) {
       this.x = coordinates.x();
       this.y = coordinates.y(); 
