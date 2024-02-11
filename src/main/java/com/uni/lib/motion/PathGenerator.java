@@ -26,6 +26,7 @@ public class PathGenerator {
     private List<Node> fullPath;
     private Node start;
     private VisGraph aStar;
+    private List<Node> usedNodes;
     private List<Pose2d> fullPathPoses;
     private List<Obstacle> totalObstacles = Constants.FieldConstants.obstacles;
     private static PathGenerator instance;
@@ -40,9 +41,12 @@ public class PathGenerator {
         aStar = VisGraph.getInstance();
         fullPath = new ArrayList<Node>();
         fullPathPoses = new ArrayList<Pose2d>();
+        usedNodes = new ArrayList<>();
         for (double i = 2 * grain; i < 15 * grain; i++) {
             for (double j = 0; j < 9 * grain; j++) {
-                aStar.addNode(new Node(i / grain, j / grain));
+                Node newNode = new Node(i / grain, j / grain);
+                aStar.addNode(newNode);
+                usedNodes.add(newNode);
             }
         }
         for (int i = 0; i < aStar.getNodeSize(); i++) {
@@ -58,10 +62,14 @@ public class PathGenerator {
         aStar.addNode(endTarget);
         fullPathPoses = new ArrayList<Pose2d>();
         fullPath = new ArrayList<Node>();
-        for (int i = 0; i < aStar.getNodeSize(); i++) {
+        if(!usedNodes.contains(endTarget)){
+            for (int i = 0; i < aStar.getNodeSize(); i++) {
                 Node end = aStar.getNode(i);
                 aStar.addEdge(new Edge(endTarget, end), totalObstacles);
             }
+            usedNodes.add(endTarget);
+        }
+
 
         if (aStar.addEdge(new Edge(start, endTarget), totalObstacles)) {
             fullPath.add(0, start);
