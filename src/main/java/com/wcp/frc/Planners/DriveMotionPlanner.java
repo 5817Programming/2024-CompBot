@@ -42,7 +42,7 @@ public class DriveMotionPlanner {
         mTrajectoryFollowed = false;
     }
 
-    public synchronized void setTargetTrajectory(PathPlannerTrajectory trajectory) {//TODO setpoint generator
+    public synchronized void setTargetTrajectory(PathPlannerTrajectory trajectory) {
         mTrajectory = trajectory;
     }
 
@@ -72,10 +72,6 @@ public class DriveMotionPlanner {
     public synchronized DriverStation.Alliance getAlliance(){
         return DriverStation.getAlliance().get();
     }
-
-    
-
-
     public synchronized ChassisSpeeds updateAutoAlign(double timestamp, Pose2d currentOdomToVehicle,
         Pose2d currentFieldToOdom, Twist2d currentVel) {
                 
@@ -140,7 +136,7 @@ public class DriveMotionPlanner {
         boolean thetaWithinDeadband = mThetaController.onTarget();
         boolean yOutputWithinDeadband = mYController.onTarget();
         boolean xOutputWithinDeadband = mXController.onTarget();
-        boolean mTrajectoryFollowed = thetaWithinDeadband && yOutputWithinDeadband && xOutputWithinDeadband && timestamp >= mTrajectory.getTotalTimeSeconds();
+        boolean mTrajectoryFollowed = thetaWithinDeadband && yOutputWithinDeadband && xOutputWithinDeadband && sampleTime >= mTrajectory.getTotalTimeSeconds();
         setPoint = ChassisSpeeds.fromFieldRelativeSpeeds(
                 (xOutputWithinDeadband ? 0.0 : xOutput) + xFF,
                 (yOutputWithinDeadband ? 0.0 : yOutput) + yFF,

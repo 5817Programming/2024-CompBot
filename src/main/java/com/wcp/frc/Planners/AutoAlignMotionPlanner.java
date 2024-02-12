@@ -34,7 +34,7 @@ public class AutoAlignMotionPlanner {
         mAutoAlignComplete = false;
     }
 
-    public synchronized void setTargetPoint(Pose2d targetPoint) {//TODO setpoint generator
+    public synchronized void setTargetPoint(Pose2d targetPoint) {
         mFieldToTargetPoint = targetPoint;
     }
 
