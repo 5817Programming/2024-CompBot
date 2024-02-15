@@ -34,6 +34,7 @@ import com.uni.lib.swerve.ChassisSpeeds;
 import com.uni.lib.swerve.SwerveKinematics;
 import com.uni.lib.util.Util;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -163,7 +164,6 @@ public class SwerveDrive extends Subsystem {
         speedPercent = (1 - (percent * Constants.GrannyModeWeight));
     }
 
-    //
     public void sendInput(double x, double y, double rotation, State state) {
         setState(state);
         translationVector = new Translation2d(x, y).scale(speedPercent);
@@ -181,7 +181,7 @@ public class SwerveDrive extends Subsystem {
         if (translationVector.norm() <= translationDeadband) {
             translationVector = new Translation2d();
         }
-        rotationScalar *= 0.01;
+        rotationScalar *= 0.02;
         if (translationVector.norm() <= translationDeadband && Math.abs(rotation) <= rotationDeadband) {
             this.commandModuleDrivePowers(0);
         } else {
@@ -301,6 +301,9 @@ public class SwerveDrive extends Subsystem {
                 break;
 
             case TRAJECTORY:
+                if(DriverStation.isTeleop() && translationVector.norm() != 0){
+                    setState(State.MANUAL);
+                }
                 mDriveMotionPlanner.updateTrajectory();
                 Translation2d translationCorrection = mDriveMotionPlanner.updateFollowedTranslation2d(timeStamp).scale(1);
                 headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading());
