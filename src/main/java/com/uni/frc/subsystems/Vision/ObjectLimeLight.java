@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.Timer;
 public class ObjectLimeLight extends Subsystem {
 
   public static ObjectLimeLight instance = null;
-  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-up");
+  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-down");
   PeriodicIO mPeriodicIO = new PeriodicIO();
 
   private boolean mOutputsHaveChanged = true;

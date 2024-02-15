@@ -32,7 +32,7 @@ public class DriveMotionPlanner{
     Pose2d drivingpose = new Pose2d();
     PathPlannerTrajectory trajectoryDesired;
     PathStateGenerator pathFollower;
-    PID2d OdometryPID = new PID2d(new SynchronousPIDF(.5,0,0),new SynchronousPIDF(.5,0,0));
+    PID2d OdometryPID = new PID2d(new SynchronousPIDF(.6,0,0),new SynchronousPIDF(.6,0,0));
     double lastTimestamp = 0;
     Pose2d poseMeters;
     public static DriveMotionPlanner instance = null;
@@ -99,11 +99,16 @@ public class DriveMotionPlanner{
         double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.x(), dt);
         double yError = OdometryPID.y().calculate(targetFollowTranslation.y() - currentRobotPositionFromStart.y(), dt);
         lastTimestamp = timestamp;
-        if (Math.abs(xError + yError) / 2 < .1 && PathStateGenerator.getInstance().isFinished()) {
+        if (((Math.abs(xError) + Math.abs(yError)) / 2 < .05 && PathStateGenerator.getInstance().isFinished())||trajectoryFinished) {
             trajectoryFinished = true;
             return new Translation2d();
         }
         return new Translation2d(xError, -yError);
+    }
+
+    public void generatePath(Pose2d startPose, Pose2d endPose){
+        
+        
     }
     // public Request generateTrajectoryRequest(int node) {
     // return new Request() {
@@ -137,6 +142,14 @@ public class DriveMotionPlanner{
 
     // }
 
+public Request generatePathRequest(){
+    return new Request() {
+        @Override
+        public void act(){
+            
+        }
+    };
+}
 public Request startPathRequest(boolean useAllianceColor) {
 
         return new Request() {
@@ -147,11 +160,11 @@ public Request startPathRequest(boolean useAllianceColor) {
         };
     }
 
-        public Request waitForTrajectoryRequest(double PercentageToRun) {
+        public Request waitForTrajectoryRequest(double time) {
         return new Request() {
             @Override
             public boolean isFinished() {
-                return pathFollower.hasElapsedPercentage(PercentageToRun);
+                return pathFollower.getTime()>time;
             }
         };}
     public Request waitForTrajectoryRequest() {

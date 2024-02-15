@@ -17,7 +17,9 @@ import com.uni.frc.Autos.M5;
 import com.uni.frc.Autos.M5Safe;
 import com.uni.frc.Autos.M6;
 import com.uni.frc.Autos.M7;
+import com.uni.frc.Autos.M8;
 import com.uni.frc.Autos.NS5;
+// import com.uni.frc.subsystems.Intake;
 import com.uni.frc.subsystems.Music;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.RobotStateEstimator;
@@ -110,7 +112,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve = SwerveDrive.getInstance();
     swerve.fieldzeroSwerve();
     swerve.zeroModules();
-    new M7().runAuto();
+    new M8().runAuto();
      }
 
   /** This function is called periodically during autonomous. */

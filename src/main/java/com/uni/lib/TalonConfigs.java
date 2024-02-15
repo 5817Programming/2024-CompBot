@@ -14,7 +14,7 @@ public class TalonConfigs {
     public static TalonFXConfiguration swerveRotationConfig(){
         TalonFXConfiguration motionMagicConfig = new TalonFXConfiguration();
 
- motionMagicConfig.Slot0.kP = 6;
+        motionMagicConfig.Slot0.kP = 6;
         motionMagicConfig.Slot0.kS = 0.8;
         motionMagicConfig.Slot0.kV = .1224;
         motionMagicConfig.MotionMagic.MotionMagicCruiseVelocity = 98;
@@ -28,10 +28,10 @@ public class TalonConfigs {
         driveConfigs.Slot0.kV = .12;
         driveConfigs.Slot0.kS = .25;
         driveConfigs.Slot0.kA = .01;
-        driveConfigs.Slot0.kP = .5;
+        driveConfigs.Slot0.kP = .05;
         driveConfigs.Slot0.kI = 0;
         driveConfigs.Slot0.kD = 0;
-        driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 1; 
+        driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0; 
 
         driveConfigs.MotionMagic.MotionMagicCruiseVelocity = 80;
         driveConfigs.MotionMagic.MotionMagicAcceleration = 240;
@@ -86,5 +86,18 @@ public class TalonConfigs {
 
       return driveConfigs;
     }
+    public static TalonFXConfiguration intakeConfigs() {
+        TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
+        driveConfigs.Slot0.kV = .12;
+        driveConfigs.Slot0.kS = .25;
+        driveConfigs.Slot0.kA = .01;
+        driveConfigs.Slot0.kP = .11;
+        driveConfigs.Slot0.kI = 0;
+        driveConfigs.Slot0.kD = 0;
 
+        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
+        driveConfigs.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));
+
+      return driveConfigs;
+    }
 }

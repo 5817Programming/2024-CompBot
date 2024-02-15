@@ -11,11 +11,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 
-public class M7 extends AutoBase{
+public class M8 extends AutoBase{
     SuperStructure s = SuperStructure.getInstance();
     SwerveDrive mSwerve = SwerveDrive.getInstance();
     double initRotation = -2;
-    PathPlannerTrajectory path = PathPlannerPath.fromPathFile("M7 SPEED").getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
+    PathPlannerTrajectory path = PathPlannerPath.fromPathFile("M8").getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
 
     @Override
     public void auto() {

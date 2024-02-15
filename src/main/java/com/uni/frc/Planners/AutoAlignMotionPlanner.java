@@ -21,8 +21,8 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class AutoAlignMotionPlanner {
     
-    private ProfileFollower mXController = new ProfileFollower(2.5, 0, 0, 1, 0, 0);
-    private ProfileFollower mYController = new ProfileFollower(2.5, 0, 0, 1, 0, 0);
+    private ProfileFollower mXController = new ProfileFollower(2.5, 0, 0, 0, 0, 0);
+    private ProfileFollower mYController = new ProfileFollower(2.5, 0, 0, 0, 0, 0);
     private ProfileFollower mThetaController = new ProfileFollower(1.5, 0.0, 0.0, 1.0, 0.0, 0.0);
 
     private boolean mAutoAlignComplete = false;
@@ -49,15 +49,15 @@ public class AutoAlignMotionPlanner {
                 Logger.recordOutput("offsetTargetPoint", odomToTargetPoint.toWPI());
         mXController.setGoalAndConstraints(
                 new MotionProfileGoal(odomToTargetPoint.getTranslation().x(), 0,
-                        IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 0.08, 0.05),
+                        IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 0.08, 0.3),
                 Constants.kPositionMotionProfileConstraints);
         mYController.setGoalAndConstraints(
                 new MotionProfileGoal(odomToTargetPoint.getTranslation().y(), 0,
-                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.08, 0.05),
+                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.08, 0.3),
                 Constants.kPositionMotionProfileConstraints);
         mThetaController.setGoalAndConstraints(
                 new MotionProfileGoal(odomToTargetPoint.getRotation().getRadians(), 0,
-                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.03, 0.05),
+                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.08, 0.05),
                 Constants.kHeadingMotionProfileConstraints);
 
 

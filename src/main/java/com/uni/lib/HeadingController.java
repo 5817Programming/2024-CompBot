@@ -53,7 +53,7 @@ public class HeadingController {
         }
         double correctionForce = pidController.calculate(error, dt);
         if(Math.abs(correctionForce) > 0.017){
-            correctionForce = .020* Math.signum(correctionForce);
+            correctionForce = .0075* Math.signum(correctionForce);
         }
         return correctionForce;
     }

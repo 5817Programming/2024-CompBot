@@ -45,10 +45,10 @@ public class Constants {
     public static final int TIMEOUT_MILLISECONDS = 30;
     public static final int kCANTimeoutMs = 20;// The refresh rate of the periodic looper
 
-    public static final double kRobotBaseWidth = 22.0; // The Robot Wheel Base Width
-    public static final double kRobotBaseLength = 22.0;
-    public static final double mRobotBaseWidth = Units.inchesToMeters(22); // The Robot Wheel Base Width
-    public static final double mRobotBaseLength = Units.inchesToMeters(22);// The Robot Wheel Base Length
+    public static final double kRobotBaseWidth = 24.0; // The Robot Wheel Base Width
+    public static final double kRobotBaseLength = 24.0;
+    public static final double mRobotBaseWidth = Units.inchesToMeters(24); // The Robot Wheel Base Width
+    public static final double mRobotBaseLength = Units.inchesToMeters(24);// The Robot Wheel Base Length
 
     public static final double kOuterWheelDriveDiameter = 4.0;
 
@@ -95,8 +95,11 @@ public class Constants {
     // Scrub Factors
     public static final boolean kSimulateReversedCarpet = false;
     public static final double[] kWheelScrubFactors = new double[] { 1.0, 1.0, 1.0, 1.0 };
-    public static final double kXScrubFactor = isCompbot?0.935:0.85;
-    public static final double kYScrubFactor = isCompbot?0.93:0.875;
+    public static final double kXScrubFactorP = isCompbot?0.935:0.85;
+    public static final double kYScrubFactorP = isCompbot?1:.875;
+    public static final double kXScrubFactorN = isCompbot?0.94:0.85;
+    public static final double kYScrubFactorN = isCompbot?1:.875;
+
 
     public static final double driveKS = (0.32 / 12);
     public static final double driveKV = (1.51 / 12);
@@ -140,10 +143,10 @@ public class Constants {
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = kMaxAccelerationMetersPerSecondSquared /
     Math.hypot(mRobotBaseLength / 2.0, mRobotBaseWidth / 2.0);
 
-    public static final double kFrontRightStartingEncoderPosition = isCompbot ? -143.7 : -86; // -354.950352
-    public static final double kFrontLeftStartingEncoderPosition = isCompbot ? 22.36 : -160; // -263.094811
-    public static final double kRearLeftStartingEncoderPosition = isCompbot ? 40.4 : -355; // -121.094031
-    public static final double kRearRightStartingEncoderPosition =isCompbot ? 11.07 : -265; // -355.170825
+    public static final double kFrontRightStartingEncoderPosition = isCompbot ? -144.3 : -86; // -354.950352
+    public static final double kFrontLeftStartingEncoderPosition = isCompbot ? 52.25 : -160; // -263.094811
+    public static final double kRearLeftStartingEncoderPosition = isCompbot ?117.9: -355; // -121.094031
+    public static final double kRearRightStartingEncoderPosition =isCompbot ? 4.3 : -265; // -355.170825
 
     public static final class ShooterConstants {
         public static final double HANDOFF = 0;
@@ -220,13 +223,13 @@ public class Constants {
 
     public static final class VisionConstants {
         public static final int APRIL_PIPLINE = 0;
-        public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 12;
+        public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 25;
 
-        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(.349,0),
+        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(.072,-.07),
                 Rotation2d.fromDegrees(0));
 
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);
-        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(27);
+        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(21);
 
         public static final double IMAGE_CAPTURE_LATENCY = 11.0;
        
@@ -238,7 +241,7 @@ public class Constants {
                         {0., 0., 1.}}
                 );
 
-        // public static final UndistortMap UNDISTORTMAP = new InterpolatingUndisortMap((int)1280.0, (int)960.0, new UndistortMap_Limelight_B_640x480());
+        public static final UndistortMap UNDISTORTMAP = new InterpolatingUndisortMap((int)1280.0, (int)960.0, new UndistortMap_Limelight_B_640x480());
     }
 
     public static final class LightConstants {

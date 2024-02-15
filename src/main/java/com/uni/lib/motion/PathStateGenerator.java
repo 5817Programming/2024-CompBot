@@ -99,13 +99,12 @@ public class PathStateGenerator{
 
   }
 
-  public double percentageDone() {
-    return (this.timer.get() / (transformedTrajectory.getTotalTimeSeconds())*nodes + .2);
-  }
+  // public double percentageDone() {
+  //   return (this.timer.get() / (transformedTrajectory.getTotalTimeSeconds() + .2));
+  // }
 
-  public boolean hasElapsedPercentage(double percent) {
-    return percentageDone() > percent;
+  public double getTime(){
+    return this.timer.get();
   }
-
 
 }

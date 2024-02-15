@@ -222,13 +222,13 @@ public class SuperStructure extends Subsystem {
     }
 
 
-    public void intakePercent(double percentage) {
-        RequestList request = new RequestList(Arrays.asList(
-            // intake.setIntakePercentRequest(percentage)
-        ), true);
+    // public void intakePercent(double percentage) {
+    //     RequestList request = new RequestList(Arrays.asList(
+    //         intake.setIntakePercentRequest(percentage)
+    //     ), false);
 
-        queue(request);
-    }
+    //     request(request);
+    // }
 
     public void trajectoryState(PathPlannerTrajectory trajectory, double nodes,double initRotation) { 
         RequestList request = new RequestList(Arrays.asList(
@@ -242,32 +242,32 @@ public class SuperStructure extends Subsystem {
         queue(queue);
     } 
 
-    public void intakeState(boolean Override){
-        RequestList request = new RequestList(Arrays.asList(
-            logCurrentRequest("Intaking")
-            // intake.stateRequest(Intake.State.Intaking),
-            // intake.hasPieceRequest()
-        ), true);
-        RequestList queue = new RequestList(Arrays.asList(
-            logCurrentRequest("Transfering")
-            // intake.hasPieceRequest(),
-            // intake.stateRequest(Intake.State.Feeding),
-            // indexer.stateRequest(Indexer.State.Recieving),
-            // indexer.hasPieceRequest()
-        ), false);
+    // public void intakeState(boolean Override){
+    //     RequestList request = new RequestList(Arrays.asList(
+    //         logCurrentRequest("Intaking"),
+    //         intake.stateRequest(Intake.State.Intaking),
+    //         intake.hasPieceRequest()
+    //     ), true);
+    //     RequestList queue = new RequestList(Arrays.asList(
+    //         logCurrentRequest("Transfering")
+    //         // intake.hasPieceRequest(),
+    //         // intake.stateRequest(Intake.State.Feeding),
+    //         // indexer.stateRequest(Indexer.State.Recieving),
+    //         // indexer.hasPieceRequest()
+    //     ), false);
 
-        if(Override){
-            request(request,queue);
-        }
-        else{
-            queue(request);
-            queue(queue);
-        }
-    }
+    //     if(Override){
+    //         request(request,queue);
+    //     }
+    //     else{
+    //         queue(request);
+    //         queue(queue);
+    //     }
+    // }
 
-    public void waitForTrajectoryState(double PercentageToRun) { 
+    public void waitForTrajectoryState(double TimeToElapse) { 
         RequestList request = new RequestList(Arrays.asList(
-                driveMotionPlanner.waitForTrajectoryRequest(PercentageToRun)),
+                driveMotionPlanner.waitForTrajectoryRequest(TimeToElapse)),
                 false);
         queue(request);
     }

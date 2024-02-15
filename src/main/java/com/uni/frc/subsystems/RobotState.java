@@ -153,7 +153,7 @@ public class RobotState {
             
             Pose2d odomToVehicle = getPoseFromOdom(visionTimestamp);
             //Rotating Camera by Yaw Offset
-            Pose2d cameraToTag = Pose2d.fromTranslation(mLatestVisionUpdate.get().getCameraToTarget().rotateBy(Constants.VisionConstants.cameraYawOffset.flip()));
+            Pose2d cameraToTag = Pose2d.fromTranslation(mLatestVisionUpdate.get().getCameraToTarget().rotateBy(Constants.VisionConstants.cameraYawOffset));
             //Getting Vehicle to Tag in Field Frame
             Pose2d vehicleToTag = Pose2d.fromTranslation(Constants.VisionConstants.ROBOT_TO_CAMERA.transformBy(cameraToTag).getTranslation().rotateBy(odomToVehicle.getRotation().inverse()));
 

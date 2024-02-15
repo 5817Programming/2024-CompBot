@@ -32,7 +32,7 @@ public class Ports {
             REAR_LEFT_ENCODER, REAR_RIGHT_ENCODER };
     
    
-        public static final int Intake = 0;
+        public static final int Intake = 22;
         public static final int shooter = 0;
         public static final int Pivot = 0;
         public static final int Arm = 0;

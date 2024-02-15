@@ -294,7 +294,7 @@ public class SwerveDrive extends Subsystem {
                 commandModuleVelocitys(inverseKinematics.updateDriveVectors(new Translation2d(
                     targetChassisSpeeds.vxMetersPerSecond,
                     -targetChassisSpeeds.vyMetersPerSecond),
-                    targetChassisSpeeds.omegaRadiansPerSecond*12,
+                    targetChassisSpeeds.omegaRadiansPerSecond*8,
                     poseMeters,
                     robotCentric
                     ));
@@ -306,7 +306,7 @@ public class SwerveDrive extends Subsystem {
                 headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading());
                 rotationCorrection = headingController.getRotationCorrection(getRobotHeading(), timeStamp);
                 desiredRotationScalar = rotationCorrection;
-                commandModuleVelocitysPercentages(inverseKinematics.updateDriveVectors(translationCorrection, rotationCorrection, poseMeters,
+                commandModules(inverseKinematics.updateDriveVectors(translationCorrection, rotationCorrection, poseMeters,
                         robotCentric));
                 break;
             case TARGETOBJECT:
@@ -362,8 +362,8 @@ public class SwerveDrive extends Subsystem {
     }
 
     public void fieldzeroSwerve() {// starts the zero 180 off
-        headingController.setTargetHeading(Rotation2d.fromDegrees(-180));
-        gyro.setAngle(-180);
+        headingController.setTargetHeading(Rotation2d.fromDegrees(0));
+        gyro.setAngle(0);
     }
 
     @Override

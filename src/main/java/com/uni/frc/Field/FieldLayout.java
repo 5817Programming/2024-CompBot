@@ -22,12 +22,12 @@ public class FieldLayout {
     public static class Red {
         public static final HashMap<Integer, AprilTag> kAprilTagMap = new HashMap<>();
 
-        private static final Pose2d kTag1ToCenterAlign = new Pose2d(-3, 0.0, Rotation2d.fromDegrees(0));
+        private static final Pose2d kTag1ToCenterAlign = new Pose2d(-3, 0.0, Rotation2d.fromDegrees(180));
         private static final Pose2d kTag1ToRightAlign = new Pose2d(3, -0.55, Rotation2d.fromDegrees(0));
         private static final Pose2d kTag1ToLeftAlign = new Pose2d(3, 0.55, Rotation2d.fromDegrees(0));
 
 
-        private static final Pose2d kTag2ToCenterAlign = new Pose2d(0.77, 0.0, Rotation2d.fromDegrees(0));
+        private static final Pose2d kTag2ToCenterAlign = new Pose2d(0.77, 0.0, Rotation2d.fromDegrees(180));
         private static final Pose2d kTag2ToRightAlign = new Pose2d(0.77, -0.55, Rotation2d.fromDegrees(0));
         private static final Pose2d kTag2ToLeftAlign = new Pose2d(0.77, 0.55, Rotation2d.fromDegrees(0));
 
@@ -37,14 +37,14 @@ public class FieldLayout {
         private static final Pose2d kTag3ToLeftAlign = new Pose2d(-3, 0.55, Rotation2d.fromDegrees(0));
 
 
-        private static final Pose2d kTag4ToCenterAlign = new Pose2d(-1.4, 0.0, Rotation2d.fromDegrees(180));
+        private static final Pose2d kTag4ToCenterAlign = new Pose2d(-1.4, 0.0, Rotation2d.fromDegrees(0));
         private static final Pose2d kTag4ToRightAlign = new Pose2d(3, -0.55, Rotation2d.fromDegrees(0));
         private static final Pose2d kTag4ToLeftAlign = new Pose2d(3, 0.55, Rotation2d.fromDegrees(0));
 
 
 
 
-        private static final Pose2d kTag5ToCenterAlign = new Pose2d(0, -0.5, Rotation2d.fromDegrees(90));
+        private static final Pose2d kTag5ToCenterAlign = new Pose2d(0, -0.5, Rotation2d.fromDegrees(-90));
         private static final Pose2d kTag5ToRightAlign = new Pose2d(0.77, -0.55, Rotation2d.fromDegrees(0));
         private static final Pose2d kTag5ToLeftAlign = new Pose2d(0.77, 0.55, Rotation2d.fromDegrees(0));
 

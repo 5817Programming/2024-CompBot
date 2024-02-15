@@ -6,6 +6,8 @@ package com.uni.frc;
 
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.uni.frc.Planners.AutoAlignPointSelector;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.SuperStructure;
@@ -34,14 +36,20 @@ public class Controls {
         CoDriver = new Controller(Ports.XBOX_2);
         swerve = SwerveDrive.getInstance();
     }
-
+double percent = 0;
     public void update() {
         Driver.update();
         CoDriver.update();
         var timestamp = Timer.getFPGATimestamp();
         s = SuperStructure.getInstance();
 
-        
+        // if(Driver.RightBumper.isActive()){
+        //     s.intakePercent(-percent);
+        // }
+        // else{
+        //     s.intakePercent(0);
+        // }
+
         if (Driver.StartButton.isPressed())
             swerve.resetGryo(180);
 

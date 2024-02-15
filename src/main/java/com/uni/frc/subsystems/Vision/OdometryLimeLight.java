@@ -41,7 +41,7 @@ public class OdometryLimeLight extends Subsystem {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
   public static OdometryLimeLight instance = null;
-  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-down");
+  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-up");
   PeriodicIO mPeriodicIO = new PeriodicIO();
 
   private Mat mCameraMatrix = new Mat(3, 3, CV_64FC1);
@@ -231,19 +231,19 @@ public class OdometryLimeLight extends Subsystem {
       return null;
     } else {
       double[] undistortedNormalizedPixelValues;
-      // UndistortMap undistortMap =  Constants.VisionConstants.UNDISTORTMAP;
+      UndistortMap undistortMap =  Constants.VisionConstants.UNDISTORTMAP;
 
-      // undistortedNormalizedPixelValues = undistortMap.pixelToUndistortedNormalized((int) desiredTargetPixel.x(), (int) desiredTargetPixel.y());
-      // double y_pixels = undistortedNormalizedPixelValues[0];
-      // double z_pixels = undistortedNormalizedPixelValues[1];
+      undistortedNormalizedPixelValues = undistortMap.pixelToUndistortedNormalized((int) desiredTargetPixel.x(), (int) desiredTargetPixel.y());
+      double y_pixels = undistortedNormalizedPixelValues[0];
+      double z_pixels = undistortedNormalizedPixelValues[1];
 
-      // double nY = -(y_pixels - mCameraMatrix.get(0, 2)[0]);// -(y_pixels * 2.0 - 1.0);
-      // double nZ = -(z_pixels - mCameraMatrix.get(1, 2)[0]);// -(z_pixels * 2.0 - 1.0);
+      double nY = -(y_pixels - mCameraMatrix.get(0, 2)[0]);// -(y_pixels * 2.0 - 1.0);
+      double nZ = -(z_pixels - mCameraMatrix.get(1, 2)[0]);// -(z_pixels * 2.0 - 1.0);
 
-      // double y = nY / mCameraMatrix.get(0, 0)[0];
-      // double z = nZ / mCameraMatrix.get(1, 1)[0];
+      double y = nY / mCameraMatrix.get(0, 0)[0];
+      double z = nZ / mCameraMatrix.get(1, 1)[0];
 
-      return new TargetInfo(0, 0, tagId);
+      return new TargetInfo(y, z, tagId);
     }
   }
 

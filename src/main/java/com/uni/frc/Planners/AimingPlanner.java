@@ -63,7 +63,7 @@ public class AimingPlanner {
             case LimeLight:
                 
         }
-        headingController.setTargetHeading(targetPose.getRotation());
+        headingController.setTargetHeading(targetPose.getRotation().flip());
         double rotationOutput = headingController.updateRotationCorrection(currentOdomToRobot.getRotation(), timeStamp);
 
         targetPose = new Pose2d(
