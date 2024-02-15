@@ -71,7 +71,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     // autos.put("NS3", new NS3());
     // autos.put("S5", new S5());
     // autos.put("S3", new S3());
-    RobotState.getInstance().resetKalmanFilters();
+    RobotState.getInstance().resetKalmanFilters(Timer.getFPGATimestamp());
     for(HashMap.Entry<String, AutoBase> entry : autos.entrySet()) {
       String N = entry.getKey();
       AutoBase A = entry.getValue();
@@ -174,9 +174,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-        PathPlannerTrajectory genTrag = pathGenerator.generatePath(new Pose2d(0,2,new Rotation2d()).toWPI(), new PathConstraints(4, 4, 540, 760), new Node(new Pose2d(16,3.5, Rotation2d.identity())), new ChassisSpeeds().toWPI());
-
-      Logger.recordOutput("trag",Pose2d.fromTranslation(new Translation2d(genTrag.sample(Timer.getFPGATimestamp()%genTrag.getTotalTimeSeconds()).positionMeters.getX(),genTrag.sample(Timer.getFPGATimestamp()%genTrag.getTotalTimeSeconds()).positionMeters.getY())).toWPI());
+    
 
   }
 }

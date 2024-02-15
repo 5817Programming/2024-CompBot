@@ -487,30 +487,7 @@ public static final class FieldConstants {
     
         public static List<Obstacle> obstacles = List.of(
                 // Blue Charging Station
-                new Obstacle(new double[] {
-                        FieldConstants.Community.chargingStationCorners[0].x(),
-                        FieldConstants.Community.chargingStationCorners[1].x(),
-                        FieldConstants.Community.chargingStationCorners[3].x(),
-                        FieldConstants.Community.chargingStationCorners[2].x(),
-                }, new double[] {
-                        FieldConstants.Community.chargingStationCorners[0].y(),
-                        FieldConstants.Community.chargingStationCorners[1].y(),
-                        FieldConstants.Community.chargingStationCorners[3].y(),
-                        FieldConstants.Community.chargingStationCorners[2].y()
-                }).offset(0.5)
-                ,
-                new Obstacle(new double[] {
-                        allianceFlip(FieldConstants.Community.chargingStationCorners[2]).x(),
-                        allianceFlip(FieldConstants.Community.chargingStationCorners[3]).x(),
-                        allianceFlip(FieldConstants.Community.chargingStationCorners[1]).x(),
-                        allianceFlip(FieldConstants.Community.chargingStationCorners[0]).x(),
-                }, new double[] {
-                        allianceFlip(FieldConstants.Community.chargingStationCorners[2]).y(),
-                        allianceFlip(FieldConstants.Community.chargingStationCorners[3]).y(),
-                        allianceFlip(FieldConstants.Community.chargingStationCorners[1]).y(),
-                        allianceFlip(FieldConstants.Community.chargingStationCorners[0]).y()
-                }).offset(0.5)
-                
+              
                 );
             }
         public static Translation2d allianceFlip(Translation2d translation) {

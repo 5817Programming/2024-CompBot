@@ -57,7 +57,7 @@ public class PathStateGenerator{
     double desiredX = desiredState.getTargetHolonomicPose().getTranslation().getX();
     double desiredY = desiredState.getTargetHolonomicPose().getTranslation().getY();
     Logger.recordOutput("desiredPose", new Pose2d(desiredX, desiredY, Rotation2d.fromDegrees(desiredRotation)).toWPI());
-    if (alliance())
+    if (alliance()&& useAllianceColor)
       return new Pose2d(new Translation2d(reflect(desiredX), desiredY), Rotation2d.fromDegrees(desiredRotation));
     else
       return new Pose2d(new Translation2d(desiredX, desiredY), Rotation2d.fromDegrees(desiredRotation).flip());
@@ -72,11 +72,11 @@ public class PathStateGenerator{
     return DriverStation.getAlliance().get().equals(Alliance.Red);
   }
 
-  public Pose2d getInitial(PathPlannerTrajectory trajectory,double Rotation) {
+  public Pose2d getInitial(PathPlannerTrajectory trajectory,double Rotation, boolean useAllianceColor) {
     double initX = trajectory.getInitialState().positionMeters.getX();
     double initY = trajectory.getInitialState().positionMeters.getY();
     double initRot = Rotation;
-    if (alliance()) {
+    if (alliance() && useAllianceColor) {
       return new Pose2d(new Translation2d(reflect(initX), initY),
           Rotation2d.fromDegrees(initRot).flip());
     } else {

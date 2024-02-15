@@ -53,6 +53,10 @@ public class RobotStateEstimator extends Subsystem {
 
   } 
 
+  public void resetModuleOdometry(Pose2d initialPose){
+      mOdometry.resetPosition(initialPose, mDrive.getModules());
+  }
+
   @Override
   public void outputTelemetry() {
     RobotState.getInstance().outputTelemetry();

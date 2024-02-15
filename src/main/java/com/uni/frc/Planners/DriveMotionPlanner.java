@@ -6,6 +6,7 @@ package com.uni.frc.Planners;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.RobotStateEstimator;
@@ -14,7 +15,9 @@ import com.uni.frc.subsystems.gyros.Pigeon;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
+import com.uni.lib.motion.PathGenerator;
 import com.uni.lib.motion.PathStateGenerator;
+import com.uni.lib.swerve.ChassisSpeeds;
 import com.uni.lib.util.PID2d;
 import com.uni.lib.util.SynchronousPIDF;
 
@@ -31,10 +34,10 @@ public class DriveMotionPlanner{
     boolean trajectoryFinished = false;
     Pose2d drivingpose = new Pose2d();
     PathPlannerTrajectory trajectoryDesired;
-    PathStateGenerator pathFollower;
+    PathStateGenerator mPathStateGenerator;
+    PathGenerator mPathGenerator;
     PID2d OdometryPID = new PID2d(new SynchronousPIDF(.6,0,0),new SynchronousPIDF(.6,0,0));
     double lastTimestamp = 0;
-    Pose2d poseMeters;
     public static DriveMotionPlanner instance = null;
 
     public static DriveMotionPlanner getInstance() {// if doesnt have an instance of swerve will make a new one
@@ -43,48 +46,55 @@ public class DriveMotionPlanner{
         return instance;
     }
     public DriveMotionPlanner(){
-        pathFollower = PathStateGenerator.getInstance();
+        mPathStateGenerator = PathStateGenerator.getInstance();
+        mPathGenerator = new PathGenerator();
         // swerve = SwerveDrive.getInstance();
     }
     public Rotation2d getTargetHeading(){
         return targetHeading;
     }
 
-    public void setTrajectory(PathPlannerTrajectory trajectory, double nodes,double initRotation) {
+    public void setTrajectory(PathPlannerTrajectory trajectory, double nodes,double initRotation, boolean useAllianceColor) {
         trajectoryFinished = false;
-        pathFollower.setTrajectory(trajectory, nodes);
-        poseMeters = pathFollower.getInitial(trajectory,initRotation);
-        Pose2d newpose = (pathFollower.getInitial(trajectory,initRotation));
+        this.useAllianceColor = useAllianceColor;
+        mPathStateGenerator.setTrajectory(trajectory, nodes);
+        Pose2d newpose = (mPathStateGenerator.getInitial(trajectory, initRotation, useAllianceColor));
+        RobotStateEstimator.getInstance().resetModuleOdometry(newpose);
         Pigeon.getInstance().setAngle(initRotation);
-        RobotStateEstimator.getInstance().resetOdometry(newpose);
-        RobotState.getInstance().resetKalmanFilters();
 
+   }
+    public void setTrajectoryOnTheFly(PathPlannerTrajectory trajectory, double nodes, boolean useAllianceColor) {
+        trajectoryFinished = false;
+        this.useAllianceColor = useAllianceColor;
+        mPathStateGenerator.setTrajectory(trajectory, nodes);
+        
+        Pose2d newpose = RobotState.getInstance().getKalmanPose(Timer.getFPGATimestamp());
+        RobotStateEstimator.getInstance().resetModuleOdometry(newpose);
+        RobotState.getInstance().reset(Timer.getFPGATimestamp(), newpose);
    }
 
     public void startPath(boolean useAllianceColor) {
         trajectoryStarted = true;
         this.useAllianceColor = useAllianceColor;
-        pathFollower.startTimer();
-    
-
+        mPathStateGenerator.startTimer();
     }
 
     public void resetTimer() {
         PathStateGenerator.getInstance().resetTimer();
     }
-    public Request setTrajectoryRequest(PathPlannerTrajectory trajectory, double nodes,double initRotation) {
+    public Request setTrajectoryRequest(PathPlannerTrajectory trajectory, double nodes,double initRotation, boolean useAllianceColor) {
         return new Request() {
 
             @Override
             public void act() {
-                setTrajectory(trajectory, nodes,initRotation);
+                setTrajectory(trajectory, nodes,initRotation, useAllianceColor);
             }
 
         };
     }
 
       public void updateTrajectory() {
-        Pose2d desiredPose = pathFollower.getDesiredPose2d(useAllianceColor);
+        Pose2d desiredPose = mPathStateGenerator.getDesiredPose2d(useAllianceColor);
         targetHeading = desiredPose.getRotation().inverse();
         targetFollowTranslation = desiredPose.getTranslation();
     }
@@ -106,9 +116,14 @@ public class DriveMotionPlanner{
         return new Translation2d(xError, -yError);
     }
 
-    public void generatePath(Pose2d startPose, Pose2d endPose){
-        
-        
+    public void generateAndPrepareTrajectory(Pose2d startPose, Pose2d endPose, ChassisSpeeds currentVelocity, boolean useAllianceColor){
+        PathPlannerTrajectory trajectory = mPathGenerator.generatePath(
+            startPose,
+            new PathConstraints(2.5, 7, 1000000, 1000000),
+            endPose,
+            new ChassisSpeeds()
+        );
+        setTrajectoryOnTheFly(trajectory, 1, useAllianceColor);
     }
     // public Request generateTrajectoryRequest(int node) {
     // return new Request() {
@@ -142,11 +157,11 @@ public class DriveMotionPlanner{
 
     // }
 
-public Request generatePathRequest(){
+public Request generatePathRequest(Pose2d start, Pose2d end, ChassisSpeeds currentVelocity, boolean useAllianceColor){
     return new Request() {
         @Override
         public void act(){
-            
+            generateAndPrepareTrajectory(start, end, currentVelocity, useAllianceColor);
         }
     };
 }
@@ -158,13 +173,13 @@ public Request startPathRequest(boolean useAllianceColor) {
                 startPath(useAllianceColor);
             }
         };
-    }
+}
 
         public Request waitForTrajectoryRequest(double time) {
         return new Request() {
             @Override
             public boolean isFinished() {
-                return pathFollower.getTime()>time;
+                return mPathStateGenerator.getTime()>time;
             }
         };}
     public Request waitForTrajectoryRequest() {

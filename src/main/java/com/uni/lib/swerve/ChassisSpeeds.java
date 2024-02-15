@@ -81,6 +81,10 @@ public class ChassisSpeeds {
     public edu.wpi.first.math.kinematics.ChassisSpeeds toWPI (){
         return new edu.wpi.first.math.kinematics.ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
     }
+
+    public static ChassisSpeeds fromTwist2d(Twist2d twist2d, Rotation2d rotation){
+        return ChassisSpeeds.fromFieldRelativeSpeeds(twist2d.dx, twist2d.dy, twist2d.dtheta, rotation);
+    }
     public Twist2d toTwist2d() {
         return new Twist2d(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
     }

@@ -64,7 +64,7 @@ public class RobotState {
         poseFromOdom = new InterpolatingTreeMap<>(kObservationBufferSize);
         poseFromOdom.put(new InterpolatingDouble(start_time), initialPose);
         visionPoseComponent = new InterpolatingTreeMap<>(kObservationBufferSize);
-        visionPoseComponent.put(new InterpolatingDouble(start_time), getInitialPose().getTranslation());
+        visionPoseComponent.put(new InterpolatingDouble(start_time), Translation2d.identity());
         PredictedVelocity = Twist2d.identity();
         MeasuredVelocity = Twist2d.identity();
         filteredMeasuredVelocity = new MovingAverageTwist2d(25);
@@ -78,7 +78,9 @@ public class RobotState {
         reset(Timer.getFPGATimestamp(), Pose2d.identity());
     }
 
-    public synchronized void resetKalmanFilters() {
+    public synchronized void resetKalmanFilters(double timestamp) {
+        visionPoseComponent = new InterpolatingTreeMap<>(kObservationBufferSize);
+        visionPoseComponent.put(new InterpolatingDouble(timestamp), getInitialPose().getTranslation());
         mKalmanFilter =
         new UnscentedKalmanFilter<>(
             Nat.N2(),

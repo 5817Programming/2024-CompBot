@@ -17,6 +17,9 @@ import com.uni.frc.subsystems.Requests.RequestList;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.frc.subsystems.Swerve.SwerveDrive.State;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight;
+import com.uni.lib.geometry.Pose2d;
+import com.uni.lib.swerve.ChassisSpeeds;
+
 import edu.wpi.first.wpilibj.Timer;
 
 /** Add your docs here. */
@@ -27,6 +30,7 @@ public class SuperStructure extends Subsystem {
     public DriveMotionPlanner driveMotionPlanner;
     public Logger logger;
     public DriveMotionPlanner dMotionPlanner;
+    public RobotState mRobotState;
     // public Indexer indexer;
     // public Pivot pivot;
     // public Shooter shooter;
@@ -37,6 +41,7 @@ public class SuperStructure extends Subsystem {
         swerve = SwerveDrive.getInstance();
         vision = OdometryLimeLight.getInstance();
         driveMotionPlanner = DriveMotionPlanner.getInstance();
+        mRobotState = RobotState.getInstance();
         // intake = Intake.getInstance();
         // indexer = Indexer.getInstance();
         // pivot = Pivot.getInstance();
@@ -235,13 +240,27 @@ public class SuperStructure extends Subsystem {
                 logCurrentRequest("trajectory")
         ), true);
         RequestList queue = new RequestList(Arrays.asList(
-                driveMotionPlanner.setTrajectoryRequest(trajectory, nodes,initRotation),
+                driveMotionPlanner.setTrajectoryRequest(trajectory, nodes,initRotation, true),
                 swerve.setStateRequest(State.TRAJECTORY),
                 driveMotionPlanner.startPathRequest(true)), false);
         queue(request);
         queue(queue);
     } 
 
+    public void onTheFlyTrajectoryState(Pose2d endPose, double timestamp){
+        RequestList request = new RequestList(Arrays.asList(
+            logCurrentRequest("OnTheFly"),
+            driveMotionPlanner.generatePathRequest(
+                mRobotState.getKalmanPose(timestamp),
+                endPose,
+                ChassisSpeeds.fromTwist2d(mRobotState.getPredictedVelocity(), swerve.getRobotHeading()),
+                false),
+            swerve.setStateRequest(State.TRAJECTORY),
+            driveMotionPlanner.startPathRequest(false)
+        ), false);
+
+        request(request);
+    }
     // public void intakeState(boolean Override){
     //     RequestList request = new RequestList(Arrays.asList(
     //         logCurrentRequest("Intaking"),

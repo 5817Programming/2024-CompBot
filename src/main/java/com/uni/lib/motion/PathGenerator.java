@@ -25,6 +25,7 @@ public class PathGenerator {
     private double grain = 2;
     private List<Node> fullPath;
     private Node start;
+    private Node endTarget;
     private VisGraph aStar;
     private List<Node> usedNodes;
     private List<Pose2d> fullPathPoses;
@@ -57,8 +58,9 @@ public class PathGenerator {
         }
     }
 
-    public PathPlannerTrajectory generatePath(Pose2d currentPose, PathConstraints constraints, Node endTarget, ChassisSpeeds currentVel) {
+    public PathPlannerTrajectory generatePath(com.uni.lib.geometry.Pose2d currentPose, PathConstraints constraints, com.uni.lib.geometry.Pose2d endPose, com.uni.lib.swerve.ChassisSpeeds currentVel) {
         start = new Node(currentPose);
+        endTarget = new Node(endPose);
         aStar.addNode(endTarget);
         fullPathPoses = new ArrayList<Pose2d>();
         fullPath = new ArrayList<Node>();
@@ -83,10 +85,10 @@ public class PathGenerator {
             fullPath = aStar.findPath(start, endTarget);
         }
         for(Node p : fullPath){
+            Logger.recordOutput("p " + fullPath.indexOf(p), p.toPose());
             fullPathPoses.add(p.toPose());
         }
-        Logger.recordOutput("gent1", fullPathPoses.get(0));
-        Logger.recordOutput("gent2", fullPathPoses.get(1));
+
         List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(fullPathPoses);
 
         PathPlannerPath path = new PathPlannerPath(
@@ -94,6 +96,6 @@ public class PathGenerator {
             constraints, 
             new GoalEndState(0, endTarget.getHolRot().toWPI()));
 
-        return path.getTrajectory(currentVel, currentPose.getRotation());
+        return path.getTrajectory(new ChassisSpeeds(-2,-2,0 ), currentPose.getRotation().toWPI());
     }
 }   

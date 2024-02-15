@@ -14,6 +14,7 @@ import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.frc.subsystems.Swerve.SwerveDrive.State;
 import com.uni.lib.geometry.Pose2d;
+import com.uni.lib.geometry.Rotation2d;
 
 import edu.wpi.first.wpilibj.Timer;
 
@@ -52,7 +53,7 @@ double percent = 0;
 
         if (Driver.StartButton.isPressed())
             swerve.resetGryo(180);
-
+            
         if (Driver.LeftTrigger.getValue() > 0.2) {
             swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), -Driver.RightStickX.getValue(), State.AIMING);
         } else if (Driver.RightTrigger.getValue() > .2) {
@@ -65,6 +66,11 @@ double percent = 0;
             swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), -Driver.RightStickX.getValue(), State.ALIGNMENT);
             }
             
+        }else if(Driver.BButton.isPressed()){
+            s.onTheFlyTrajectoryState(new Pose2d(8,2, Rotation2d.fromDegrees(180)), timestamp);
+        }
+        else if(Driver.BButton.isActive()){
+
         }
         else if(Driver.LeftBumper.isActive()){
             swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), -Driver.RightStickX.getValue(), State.TARGETOBJECT);
