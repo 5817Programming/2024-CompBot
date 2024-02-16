@@ -53,7 +53,7 @@ public class AutoAlignMotionPlanner {
                 Constants.kPositionMotionProfileConstraints);
         mYController.setGoalAndConstraints(
                 new MotionProfileGoal(odomToTargetPoint.getTranslation().y(), 0,
-                        IMotionProfileGoal.CompletionBehavior.OVERSHOOT, 0.08, 0.3),
+                        IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 0.08, 0.3),
                 Constants.kPositionMotionProfileConstraints);
         mThetaController.setGoalAndConstraints(
                 new MotionProfileGoal(odomToTargetPoint.getRotation().getRadians(), 0,

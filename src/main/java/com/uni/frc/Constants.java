@@ -104,8 +104,8 @@ public class Constants {
     public static final double[] kWheelScrubFactors = new double[] { 1.0, 1.0, 1.0, 1.0 };
     public static final double kXScrubFactorP = isCompbot?0.935:0.85;
     public static final double kYScrubFactorP = isCompbot?1:.875;
-    public static final double kXScrubFactorN = isCompbot?0.94:0.85;
-    public static final double kYScrubFactorN = isCompbot?1:.875;
+    public static final double kXScrubFactorN = isCompbot?0.935:0.85;
+    public static final double kYScrubFactorN = isCompbot?.86:.875;
 
 
     public static final double driveKS = (0.32 / 12);
@@ -150,10 +150,10 @@ public class Constants {
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = kMaxAccelerationMetersPerSecondSquared /
     Math.hypot(mRobotBaseLength / 2.0, mRobotBaseWidth / 2.0);
 
-    public static final double kFrontRightStartingEncoderPosition = isCompbot ? -144.3 : -86; // -354.950352
+    public static final double kFrontRightStartingEncoderPosition = isCompbot ? -103.3 : -86; // -354.950352
     public static final double kFrontLeftStartingEncoderPosition = isCompbot ? 52.25 : -160; // -263.094811
-    public static final double kRearLeftStartingEncoderPosition = isCompbot ?117.9: -355; // -121.094031
-    public static final double kRearRightStartingEncoderPosition =isCompbot ? 4.3 : -265; // -355.170825
+    public static final double kRearLeftStartingEncoderPosition = isCompbot ? -138.2: -355; // -121.094031
+    public static final double kRearRightStartingEncoderPosition =isCompbot ? 10.2 : -265; // -355.170825
 
     public static final class ShooterConstants {
         public static final double HANDOFF = 0;
