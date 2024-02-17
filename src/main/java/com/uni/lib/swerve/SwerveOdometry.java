@@ -53,7 +53,7 @@ public class SwerveOdometry {
             }
             averageDistance /= modules.size();
 
-            // m_velocity = m_kinematics.toChassisSpeedWheelConstraints(modules);
+            m_velocity = m_kinematics.toChassisSpeedWheelConstraints(modules);
 
             int minDevianceIndex = 0;
             double minDeviance = Units.inchesToMeters(100);

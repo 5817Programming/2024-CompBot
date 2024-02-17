@@ -34,6 +34,7 @@ import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
 import com.uni.lib.geometry.HeavilyInspired.Node;
+import com.uni.lib.geometry.HeavilyInspired.Obstacle;
 import com.uni.lib.motion.PathGenerator;
 import com.uni.lib.motion.PathStateGenerator;
 import com.uni.lib.swerve.ChassisSpeeds;
@@ -168,6 +169,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
+
   }
       PathGenerator pathGenerator = new PathGenerator();
 

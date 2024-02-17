@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.littletonrobotics.junction.Logger;
+
+import com.uni.lib.geometry.Pose2d;
+import com.uni.lib.geometry.Rotation2d;
+
 
 public class VisGraph {
     public static VisGraph instance = null;
@@ -53,6 +58,9 @@ public class VisGraph {
                 double y1 = polygon.ypoints[i];
                 double x2 = polygon.xpoints[j];
                 double y2 = polygon.ypoints[j];
+                Logger.recordOutput("point1", new Pose2d(x1,y1,new Rotation2d()).toWPI());
+                Logger.recordOutput("point2", new Pose2d(x2,y2,new Rotation2d()).toWPI());
+
                 if (Line2D.linesIntersect(x1, y1, x2, y2, edge.start.x, edge.start.y, edge.end.x, edge.end.y)) {
                     return false;
                 }

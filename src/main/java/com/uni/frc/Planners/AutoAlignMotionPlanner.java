@@ -46,7 +46,6 @@ public class AutoAlignMotionPlanner {
     public synchronized ChassisSpeeds updateAutoAlign(double timestamp, Pose2d currentOdomToVehicle,
             Pose2d currentFieldToOdom, Twist2d currentVel, HeadingController headingController, Rotation2d currentHeading) {
                 var odomToTargetPoint = currentFieldToOdom.inverse().transformBy(mFieldToTargetPoint);
-                Logger.recordOutput("offsetTargetPoint", odomToTargetPoint.toWPI());
         mXController.setGoalAndConstraints(
                 new MotionProfileGoal(odomToTargetPoint.getTranslation().x(), 0,
                         IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 0.08, 0.3),

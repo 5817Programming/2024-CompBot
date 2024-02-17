@@ -7,7 +7,10 @@ package com.uni.lib.swerve;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ejml.simple.SimpleMatrix;
+
 import com.uni.frc.Constants;
+import com.uni.frc.subsystems.Swerve.SwerveDriveModule;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
@@ -21,6 +24,10 @@ public class SwerveKinematics {
     
     private final int kNumberOfModules = Constants.kModulePositions.size();
     private List<Translation2d> moduleRotationVectors;
+    private List<Rotation2d> moduleRotations = new ArrayList<>(kNumberOfModules);
+    private Translation2d m_prevCoR = new Translation2d();
+
+
 
     
     public void updateModuleRotationVectors() {
@@ -29,6 +36,7 @@ public class SwerveKinematics {
         List<Translation2d> vectorList = new ArrayList<>(numberOfModules);
         for(int i = 0; i < numberOfModules; i++) {
             vectorList.add(Constants.kModulePositions.get(i).rotateBy(Rotation2d.fromDegrees(rotateVectorDirection)));
+            moduleRotations.add(Constants.kModulePositions.get(i).getAngle());
         }
         moduleRotationVectors = vectorList;
     }
@@ -60,5 +68,46 @@ public class SwerveKinematics {
         }
         return driveVectors;
         
+    }
+
+     public ChassisSpeeds toChassisSpeedWheelConstraints(List<SwerveDriveModule> modules) {
+        if (modules.size() != kNumberOfModules) {
+            throw new IllegalArgumentException(
+                    "Number of modules is not consistent with number of wheel locations provided in "
+                            + "constructor");
+        }
+        var constraintsMatrix = new SimpleMatrix(kNumberOfModules * 2, 3);
+        for (int i = 0; i < kNumberOfModules; i++) {
+            SwerveModuleState module = modules.get(i).getSwerveModuleState();
+
+            Rotation2d beta =
+                    module.angle.rotateBy(moduleRotations.get(i).inverse()).rotateBy(Rotation2d.fromRadians(Math.PI / 2.0));
+
+            //System.out.println(module);
+            constraintsMatrix.setRow(i*2, 0,
+                    module.angle.cos(),
+                    module.angle.sin(),
+                    -Constants.kModulePositions.get(i).norm()*beta.cos());
+            constraintsMatrix.setRow(i*2 + 1, 0,
+                    -module.angle.sin(),
+                    module.angle.cos(),
+                    Constants.kModulePositions.get(i).norm()*beta.sin());
+        }
+        //System.out.println(constraintsMatrix);
+
+        var psuedoInv = constraintsMatrix.pseudoInverse();
+
+        var enforcedConstraints = new SimpleMatrix(kNumberOfModules*2, 1);
+        for (int i = 0; i < kNumberOfModules; i++) {
+            enforcedConstraints.setRow(i*2, 0, modules.get(i).getSwerveModuleState().speedMetersPerSecond);
+            enforcedConstraints.setRow(i*2 + 1, 0, 0);
+        }
+        //System.out.println(enforcedConstraints);
+
+        var chassisSpeedsVector = psuedoInv.mult(enforcedConstraints);
+        return new ChassisSpeeds(
+                chassisSpeedsVector.get(0, 0),
+                chassisSpeedsVector.get(1, 0),
+                chassisSpeedsVector.get(2, 0));
     }
 }
