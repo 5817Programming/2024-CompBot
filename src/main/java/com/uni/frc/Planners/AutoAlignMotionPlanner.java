@@ -21,8 +21,8 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class AutoAlignMotionPlanner {
     
-    private ProfileFollower mXController = new ProfileFollower(2.5, 0, 0, 0, 0, 0);
-    private ProfileFollower mYController = new ProfileFollower(2.5, 0, 0, 0, 0, 0);
+    private ProfileFollower mXController = new ProfileFollower(2.5, 0, 0, 1, 0, 0);
+    private ProfileFollower mYController = new ProfileFollower(2.5, 0, 0, 1, 0, 0);
     private ProfileFollower mThetaController = new ProfileFollower(1.5, 0.0, 0.0, 1.0, 0.0, 0.0);
 
     private boolean mAutoAlignComplete = false;
@@ -61,14 +61,14 @@ public class AutoAlignMotionPlanner {
 
 
         Translation2d currentVelocityFrame = new Translation2d(currentVel.dx, currentVel.dy);
-        Translation2d currentVelocityOdometryFrame = currentVelocityFrame.rotateBy(currentOdomToVehicle.getRotation());
+        Translation2d currentVelocityOdometryFrame = currentVelocityFrame.rotateBy(currentHeading);
 
 
-        double xOutput = -mXController.update(
+        double xOutput = mXController.update(
                 new MotionState(timestamp, currentOdomToVehicle.getTranslation().x(), currentVelocityOdometryFrame.x(),
                         0.0),
                 timestamp + .01);
-        double yOutput = -mYController.update(
+        double yOutput = mYController.update(
                 new MotionState(timestamp, currentOdomToVehicle.getTranslation().y(), currentVelocityOdometryFrame.y(),
                         0.0),
                 timestamp + .01);
@@ -78,12 +78,14 @@ public class AutoAlignMotionPlanner {
         Translation2d output = new Translation2d(xOutput,yOutput).rotateBy(currentHeading);
         ChassisSpeeds setPoint;
                 Logger.recordOutput("auto align outputs", output.toWPI());
-        boolean yOutputWithinDeadband = mYController.onTarget();
-        boolean xOutputWithinDeadband = mXController.onTarget();
+        Pose2d distance = currentOdomToVehicle.transformBy(odomToTargetPoint.inverse());
+        Logger.recordOutput("distance to setpoint", distance.toWPI());
+        boolean yOutputWithinDeadband = Math.abfioutput.y()) < .1;
+        boolean xOutputWithinDeadband = Math.abs(output.x()) < .1;
         
         setPoint = ChassisSpeeds.fromFieldRelativeSpeeds(
-                xOutputWithinDeadband ? 0.0 : output.x(),
-                yOutputWithinDeadband ? 0.0 : output.y(),
+                xOutputWithinDeadband? 0:output.x(),
+                yOutputWithinDeadband? 0:output.y(),
                  thetaOutput,
                 currentFieldToOdom.getRotation().rotateBy(currentHeading));
         mAutoAlignComplete = yOutputWithinDeadband && xOutputWithinDeadband;

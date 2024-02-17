@@ -292,11 +292,11 @@ public class SwerveDrive extends Subsystem {
                 }
                 ChassisSpeeds targetChassisSpeeds = updateAutoAlign();
                 commandModuleVelocitys(inverseKinematics.updateDriveVectors(new Translation2d(
-                    targetChassisSpeeds.vxMetersPerSecond,
-                    -targetChassisSpeeds.vyMetersPerSecond),
+                    -targetChassisSpeeds.vxMetersPerSecond,
+                    targetChassisSpeeds.vyMetersPerSecond),
                     targetChassisSpeeds.omegaRadiansPerSecond*8,
                     poseMeters,
-                    robotCentric
+                    false
                     ));
                 break;
 
