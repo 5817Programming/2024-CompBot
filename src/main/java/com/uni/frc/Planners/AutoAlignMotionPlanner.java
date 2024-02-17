@@ -80,7 +80,7 @@ public class AutoAlignMotionPlanner {
                 Logger.recordOutput("auto align outputs", output.toWPI());
         Pose2d distance = currentOdomToVehicle.transformBy(odomToTargetPoint.inverse());
         Logger.recordOutput("distance to setpoint", distance.toWPI());
-        boolean yOutputWithinDeadband = Math.abfioutput.y()) < .1;
+        boolean yOutputWithinDeadband = Math.abs(output.y()) < .1;
         boolean xOutputWithinDeadband = Math.abs(output.x()) < .1;
         
         setPoint = ChassisSpeeds.fromFieldRelativeSpeeds(
