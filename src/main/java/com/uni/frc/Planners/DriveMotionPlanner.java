@@ -60,7 +60,7 @@ public class DriveMotionPlanner{
         mPathStateGenerator.setTrajectory(trajectory, nodes);
         Pose2d newpose = (mPathStateGenerator.getInitial(trajectory, initRotation, useAllianceColor));
         RobotStateEstimator.getInstance().resetModuleOdometry(newpose);
-        Pigeon.getInstance().setAngle(initRotation);
+        Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).flip().getDegrees());
 
    }
     public void setTrajectoryOnTheFly(PathPlannerTrajectory trajectory, double nodes, boolean useAllianceColor) {
