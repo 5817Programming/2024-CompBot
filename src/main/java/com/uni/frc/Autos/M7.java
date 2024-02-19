@@ -5,6 +5,7 @@ package com.uni.frc.Autos;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.subsystems.SuperStructure;
+import com.uni.frc.subsystems.Requests.Prerequisite;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,6 +22,11 @@ public class M7 extends AutoBase{
     public void auto() {
         // s.intakeState(false);
         s.trajectoryState(path,9,initRotation);
+        s.intakeState(false);
         s.waitState(25, false);
+    }
+
+    public void updateAuto(){
+        Prerequisite 
     }
 }

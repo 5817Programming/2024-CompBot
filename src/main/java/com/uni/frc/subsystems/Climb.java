@@ -1,36 +1,42 @@
  package com.uni.frc.subsystems;
 
-  import com.ctre.phoenix6.configs.TalonFXConfiguration;
+  import javax.sound.sampled.Port;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
   import com.ctre.phoenix6.controls.DutyCycleOut;
-  import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
   import com.ctre.phoenix6.hardware.TalonFX;
  import com.uni.frc.Ports;
- import com.uni.frc.CompConstants.PivotConstants;
+import com.uni.frc.CompConstants.ElevatorConstants;
  import com.uni.frc.subsystems.Requests.Request;
  import com.uni.lib.TalonConfigs;
 
 
-  public class Pivot extends Subsystem {
+  public class Climb extends Subsystem {
     private PeriodicIO mPeriodicIO = new PeriodicIO();
-    private TalonFX pivotMotor = new TalonFX(Ports.Pivot);
-    private TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
+    private TalonFX elevatorMotor1 = new TalonFX(Ports.elevatorMotor1);
+    private TalonFX elevatorMotor2 = new TalonFX(Ports.elevatorMotor2);
+    
+
+    private TalonFXConfiguration elevator1Config = TalonConfigs.elevatorConfigs();
+
     private State currentState;
-    private boolean stateChanged;
 
 
-    public static Pivot instance = null;
 
-    public static Pivot getInstance() {
+    public static Climb instance = null;
+
+    public static Climb getInstance() {
       if (instance == null)
-        instance = new Pivot();
+        instance = new Climb();
       return instance;
     }
 
     /** Creates a new pivot. */
-    public Pivot() {
+    public Climb() {
       configMotors();
-      currentState = State.MAXDOWN;
-      stateChanged = false;
+
     }
 
     public enum ControlMode {
@@ -39,13 +45,11 @@
     }
 
     public enum State {
-      AMP(PivotConstants.AMP),
-      SPEAKER(PivotConstants.SPEAKER),
-      TRANSFER(PivotConstants.SPEAKER),
-      TRAP(PivotConstants.SPEAKER),
-      MAXUP(PivotConstants.MAX_UP),
-      MAXDOWN(PivotConstants.MAX_DOWN),
-      SHOOTING(PivotConstants.MAX_DOWN);
+      STOW(ElevatorConstants.STOW),
+      OVERCHAIN(ElevatorConstants.OVERCHAIN),
+      ONCHAIN(ElevatorConstants.ONCHAIN),
+      MAXUP(ElevatorConstants.MAX_UP),
+      MAXDOWN(ElevatorConstants.MAX_DOWN);
 
       double output = 0;
 
@@ -55,14 +59,14 @@
     }
 
     public void setRamp(double rampTime) {
-      pivotMotor.getConfigurator().refresh(pivotConfig);
-      pivotConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = rampTime;
-      pivotMotor.getConfigurator().apply(pivotConfig);
+      elevatorMotor1.getConfigurator().refresh(elevator1Config);
+      elevator1Config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = rampTime;
+      elevatorMotor1.getConfigurator().apply(elevator1Config);
     }
 
     public void configMotors() {
-      pivotConfig = TalonConfigs.pivotConfigs();
-      pivotMotor.getConfigurator().apply(pivotConfig);
+      elevator1Config = TalonConfigs.pivotConfigs();
+      elevatorMotor1.getConfigurator().apply(elevator1Config);
     }
 
     public void setMotionMagic(double position){
@@ -75,31 +79,25 @@
       mPeriodicIO.rotationDemand = percentage;
     }
 
-    public void setState(State state) {
-      if (state != currentState)
-        stateChanged = true;
-      currentState = state;
-    }
 
     public boolean atTarget(){
       return Math.abs(currentState.output) - Math.abs(mPeriodicIO.rotationPosition) <1;
     }
 
     public void conformToState(State state) {
-      setState(state);
       setMotionMagic(state.output);
     }
     public void conformToState(double Override) {
-      setState(State.SHOOTING);
       setMotionMagic(Override);
     }
 
     public void motionMagic(){
-      pivotMotor.setControl(new MotionMagicVoltage(mPeriodicIO.rotationDemand));
-    }
+      elevatorMotor1.setControl(new MotionMagicVoltage(mPeriodicIO.rotationDemand));
+      elevatorMotor2.setControl(new Follower(Ports.elevatorMotor1, false));//TODO MAYBE OPPOSE
+    }   
 
     public void setPercent(){
-      pivotMotor.setControl(new DutyCycleOut(mPeriodicIO.rotationDemand, true, false, false, false));
+      elevatorMotor1.setControl(new DutyCycleOut(mPeriodicIO.rotationDemand, true, false, false, false));
      
     }
 
@@ -139,7 +137,7 @@
       return new Request() {
         @Override
           public boolean isFinished() {
-              return !stateChanged && atTarget();
+              return  atTarget();
           }
       };
     }
@@ -150,9 +148,9 @@
 
     @Override
     public void writePeriodicOutputs() {
-      mPeriodicIO.rotationPosition = pivotMotor.getPosition().getValueAsDouble();
-      mPeriodicIO.velocity = pivotMotor.getVelocity().getValueAsDouble();
-      mPeriodicIO.statorCurrent = pivotMotor.getStatorCurrent().getValueAsDouble();
+      mPeriodicIO.rotationPosition = elevatorMotor1.getPosition().getValueAsDouble();
+      mPeriodicIO.velocity = elevatorMotor1.getVelocity().getValueAsDouble();
+      mPeriodicIO.statorCurrent = elevatorMotor1.getStatorCurrent().getValueAsDouble();
     }
 
     @Override
@@ -169,7 +167,6 @@
 
     @Override
     public void outputTelemetry() {
-
     }
 
     @Override

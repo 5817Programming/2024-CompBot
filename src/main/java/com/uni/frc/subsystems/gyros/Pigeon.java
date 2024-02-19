@@ -9,7 +9,6 @@ import com.uni.frc.Constants;
 import com.uni.frc.Ports;
 import com.uni.lib.geometry.Twist2d;
 
-import edu.wpi.first.units.Units;
 
 /** 
  * This class is used as an extention of the original pidgeon class

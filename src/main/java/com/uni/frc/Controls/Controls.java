@@ -2,14 +2,16 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package com.uni.frc;
+package com.uni.frc.Controls;
 
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
-
+import com.uni.frc.Ports;
 import com.uni.frc.Planners.AutoAlignPointSelector;
+import com.uni.frc.subsystems.Indexer;
+import com.uni.frc.subsystems.Intake;
 import com.uni.frc.subsystems.RobotState;
+import com.uni.frc.subsystems.Shooter;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.frc.subsystems.Swerve.SwerveDrive.State;
@@ -44,6 +46,25 @@ double percent = 0;
         var timestamp = Timer.getFPGATimestamp();
         s = SuperStructure.getInstance();
 
+
+
+        if(Driver.XButton.isActive())
+            Intake.getInstance().setState(Intake.State.Feeding);
+        else
+            Intake.getInstance().setState(Intake.State.Off);
+        if(Driver.AButton.isActive())
+            Indexer.getInstance().setPercent(0.6);
+        else
+            Indexer.getInstance().setPercent(0);
+        if(Driver.BButton.isActive())
+            Shooter.getInstance().setPercent(0.6);
+        else
+            Shooter.getInstance().setPercent(0);
+        
+
+
+
+
         // if(Driver.RightBumper.isActive()){
         //     s.intakePercent(-percent);
         // }
@@ -53,7 +74,6 @@ double percent = 0;
 
         if (Driver.StartButton.isPressed())
             swerve.resetGryo(180);
-            
         if (Driver.LeftTrigger.getValue() > 0.2) {
             swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), -Driver.RightStickX.getValue(), State.AIMING);
         } else if (Driver.RightTrigger.getValue() > .2) {

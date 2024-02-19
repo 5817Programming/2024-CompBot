@@ -103,11 +103,10 @@ public class CompConstants {
     }
     
     public static final class ElevatorConstants{
-        public static final double SPEAKER = 0;
-        public static final double AMP = 0;
-        public static final double TRAP = 0;
-        public static final double TRANSFER = 0;
-        public static final double SHOOTING = 0;
+        public static final double STOW = 0;
+        public static final double OVERCHAIN = 0;
+        public static final double ONCHAIN = 0;
+
         public static final double MAX_UP = 0;
         public static final double MAX_DOWN = 0;
     }

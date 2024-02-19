@@ -1,7 +1,6 @@
 package com.uni.frc.Field;
 
 import com.uni.lib.geometry.Pose2d;
-import com.uni.lib.geometry.Translation2d;
 
 public class AprilTag {
 

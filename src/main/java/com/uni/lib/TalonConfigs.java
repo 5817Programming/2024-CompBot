@@ -5,7 +5,6 @@
 package com.uni.lib;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.uni.frc.Constants;
 
 /** Add your docs here. */
@@ -59,8 +58,25 @@ public class TalonConfigs {
 
       return driveConfigs;
     }
+    public static TalonFXConfiguration elevatorConfigs() {
+        TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
+        driveConfigs.Slot0.kV = .12;
+        driveConfigs.Slot0.kS = .25;
+        driveConfigs.Slot0.kA = .01;
+        driveConfigs.Slot0.kP = .11;
+        driveConfigs.Slot0.kI = 0;
+        driveConfigs.Slot0.kD = 0;
+        driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 
+        driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
 
-    public static TalonFXConfiguration rackConfigs() {
+
+        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
+        driveConfigs.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));
+
+      return driveConfigs;
+    }
+
+    public static TalonFXConfiguration armConfigs() {
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
         driveConfigs.Slot0.kV = .12;
         driveConfigs.Slot0.kS = .25;
@@ -77,7 +93,7 @@ public class TalonConfigs {
       return driveConfigs;
     }
 
-    public static TalonFXConfiguration wristConfigs() {
+    public static TalonFXConfiguration handConfigs() {
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
         driveConfigs.Slot0.kV = .12;
         driveConfigs.Slot0.kS = .25;
@@ -95,6 +111,38 @@ public class TalonConfigs {
       return driveConfigs;
     }
     public static TalonFXConfiguration intakeConfigs() {
+        TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
+        driveConfigs.Slot0.kV = .12;
+        driveConfigs.Slot0.kS = .25;
+        driveConfigs.Slot0.kA = .01;
+        driveConfigs.Slot0.kP = .11;
+        driveConfigs.Slot0.kI = 0;
+        driveConfigs.Slot0.kD = 0;
+        driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
+
+
+        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
+        driveConfigs.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));
+
+      return driveConfigs;
+    }
+ public static TalonFXConfiguration indexerConfigs() {
+        TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
+        driveConfigs.Slot0.kV = .12;
+        driveConfigs.Slot0.kS = .25;
+        driveConfigs.Slot0.kA = .01;
+        driveConfigs.Slot0.kP = .11;
+        driveConfigs.Slot0.kI = 0;
+        driveConfigs.Slot0.kD = 0;
+        driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
+
+
+        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
+        driveConfigs.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));
+
+      return driveConfigs;
+    }
+  public static TalonFXConfiguration shooterConfigs() {
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
         driveConfigs.Slot0.kV = .12;
         driveConfigs.Slot0.kS = .25;

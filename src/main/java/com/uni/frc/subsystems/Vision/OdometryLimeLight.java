@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
@@ -22,15 +21,12 @@ import com.uni.frc.subsystems.Subsystem;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.lib.Vision.TargetInfo;
 import com.uni.lib.Vision.UndistortMap;
-import com.uni.lib.Vision.UndistortMap_Limelight_B_640x480;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
-import com.uni.lib.util.InterpolatingUndisortMap;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -258,7 +254,9 @@ public class OdometryLimeLight extends Subsystem {
       public boolean isFinished() {
         return mPeriodicIO.seesTarget;
       }
-    };
+
+
+    }.withPrerequisite(null);
   }
 
   public double getPivotAngle() {

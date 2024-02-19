@@ -5,7 +5,7 @@
 package com.uni.frc.subsystems;
 
 /** Add your docs here. */
-public abstract class Subsystem {//super class to new subsystems
+public abstract class Subsystem {
     public void readPeriodicInputs() {
     }
     public void writePeriodicOutputs() {

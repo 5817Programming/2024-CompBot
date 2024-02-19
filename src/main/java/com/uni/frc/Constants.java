@@ -9,11 +9,8 @@ import java.net.SocketException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
-
 import com.uni.lib.UndistortConstants;
 import com.uni.lib.Vision.UndistortMap;
-import com.uni.lib.Vision.UndistortMap_Limelight_A_640x480;
 import com.uni.lib.Vision.UndistortMap_Limelight_B_640x480;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
@@ -26,9 +23,6 @@ import com.uni.lib.util.InterpolatingUndisortMap;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.util.Units;
@@ -160,13 +154,16 @@ public class Constants {
         public static final double IDLE = 0;
         public static final double FEEDFORWARD = 2;
 
+        public static final double kShotTime = 1.2;
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SHOT_TRAVEL_TIME_TREE_MAP = new InterpolatingTreeMap<>();
+        public static final double kDeadband = 0;;
         static {
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
         }
+
     }
 
     public static final class IntakeConstants {
@@ -208,13 +205,28 @@ public class Constants {
         public static final double SHOOTING = 0;
         public static final double MAX_UP = 0;
         public static final double MAX_DOWN = 0;
+        public static final double kDeadband = 0;
 
-        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> ANGLE_TREEMAP = new InterpolatingTreeMap<>();
+        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kNewPivotShootingMap = new InterpolatingTreeMap<>();
         static {
-            ANGLE_TREEMAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            ANGLE_TREEMAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            ANGLE_TREEMAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            ANGLE_TREEMAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            kNewPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            kNewPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            kNewPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            kNewPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+        }
+        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kMediumPivotShootingMap = new InterpolatingTreeMap<>();
+        static {
+            kMediumPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            kMediumPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            kMediumPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            kMediumPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+        }
+        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kOldPivotShootingMap = new InterpolatingTreeMap<>();
+        static {
+            kOldPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            kOldPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            kOldPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            kOldPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
         }
     }
 
@@ -275,7 +287,15 @@ public static final class FieldConstants {
                 new Obstacle(reflect(boxX),boxY)
                 );
             }
-        
+
+        public static Pose2d redShooterPose = new Pose2d();
+        public static Pose2d blueShooterPose = new Pose2d();
+    public static Pose2d getShooterPose(){
+        if(DriverStation.getAlliance().get().equals(Alliance.Red)){
+            return redShooterPose;
+        }
+        return blueShooterPose;
+    }
  /**
      * Check if this system has a certain mac address in any network device.
      * @param mac_address Mac address to check.
