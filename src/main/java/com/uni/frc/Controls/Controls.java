@@ -39,6 +39,11 @@ public class Controls {
         CoDriver = new Controller(Ports.XBOX_2);
         swerve = SwerveDrive.getInstance();
     }
+    public enum scoreMode{
+        AMP,
+        SPEAKER
+    }
+    scoreMode currentScoreMode = scoreMode.SPEAKER;
 double percent = 0;
     public void update() {
         Driver.update();
@@ -75,29 +80,42 @@ double percent = 0;
         if (Driver.StartButton.isPressed())
             swerve.resetGryo(180);
         if (Driver.LeftTrigger.getValue() > 0.2) {
-            swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), -Driver.RightStickX.getValue(), State.AIMING);
-        } else if (Driver.RightTrigger.getValue() > .2) {
-            Optional<Pose2d> targetSnap = AutoAlignPointSelector
-                    .chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
-            if (targetSnap.isEmpty()) {
-            swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), -Driver.RightStickX.getValue(), State.MANUAL);
-            } else {
-                swerve.setAlignment(targetSnap.get());
-            swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), -Driver.RightStickX.getValue(), State.ALIGNMENT);
-            }
+            switch (currentScoreMode) {
+                case SPEAKER:
+                    swerve.setStateRequest(State.AIMING);
+                    //TODO SHOOT SEQUENCE
+                    break;
             
-        }else if(Driver.BButton.isPressed()){
-            s.onTheFlyTrajectoryState(new Pose2d(8,2, Rotation2d.fromDegrees(180)), timestamp);
-        }
-        else if(Driver.BButton.isActive()){
+                case AMP:
+                     Optional<Pose2d> targetSnap = AutoAlignPointSelector
+                    .chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
+                    if (targetSnap.isEmpty()) {
+                        swerve.setState(State.MANUAL);
 
-        }
-        else if(Driver.LeftBumper.isActive()){
-            swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), -Driver.RightStickX.getValue(), State.TARGETOBJECT);
-        } else {
-            swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), -Driver.RightStickX.getValue(), State.MANUAL);
-        }
+                    } else {
+                        swerve.setAlignment(targetSnap.get());
+                        swerve.setState(State.ALIGNMENT);
+                        //TODO AMP SEQUENCE
+                    }
+                    
+                    break;
+        } }
+           
+            
+        
+        // else if(Driver.BButton.isPressed()){
+        //     s.onTheFlyTrajectoryState(new Pose2d(8,2, Rotation2d.fromDegrees(180)), timestamp);
+        // }
+        if(Driver.AButton.isPressed())
+            currentScoreMode = scoreMode.SPEAKER;
+        if(Driver.BButton.isPressed())
+            currentScoreMode = scoreMode.AMP;
+   
+        if(Driver.RightTrigger.getValue()>0.2){
+            swerve.setState(State.TARGETOBJECT);
+            s.intakeState(false);
+        } 
+        swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), -Driver.RightStickX.getValue());
+    }}
 
-    }
 
-}

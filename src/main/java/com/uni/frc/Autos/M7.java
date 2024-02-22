@@ -26,7 +26,5 @@ public class M7 extends AutoBase{
         s.waitState(25, false);
     }
 
-    public void updateAuto(){
-        Prerequisite 
-    }
+
 }

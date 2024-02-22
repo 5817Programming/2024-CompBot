@@ -11,7 +11,7 @@ import com.uni.frc.subsystems.Subsystem;
 /** Add your docs here. */
 public class SubsystemManager {//up   dates all new subsystem methods
 
-    private List<Subsystem> allSubsystems;
+    public static List<Subsystem> allSubsystems;
 
 
     public SubsystemManager() {

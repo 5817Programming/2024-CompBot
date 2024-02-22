@@ -163,8 +163,7 @@ public class SwerveDrive extends Subsystem {
         speedPercent = (1 - (percent * Constants.GrannyModeWeight));
     }
 
-    public void sendInput(double x, double y, double rotation, State state) {
-        setState(state);
+    public void sendInput(double x, double y, double rotation) {
         translationVector = new Translation2d(x, y).scale(speedPercent);
         if (Math.abs(rotation) <= rotationDeadband) {
             rotation = 0;

@@ -33,9 +33,9 @@ import edu.wpi.first.wpilibj.Timer;
 import static org.opencv.core.CvType.CV_64FC1;
 
 public class OdometryLimeLight extends Subsystem {
-    static {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-    }
+  static {
+    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+  }
   public static OdometryLimeLight instance = null;
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-up");
   PeriodicIO mPeriodicIO = new PeriodicIO();
@@ -55,14 +55,15 @@ public class OdometryLimeLight extends Subsystem {
 
   private OdometryLimeLight() {
     for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            mCameraMatrix.put(i, j, Constants.VisionConstants.UNDISTORT_CONSTANTS.getCameraMatrix()[i][j]);
-        }
+      for (int j = 0; j < 3; j++) {
+        mCameraMatrix.put(i, j, Constants.VisionConstants.UNDISTORT_CONSTANTS.getCameraMatrix()[i][j]);
+      }
     }
     for (int i = 0; i < 5; i++) {
-        mDistortionCoeffients.put(0, i, Constants.VisionConstants.UNDISTORT_CONSTANTS.getCameraDistortion()[i]);
+      mDistortionCoeffients.put(0, i, Constants.VisionConstants.UNDISTORT_CONSTANTS.getCameraDistortion()[i]);
     }
-}
+  }
+
   public static class VisionUpdate {
     private double timestamp;
     private Translation2d cameraToTarget;
@@ -70,7 +71,7 @@ public class OdometryLimeLight extends Subsystem {
     private Translation2d txy;
     private Pose2d fieldToTag;
 
-    public VisionUpdate(double timestamp, Translation2d cameraToTarget, Translation2d txy,int tagId) {
+    public VisionUpdate(double timestamp, Translation2d cameraToTarget, Translation2d txy, int tagId) {
       this.timestamp = timestamp;
       this.cameraToTarget = cameraToTarget;
       this.fieldToTag = mTagMap.get(tagId).getFieldToTag();
@@ -85,7 +86,7 @@ public class OdometryLimeLight extends Subsystem {
       return cameraToTarget;
     }
 
-    public Translation2d getTxy(){
+    public Translation2d getTxy() {
       return txy;
     }
 
@@ -110,29 +111,28 @@ public class OdometryLimeLight extends Subsystem {
     mPeriodicIO.corners = table.getEntry("tcornxy").getNumberArray(new Number[] { 0, 0, 0, 0, 0 });
     mPeriodicIO.ta = table.getEntry("ta").getDouble(0);
     Translation2d cameraToTarget = getCameraToTargetTranslation();
-    Translation2d txy = new Translation2d(mPeriodicIO.tx,mPeriodicIO.ty);
+    Translation2d txy = new Translation2d(mPeriodicIO.tx, mPeriodicIO.ty);
     int tagId = mPeriodicIO.tagId;
 
     if (mPeriodicIO.seesTarget) {
       if (mTagMap.keySet().contains(tagId) && cameraToTarget != null && mPeriodicIO.ta > .15) {
-            mPeriodicIO.visionUpdate = Optional.of(new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, txy, tagId));
+        mPeriodicIO.visionUpdate = Optional
+            .of(new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, txy, tagId));
         RobotState.getInstance().addVisionUpdate(
-            mPeriodicIO.visionUpdate.get()
-            );
+            mPeriodicIO.visionUpdate.get());
 
       } else {
         mPeriodicIO.visionUpdate = Optional.empty();
       }
-    }
-    else{
+    } else {
       mPeriodicIO.visionUpdate = Optional.empty();
     }
   }
 
-
-  public Optional<VisionUpdate> getLatestVisionUpdate(){
+  public Optional<VisionUpdate> getLatestVisionUpdate() {
     return mPeriodicIO.visionUpdate;
   }
+
   public synchronized Translation2d getCameraToTargetTranslation() {
     // Get all Corners Normalized
     List<TargetInfo> targetPoints = getTarget();
@@ -227,9 +227,10 @@ public class OdometryLimeLight extends Subsystem {
       return null;
     } else {
       double[] undistortedNormalizedPixelValues;
-      UndistortMap undistortMap =  Constants.VisionConstants.UNDISTORTMAP;
+      UndistortMap undistortMap = Constants.VisionConstants.UNDISTORTMAP;
 
-      undistortedNormalizedPixelValues = undistortMap.pixelToUndistortedNormalized((int) desiredTargetPixel.x(), (int) desiredTargetPixel.y());
+      undistortedNormalizedPixelValues = undistortMap.pixelToUndistortedNormalized((int) desiredTargetPixel.x(),
+          (int) desiredTargetPixel.y());
       double y_pixels = undistortedNormalizedPixelValues[0];
       double z_pixels = undistortedNormalizedPixelValues[1];
 
@@ -247,16 +248,13 @@ public class OdometryLimeLight extends Subsystem {
     return mPeriodicIO.tagId;
   }
 
-
   public Request hasTargetRequest() {
     return new Request() {
       @Override
       public boolean isFinished() {
         return mPeriodicIO.seesTarget;
       }
-
-
-    }.withPrerequisite(null);
+    };
   }
 
   public double getPivotAngle() {

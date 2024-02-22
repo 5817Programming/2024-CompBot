@@ -14,7 +14,7 @@ import com.uni.lib.TalonConfigs;
    private PeriodicIO mPeriodicIO = new PeriodicIO();
    private TalonFX shooterMotor1 = new TalonFX(Ports.shooter1);
    private TalonFX shooterMotor2 = new TalonFX(Ports.shooter2);
-
+   public State currentState = State.OFF;
    private TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
    private double spinOffset = 0;
    public static Shooter instance = null;
@@ -30,6 +30,16 @@ import com.uni.lib.TalonConfigs;
      configMotors();
    }
 
+   public enum State{
+    SHOOTING(1),
+    TRANSFER(0.5),
+    OFF(0);
+
+    double output = 0;
+    State(double output){
+        this.output = output;
+    }
+   }
 
    public void setRamp(double rampTime) {
      shooterMotor1.getConfigurator().refresh(shooterConfig);
@@ -49,6 +59,7 @@ import com.uni.lib.TalonConfigs;
    }
 
    public void setPercent(double Percentage) {
+     currentState = State.SHOOTING;
      mPeriodicIO.driveDemand = Percentage;
    }
 
@@ -72,6 +83,10 @@ import com.uni.lib.TalonConfigs;
 
      };
 
+   }
+   public void conformToState(State state){
+    currentState = state;
+    setPercent(state.output);
    }
 
  public Request setAccelerationRequest(double percentage) {

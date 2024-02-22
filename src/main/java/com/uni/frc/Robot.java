@@ -82,6 +82,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     vision = OdometryLimeLight.getInstance();
     swerve.zeroModules();
     subsystemManager = new SubsystemManager();
+
     subsystemManager.addSystems(Arrays.asList(
         SwerveDrive.getInstance(),
         SuperStructure.getInstance(), 

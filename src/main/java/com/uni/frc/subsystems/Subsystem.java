@@ -4,8 +4,11 @@
 
 package com.uni.frc.subsystems;
 
+import com.uni.frc.SubsystemManager;
+
 /** Add your docs here. */
 public abstract class Subsystem {
+
     public void readPeriodicInputs() {
     }
     public void writePeriodicOutputs() {

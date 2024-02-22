@@ -109,6 +109,7 @@ public class SuperStructure extends Subsystem {
 
     private enum ShootingState{
         OFF,
+        NOPIECE,
         PREPARED,
         RAMPING,
         TRANSFERING,
@@ -203,31 +204,26 @@ public class SuperStructure extends Subsystem {
     public void processShootingState(double timestamp){
         
         switch (shootingState){
+            case NOPIECE:
+                
             case RAMPING:
                 if(prepareShooterSetpoints(timestamp)){
                     shootingState = ShootingState.PREPARED;
                 }
                 break;
             case SHOOTING:
-
-                mIndexer.setPercent(1);
+                mIndexer.conformToState(Indexer.State.TRANSFERING);
                 break;
             case OFF:
-                mIndexer.setPercent(0);
-                mShooter.setPercent(0);
+
                 break;
             case TRANSFERING:
-
                 transferState();
-
-                
-                
                 break;
             case PREPARED:
                 if(readyToShoot()){
                     shootingState = ShootingState.SHOOTING;
                 }
-
                 break;
         }
     }
@@ -250,8 +246,9 @@ public class SuperStructure extends Subsystem {
     }
 
     public boolean readyToShoot(){
-        return true;
+        return true&&desiredShootingState==ShootingState.SHOOTING;
     }
+    
     public void processState(double timestamp){
         if(desiredState != currentState){
             switch (desiredState) {
@@ -378,19 +375,6 @@ public class SuperStructure extends Subsystem {
 
 
 
-  
-    public void dynamicScoreState(boolean Override){
-        RequestList request = new RequestList(Arrays.asList(
-            logCurrentRequest("Aiming"),
-            vision.hasTargetRequest()
-            // pivot.stateRequest(vision.getPivotAngle()),
-            // shooter.stateRequest(Shooter.State.Ramping),
-            // pivot.atTargetRequest()
-            // shooter.atTargetRequest()
-        ),false);
-
-        queue(request);
-    }
 
 
     public void intakePercent(double percentage) {
@@ -457,8 +441,30 @@ public class SuperStructure extends Subsystem {
                 false);
         queue(request);
     }
-
-
+    public Request superStateRequest(SuperState state){
+        return new Request() {
+            @Override
+            public void act() {
+                currentState = state;
+            }
+        };
+    }
+    public Request setShooterStateRequest(ShootingState state){
+        return new Request() {
+            @Override
+            public void act() {
+                shootingState = state;
+            }
+        };
+    }
+    public Request climbStateRequest(ClimbState state){
+        return new Request() {
+            @Override
+            public void act() {
+                climbState = state;
+            }
+        };
+    }
     public Request logCurrentRequest(String newLog) {
         return new Request() {
             @Override
@@ -468,13 +474,22 @@ public class SuperStructure extends Subsystem {
             }
         };
     }
+    public void speakerState(){
+            RequestList request = new RequestList(Arrays.asList(
+                setShooterStateRequest(ShootingState.RAMPING)
+            ),
+            false);
+        queue(request);
+    }
     public void transferState(){
         RequestList request = new RequestList(Arrays.asList(
         mIndexer.setPercentRequest(0.5),
+        mWrist.stateRequest(Wrist.State.TRANSFER),
         mShooter.setPercentRequest(0.5),
         mHand.stateRequest(Hand.State.TRANSFERING),
         mHand.hasPieceRequest(),
         mHand.stateRequest(Hand.State.OFF),
+        mWrist.stateRequest(Wrist.State.SHOOTING),
         mShooter.setPercentRequest(0),
         mIndexer.setPercentRequest(0)
         ),
