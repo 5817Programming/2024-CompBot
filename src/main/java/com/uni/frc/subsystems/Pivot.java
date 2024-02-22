@@ -48,7 +48,6 @@
       SHOOTING(PivotConstants.MAX_DOWN);
 
       double output = 0;
-
       State(double output){
         this.output = output;
       }

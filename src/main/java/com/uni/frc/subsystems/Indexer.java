@@ -12,8 +12,8 @@ import com.uni.lib.TalonConfigs;
  public class Indexer extends Subsystem {
 
    private PeriodicIO mPeriodicIO = new PeriodicIO();
-   private TalonFX indexerMotor = new TalonFX(Ports.Intake);
-   private BeamBreak indexerBeamBreak = new BeamBreak(Ports.IndexerBeamBreakPort);
+   private TalonFX indexerMotor = new TalonFX(Ports.Indexer, "Minivore");
+  //  private BeamBreak indexerBeamBreak = new BeamBreak(Ports.IndexerBeamBreakPort);
    private TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
 
 
@@ -106,7 +106,7 @@ import com.uni.lib.TalonConfigs;
      mPeriodicIO.drivePosition = indexerMotor.getPosition().getValueAsDouble();
      mPeriodicIO.velocity = indexerMotor.getVelocity().getValueAsDouble();
      mPeriodicIO.statorCurrent = indexerMotor.getStatorCurrent().getValueAsDouble();
-     mPeriodicIO.hasPiece = indexerBeamBreak.get();
+    //  mPeriodicIO.hasPiece = indexerBeamBreak.get();
    }
 
    @Override

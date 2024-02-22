@@ -38,11 +38,12 @@ public class Ports {
     
    
         public static final int Intake = 22;
-        public static final int shooter1 = 0;
-        public static final int shooter2 = 0;
+        public static final int shooter1 = 18;
+        public static final int shooter2 = 19;
         public static final int Pivot = 0;
         public static final int Wrist = 0;
         public static final int Hand = 0;
+        public static final int Indexer = 26; 
         public static final int IndexerBeamBreakPort = 0;
         public static final int IntakeBeamBreakPort = 0;
         public static final int handBeamBreak = 0;

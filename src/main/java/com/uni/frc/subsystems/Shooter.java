@@ -2,7 +2,8 @@ package com.uni.frc.subsystems;
 
 
  import com.ctre.phoenix6.configs.TalonFXConfiguration;
- import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
  import com.ctre.phoenix6.hardware.TalonFX;
 import com.uni.frc.Constants;
 import com.uni.frc.Ports;
@@ -12,8 +13,8 @@ import com.uni.lib.TalonConfigs;
 
  public class Shooter extends Subsystem {
    private PeriodicIO mPeriodicIO = new PeriodicIO();
-   private TalonFX shooterMotor1 = new TalonFX(Ports.shooter1);
-   private TalonFX shooterMotor2 = new TalonFX(Ports.shooter2);
+   private TalonFX shooterMotor1 = new TalonFX(Ports.shooter1, "Minivore");
+   private TalonFX shooterMotor2 = new TalonFX(Ports.shooter2, "Minivore");
    public State currentState = State.OFF;
    private TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
    private double spinOffset = 0;
@@ -127,20 +128,9 @@ import com.uni.lib.TalonConfigs;
 
    @Override
    public void readPeriodicInputs() {
-     shooterMotor1.setControl(new VelocityDutyCycle(mPeriodicIO.driveDemand,
-                                                   mPeriodicIO.accelerationDemand,
-                                          true,
-                                                   Constants.ShooterConstants.FEEDFORWARD,
-                                                   0,false,
-                                                   false,
-                                                   false));
-     shooterMotor1.setControl(new VelocityDutyCycle(mPeriodicIO.driveDemand-spinOffset,
-                                                   mPeriodicIO.accelerationDemand,
-                                          true,
-                                                   Constants.ShooterConstants.FEEDFORWARD,
-                                                   0,false,
-                                                   false,
-                                                   false));
+      shooterMotor1.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand).withEnableFOC(true));//TODO
+      shooterMotor2.setControl(new DutyCycleOut(mPeriodicIO.driveDemand).withEnableFOC(true));
+
    }
 
    @Override

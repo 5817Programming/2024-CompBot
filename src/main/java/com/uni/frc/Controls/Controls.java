@@ -54,15 +54,15 @@ double percent = 0;
 
 
         if(Driver.XButton.isActive())
-            Intake.getInstance().setState(Intake.State.Feeding);
+            s.intakePercent(-1);
         else
-            Intake.getInstance().setState(Intake.State.Off);
+            s.intakePercent(0);
         if(Driver.AButton.isActive())
-            Indexer.getInstance().setPercent(0.6);
+            Indexer.getInstance().setPercent(-0.6);
         else
             Indexer.getInstance().setPercent(0);
         if(Driver.BButton.isActive())
-            Shooter.getInstance().setPercent(0.6);
+            Shooter.getInstance().setPercent(-0.6);
         else
             Shooter.getInstance().setPercent(0);
         

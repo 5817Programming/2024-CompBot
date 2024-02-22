@@ -20,10 +20,13 @@ import com.uni.frc.Autos.M7;
 import com.uni.frc.Autos.M8;
 import com.uni.frc.Autos.NS5;
 import com.uni.frc.Controls.Controls;
+import com.uni.frc.subsystems.Indexer;
+import com.uni.frc.subsystems.Intake;
 // import com.uni.frc.subsystems.Intake;
 import com.uni.frc.subsystems.Music;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.RobotStateEstimator;
+import com.uni.frc.subsystems.Shooter;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.frc.subsystems.Vision.ObjectLimeLight;
@@ -89,9 +92,10 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
         OdometryLimeLight.getInstance(),
         RobotStateEstimator.getInstance(),
         ObjectLimeLight.getInstance(),
-        Music.getInstance()
-               // Shooter.getInstance()
-        // Intake.getInstance()
+        Music.getInstance(),
+        Shooter.getInstance(),
+        Indexer.getInstance(),
+        Intake.getInstance()
         ));
 
     }
