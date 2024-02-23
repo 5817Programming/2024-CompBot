@@ -71,13 +71,13 @@ public class Constants {
     };
     // The positions of the modules, relative to the robot's center
     public static final Translation2d kFrontRightPosition = new Translation2d(kRobotBaseWidth / 2,
-            kRobotBaseLength / 2);
+            -kRobotBaseLength / 2);
     public static final Translation2d kFrontLeftPosition = new Translation2d(kRobotBaseWidth / 2,
-            -kRobotBaseLength / 2);
-    public static final Translation2d kRearLeftPosition = new Translation2d(-kRobotBaseWidth / 2,
-            -kRobotBaseLength / 2);
-    public static final Translation2d kRearRightPosition = new Translation2d(-kRobotBaseWidth / 2,
             kRobotBaseLength / 2);
+    public static final Translation2d kRearLeftPosition = new Translation2d(-kRobotBaseWidth / 2,
+            kRobotBaseLength / 2);
+    public static final Translation2d kRearRightPosition = new Translation2d(-kRobotBaseWidth / 2,
+            -kRobotBaseLength / 2);
     public static final Translation2d mFrontRightPosition = new Translation2d(mRobotBaseWidth / 2,
             mRobotBaseLength / 2);
     public static final Translation2d mFrontLeftPosition = new Translation2d(mRobotBaseWidth / 2,
@@ -144,10 +144,15 @@ public class Constants {
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = kMaxAccelerationMetersPerSecondSquared /
     Math.hypot(mRobotBaseLength / 2.0, mRobotBaseWidth / 2.0);
 
-    public static final double kFrontRightStartingEncoderPosition = isCompbot ? -103.3 : -86; // -354.950352
-    public static final double kFrontLeftStartingEncoderPosition = isCompbot ? 52.25 : -160; // -263.094811
-    public static final double kRearLeftStartingEncoderPosition = isCompbot ? -138.2: -355; // -121.094031
-    public static final double kRearRightStartingEncoderPosition =isCompbot ? 10.2 : -265; // -355.170825
+    public static final double kFrontRightStartingEncoderPosition = isCompbot ? -164.5 : -86; // -354.950352
+    public static final double kFrontLeftStartingEncoderPosition = isCompbot ? -141.5 : -160; // -263.094811
+    public static final double kRearLeftStartingEncoderPosition = isCompbot ? -104.4: -355; // -121.094031
+    public static final double kRearRightStartingEncoderPosition =isCompbot ? -156.2: -265; // -355.170825
+
+
+
+
+
 
     public static final class ShooterConstants {
         public static final double HANDOFF = 0;
@@ -159,9 +164,7 @@ public class Constants {
         public static final double kDeadband = 0;;
         static {
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(10.0), new InterpolatingDouble(0.0));
         }
 
     }
@@ -209,10 +212,8 @@ public class Constants {
 
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kNewPivotShootingMap = new InterpolatingTreeMap<>();
         static {
-            kNewPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            kNewPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            kNewPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            kNewPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            kNewPivotShootingMap.put(new InterpolatingDouble(0.8), new InterpolatingDouble(-16.0));
+            kNewPivotShootingMap.put(new InterpolatingDouble(6.0), new InterpolatingDouble(-1.0));
         }
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kMediumPivotShootingMap = new InterpolatingTreeMap<>();
         static {
@@ -288,13 +289,12 @@ public static final class FieldConstants {
                 );
             }
 
-        public static Pose2d redShooterPose = new Pose2d();
-        public static Pose2d blueShooterPose = new Pose2d();
+  
     public static Pose2d getShooterPose(){
         if(DriverStation.getAlliance().get().equals(Alliance.Red)){
-            return redShooterPose;
+            return new Pose2d(16.28,5.6,new Rotation2d());
         }
-        return blueShooterPose;
+        return new Pose2d();
     }
  /**
      * Check if this system has a certain mac address in any network device.

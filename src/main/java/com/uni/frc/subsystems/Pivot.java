@@ -1,9 +1,13 @@
  package com.uni.frc.subsystems;
 
-  import com.ctre.phoenix6.configs.TalonFXConfiguration;
+  import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
   import com.ctre.phoenix6.controls.DutyCycleOut;
-  import com.ctre.phoenix6.controls.MotionMagicVoltage;
-  import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
  import com.uni.frc.Ports;
  import com.uni.frc.CompConstants.PivotConstants;
  import com.uni.frc.subsystems.Requests.Request;
@@ -12,7 +16,10 @@
 
   public class Pivot extends Subsystem {
     private PeriodicIO mPeriodicIO = new PeriodicIO();
-    private TalonFX pivotMotor = new TalonFX(Ports.Pivot);
+    private TalonFX pivotMotor1 = new TalonFX(Ports.Pivot1,"Minivore");
+    private TalonFX pivotMotor2 = new TalonFX(Ports.Pivot2,"Minivore");
+
+    private CANcoder encoder = new CANcoder(Ports.PivotEncoder,"Minivore");
     private TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
     private State currentState;
     private boolean stateChanged;
@@ -53,15 +60,26 @@
       }
     }
 
+    public void resetToAbsolute(){
+      double currentAngle =getAbsolutePosition()/360;
+      pivotMotor1.setPosition(currentAngle);
+
+      mPeriodicIO.rotationDemand = currentAngle;
+    }
+
     public void setRamp(double rampTime) {
-      pivotMotor.getConfigurator().refresh(pivotConfig);
+      pivotMotor1.getConfigurator().refresh(pivotConfig);
       pivotConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = rampTime;
-      pivotMotor.getConfigurator().apply(pivotConfig);
+      pivotMotor1.getConfigurator().apply(pivotConfig);
+    }
+
+    public double getAbsolutePosition(){
+      return encoder.getAbsolutePosition().getValueAsDouble()*360;
     }
 
     public void configMotors() {
       pivotConfig = TalonConfigs.pivotConfigs();
-      pivotMotor.getConfigurator().apply(pivotConfig);
+      pivotMotor1.getConfigurator().apply(pivotConfig);
     }
 
     public void setMotionMagic(double position){
@@ -94,12 +112,13 @@
     }
 
     public void motionMagic(){
-      pivotMotor.setControl(new MotionMagicVoltage(mPeriodicIO.rotationDemand));
+      pivotMotor1.setControl(new MotionMagicVoltage(mPeriodicIO.rotationDemand));
+      // pivotMotor2.setControl(new Follower(Ports.Pivot1, false));
+
     }
 
     public void setPercent(){
-      pivotMotor.setControl(new DutyCycleOut(mPeriodicIO.rotationDemand, true, false, false, false));
-     
+      pivotMotor1.setControl(new DutyCycleOut(mPeriodicIO.rotationDemand, true, false, false, false));
     }
 
     public Request stateRequest(State state) {
@@ -149,9 +168,9 @@
 
     @Override
     public void writePeriodicOutputs() {
-      mPeriodicIO.rotationPosition = pivotMotor.getPosition().getValueAsDouble();
-      mPeriodicIO.velocity = pivotMotor.getVelocity().getValueAsDouble();
-      mPeriodicIO.statorCurrent = pivotMotor.getStatorCurrent().getValueAsDouble();
+      mPeriodicIO.rotationPosition = pivotMotor1.getPosition().getValueAsDouble();
+      mPeriodicIO.velocity = pivotMotor1.getVelocity().getValueAsDouble();
+      mPeriodicIO.statorCurrent = pivotMotor1.getStatorCurrent().getValueAsDouble();
     }
 
     @Override
@@ -168,6 +187,8 @@
 
     @Override
     public void outputTelemetry() {
+      Logger.recordOutput("Pivot Position", pivotMotor1.getPosition().getValue());
+      Logger.recordOutput("Pivot Absolute Position",encoder.getAbsolutePosition().getValue()*360);
 
     }
 
@@ -182,6 +203,6 @@
       double velocity = 0;
       double statorCurrent = 0;
 
-      double rotationDemand = 0.0;
+      double rotationDemand = 0;
     }
   }

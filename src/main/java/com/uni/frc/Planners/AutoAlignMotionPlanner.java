@@ -72,7 +72,7 @@ public class AutoAlignMotionPlanner {
                 new MotionState(timestamp, currentOdomToVehicle.getTranslation().y(), currentVelocityOdometryFrame.y(),
                         0.0),
                 timestamp + .01);
-                headingController.setTargetHeading(mFieldToTargetPoint.getRotation());
+                headingController.setTargetHeading(mFieldToTargetPoint.getRotation().inverse().flip());
         double thetaOutput = headingController.getRotationCorrection(currentHeading, timestamp);
 
         Translation2d output = new Translation2d(xOutput,yOutput).rotateBy(currentHeading);

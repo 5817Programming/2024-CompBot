@@ -272,14 +272,13 @@ public class SwerveDrive extends Subsystem {
         switch (currentState) {
             case MANUAL:
                 if(stateHasChanged){
-                    headingController.setTargetHeading(getRobotHeading());
+                    headingController.setTargetHeading(getRobotHeading().inverse().flip());
                 }
-                rotationCorrection = headingController.updateRotationCorrection(drivingPose.getRotation(),
+                rotationCorrection = headingController.updateRotationCorrection(drivingPose.getRotation().inverse().flip(),
                         timeStamp);
                 if (translationVector.norm() == 0 || rotationScalar != 0) {
                     rotationCorrection = 0;
                 }
-                SmartDashboard.putNumber("Swerve Heading Correctiomm    33  33   /n", rotationCorrection);
                 commandModules(inverseKinematics.updateDriveVectors(translationVector,
                         rotationScalar + rotationCorrection, drivingPose, robotCentric));
                 break;
@@ -364,7 +363,7 @@ public class SwerveDrive extends Subsystem {
 
     public void fieldzeroSwerve() {// starts the zero 180 off
         headingController.setTargetHeading(Rotation2d.fromDegrees(0));
-        gyro.setAngle(0);
+        gyro.setAngle(180);
     }
 
     @Override

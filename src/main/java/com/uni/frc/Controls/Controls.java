@@ -52,7 +52,8 @@ double percent = 0;
         s = SuperStructure.getInstance();
 
 
-
+        if(Driver.YButton.isActive())
+            Indexer.getInstance().setPercent(0.2);
         if(Driver.XButton.isActive())
             s.intakePercent(-1);
         else
@@ -62,7 +63,7 @@ double percent = 0;
         else
             Indexer.getInstance().setPercent(0);
         if(Driver.BButton.isActive())
-            Shooter.getInstance().setPercent(-0.6);
+            Shooter.getInstance().setPercent(-1);
         else
             Shooter.getInstance().setPercent(0);
         
@@ -82,11 +83,13 @@ double percent = 0;
         if (Driver.LeftTrigger.getValue() > 0.2) {
             switch (currentScoreMode) {
                 case SPEAKER:
-                    swerve.setStateRequest(State.AIMING);
+                    swerve.setState(State.AIMING);
+                    s.prepareShooterSetpoints(timestamp);
                     //TODO SHOOT SEQUENCE
                     break;
             
                 case AMP:
+
                      Optional<Pose2d> targetSnap = AutoAlignPointSelector
                     .chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
                     if (targetSnap.isEmpty()) {
@@ -100,22 +103,21 @@ double percent = 0;
                     
                     break;
         } }
+        else{
+            swerve.setState(State.MANUAL);
+        }
            
             
         
         // else if(Driver.BButton.isPressed()){
         //     s.onTheFlyTrajectoryState(new Pose2d(8,2, Rotation2d.fromDegrees(180)), timestamp);
-        // }
-        if(Driver.AButton.isPressed())
-            currentScoreMode = scoreMode.SPEAKER;
-        if(Driver.BButton.isPressed())
-            currentScoreMode = scoreMode.AMP;
-   
+
+        
         if(Driver.RightTrigger.getValue()>0.2){
             swerve.setState(State.TARGETOBJECT);
             s.intakeState(false);
         } 
-        swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), -Driver.RightStickX.getValue());
+        swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), Driver.RightStickX.getValue());
     }}
 
 

@@ -43,25 +43,27 @@ public class TalonConfigs {
 
     public static TalonFXConfiguration pivotConfigs() {
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
-        driveConfigs.Slot0.kV = .12;
-        driveConfigs.Slot0.kS = .25;
-        driveConfigs.Slot0.kA = .01;
-        driveConfigs.Slot0.kP = .11;
+        driveConfigs.Slot0.kV = 0;
+        driveConfigs.Slot0.kS = 0;
+        driveConfigs.Slot0.kA = 0;
+        driveConfigs.Slot0.kP = 1.5;
         driveConfigs.Slot0.kI = 0;
         driveConfigs.Slot0.kD = 0;
+        driveConfigs.Slot0.kG = -.3;
+        
         driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 
-        driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
 
 
-        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
-        driveConfigs.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));
+        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = 200;
+        driveConfigs.MotionMagic.MotionMagicAcceleration = 200;
 
       return driveConfigs;
+
     }
     public static TalonFXConfiguration elevatorConfigs() {
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
         driveConfigs.Slot0.kV = .12;
-        driveConfigs.Slot0.kS = .25;
+        driveConfigs.Slot0.kS = 0;
         driveConfigs.Slot0.kA = .01;
         driveConfigs.Slot0.kP = .11;
         driveConfigs.Slot0.kI = 0;

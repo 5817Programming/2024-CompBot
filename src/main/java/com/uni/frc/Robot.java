@@ -24,6 +24,7 @@ import com.uni.frc.subsystems.Indexer;
 import com.uni.frc.subsystems.Intake;
 // import com.uni.frc.subsystems.Intake;
 import com.uni.frc.subsystems.Music;
+import com.uni.frc.subsystems.Pivot;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.RobotStateEstimator;
 import com.uni.frc.subsystems.Shooter;
@@ -95,7 +96,8 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
         Music.getInstance(),
         Shooter.getInstance(),
         Indexer.getInstance(),
-        Intake.getInstance()
+        Intake.getInstance(),
+        Pivot.getInstance()
         ));
 
     }

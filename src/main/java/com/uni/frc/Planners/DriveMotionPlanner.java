@@ -179,7 +179,7 @@ public Request startPathRequest(boolean useAllianceColor) {
         return new Request() {
             @Override
             public boolean isFinished() {
-                return mPathStateGenerator.getTime()>time;
+                return mPathStateGenerator.atPositionOfTime(time, RobotState.getInstance().getLatestPoseFromOdom().getValue().getTranslation());
             }
         };}
     public Request waitForTrajectoryRequest() {

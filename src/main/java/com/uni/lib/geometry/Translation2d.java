@@ -73,6 +73,9 @@ public class Translation2d implements ITranslation2d<Translation2d> {
     public Translation2d translateBy(final Translation2d other) {
         return new Translation2d(x_ + other.x_, y_ + other.y_);
     }
+    public Translation2d translateBy(final edu.wpi.first.math.geometry.Translation2d other) {
+        return new Translation2d(x_ + other.getY(), y_ + other.getX());
+    }
 
     public Translation2d plus(Translation2d other) {
         return new Translation2d(x_ + other.x(), y_ + other.y());
