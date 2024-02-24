@@ -20,7 +20,7 @@ public class M8 extends AutoBase{
     @Override
     public void auto() {
         // s.intakeState(false);
-        s.trajectoryState(path,9,initRotation);
+        s.trajectoryState(path,initRotation);
         s.waitState(25, false);
     }
 }

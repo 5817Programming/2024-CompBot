@@ -3,6 +3,7 @@ package com.uni.frc.subsystems;
 
  import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
  import com.ctre.phoenix6.hardware.TalonFX;
 import com.uni.frc.Constants;
@@ -32,8 +33,9 @@ import com.uni.lib.TalonConfigs;
    }
 
    public enum State{
-    SHOOTING(1),
+    SHOOTING(-1),
     TRANSFER(0.5),
+    REVERSETRANSFER(-.5),
     OFF(0);
 
     double output = 0;
@@ -89,7 +91,14 @@ import com.uni.lib.TalonConfigs;
     currentState = state;
     setPercent(state.output);
    }
-
+ public Request stateRequest(State state){
+  return new Request() {
+    @Override
+    public void act() {
+        setPercent(state.output);
+    }
+  };
+ }
  public Request setAccelerationRequest(double percentage) {
      return new Request() {
 
@@ -128,9 +137,11 @@ import com.uni.lib.TalonConfigs;
 
    @Override
    public void readPeriodicInputs() {
-      shooterMotor1.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand).withEnableFOC(true));//TODO
-      shooterMotor2.setControl(new DutyCycleOut(mPeriodicIO.driveDemand-.3).withEnableFOC(true));
+      // shooterMotor1.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand).withEnableFOC(true));//TODO
+      // shooterMotor2.setControl(new DutyCycleOut(mPeriodicIO.driveDemand*0.9).withEnableFOC(true));
 
+      shooterMotor1.setControl(new MotionMagicVelocityDutyCycle(-1).withEnableFOC(true));
+      shooterMotor2.setControl(new MotionMagicVelocityDutyCycle(0.9).withEnableFOC(true));
    }
 
    @Override

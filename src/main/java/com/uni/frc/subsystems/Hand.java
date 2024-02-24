@@ -8,6 +8,8 @@ import com.uni.frc.Ports;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.lib.TalonConfigs;
 
+import edu.wpi.first.wpilibj.Timer;
+
 public class Hand extends Subsystem {
   private PeriodicIO mPeriodicIO = new PeriodicIO();
   private TalonFX handMotor = new TalonFX(Ports.Hand);
@@ -30,6 +32,7 @@ public class Hand extends Subsystem {
   public enum State {
     SHOOTING(0.5),
     TRANSFERING(-0.5),
+    REVERSETRANSFER(.5),
     OFF(0);
 
     double output = 0;
@@ -86,17 +89,31 @@ public class Hand extends Subsystem {
     };
 
   }
-  public boolean hasPiece(){
+
+  public boolean hasPiece() {
     return mPeriodicIO.hasPiece;
   }
-  
 
-
-  public Request hasPieceRequest() {
+  public Request hasPieceRequest(boolean timeout) {
+    if (timeout) {
+      return new Request() {
+        @Override
+        public boolean isFinished() {
+          return mPeriodicIO.hasPiece;
+        }
+      };
+    }
     return new Request() {
+      double startTime;
+
+      @Override
+      public void initialize() {
+        startTime = Timer.getFPGATimestamp();
+      }
+
       @Override
       public boolean isFinished() {
-        return mPeriodicIO.hasPiece;
+        return mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > 3;
       }
     };
   }

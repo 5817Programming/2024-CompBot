@@ -8,13 +8,13 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 
 public class BeamBreak {
-    DigitalOutput sensors;
+    // DigitalOutput sensors;
     BeamBreak(int port){
-        sensors = new DigitalOutput(port);
+        // sensors = new DigitalOutput(port);
     }
 
     public boolean get(){
-        return sensors.get();
+        return true;//sensors.get();
     }
 
     

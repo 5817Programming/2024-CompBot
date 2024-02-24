@@ -21,7 +21,6 @@ public class PathStateGenerator{
 
   double desiredRotation = 0;
   double speed = 1;
-  private double nodes = 0;
   Pose2d currentPose;
   boolean useEvents = false;
   boolean ran = false;
@@ -42,9 +41,8 @@ public class PathStateGenerator{
     this.timer.start();
   }
 
-  public void setTrajectory(PathPlannerTrajectory trajectory, double nodes) {
+  public void setTrajectory(PathPlannerTrajectory trajectory) {
     resetTimer();
-    this.nodes = nodes;
     this.transformedTrajectory = trajectory;
   }
 

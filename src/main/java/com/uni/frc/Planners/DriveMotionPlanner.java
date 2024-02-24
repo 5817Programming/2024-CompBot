@@ -54,19 +54,19 @@ public class DriveMotionPlanner{
         return targetHeading;
     }
 
-    public void setTrajectory(PathPlannerTrajectory trajectory, double nodes,double initRotation, boolean useAllianceColor) {
+    public void setTrajectory(PathPlannerTrajectory trajectory,double initRotation, boolean useAllianceColor) {
         trajectoryFinished = false;
         this.useAllianceColor = useAllianceColor;
-        mPathStateGenerator.setTrajectory(trajectory, nodes);
+        mPathStateGenerator.setTrajectory(trajectory);
         Pose2d newpose = (mPathStateGenerator.getInitial(trajectory, initRotation, useAllianceColor));
         RobotStateEstimator.getInstance().resetModuleOdometry(newpose);
         Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).flip().getDegrees());
 
    }
-    public void setTrajectoryOnTheFly(PathPlannerTrajectory trajectory, double nodes, boolean useAllianceColor) {
+    public void setTrajectoryOnTheFly(PathPlannerTrajectory trajectory, boolean useAllianceColor) {
         trajectoryFinished = false;
         this.useAllianceColor = useAllianceColor;
-        mPathStateGenerator.setTrajectory(trajectory, nodes);
+        mPathStateGenerator.setTrajectory(trajectory);
         
         Pose2d newpose = RobotState.getInstance().getKalmanPose(Timer.getFPGATimestamp());
         RobotStateEstimator.getInstance().resetModuleOdometry(newpose);
@@ -82,12 +82,12 @@ public class DriveMotionPlanner{
     public void resetTimer() {
         PathStateGenerator.getInstance().resetTimer();
     }
-    public Request setTrajectoryRequest(PathPlannerTrajectory trajectory, double nodes,double initRotation, boolean useAllianceColor) {
+    public Request setTrajectoryRequest(PathPlannerTrajectory trajectory,double initRotation, boolean useAllianceColor) {
         return new Request() {
 
             @Override
             public void act() {
-                setTrajectory(trajectory, nodes,initRotation, useAllianceColor);
+                setTrajectory(trajectory,initRotation, useAllianceColor);
             }
 
         };
@@ -123,7 +123,7 @@ public class DriveMotionPlanner{
             endPose,
             new ChassisSpeeds()
         );
-        setTrajectoryOnTheFly(trajectory, 1, useAllianceColor);
+        setTrajectoryOnTheFly(trajectory, useAllianceColor);
     }
     // public Request generateTrajectoryRequest(int node) {
     // return new Request() {

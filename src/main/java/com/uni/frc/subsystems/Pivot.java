@@ -38,6 +38,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
       configMotors();
       currentState = State.MAXDOWN;
       stateChanged = false;
+      resetToAbsolute();
     }
 
     public enum ControlMode {
@@ -99,7 +100,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
     }
 
     public boolean atTarget(){
-      return Math.abs(currentState.output) - Math.abs(mPeriodicIO.rotationPosition) <1;
+      System.out.println(Math.abs(mPeriodicIO.rotationDemand -mPeriodicIO.rotationPosition));
+      return Math.abs(mPeriodicIO.rotationDemand -mPeriodicIO.rotationPosition) <1;
     }
 
     public void conformToState(State state) {
@@ -113,12 +115,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
     public void motionMagic(){
       pivotMotor1.setControl(new MotionMagicVoltage(mPeriodicIO.rotationDemand));
-      // pivotMotor2.setControl(new Follower(Ports.Pivot1, false));
+      pivotMotor2.setControl(new Follower(Ports.Pivot1, false));
 
     }
 
     public void setPercent(){
-      pivotMotor1.setControl(new DutyCycleOut(mPeriodicIO.rotationDemand, true, false, false, false));
+      // pivotMotor1.setControl(new DutyCycleOut(mPeriodicIO.rotationDemand, true, false, false, false));
     }
 
     public Request stateRequest(State state) {
@@ -144,6 +146,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
     public Request setpivotPercentRequest(double percentage) {
       return new Request() {
 
+
         @Override
         public void act() {
           setPivotPercent(percentage);
@@ -157,7 +160,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
       return new Request() {
         @Override
           public boolean isFinished() {
-              return !stateChanged && atTarget();
+              return   atTarget();
           }
       };
     }

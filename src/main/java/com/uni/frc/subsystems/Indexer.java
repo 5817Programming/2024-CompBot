@@ -2,18 +2,24 @@ package com.uni.frc.subsystems;
 
 
 
- import com.ctre.phoenix6.configs.TalonFXConfiguration;
+ import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.inputs.LoggableInputs;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
  import com.ctre.phoenix6.controls.DutyCycleOut;
  import com.ctre.phoenix6.hardware.TalonFX;
 import com.uni.frc.Ports;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.lib.TalonConfigs;
 
+import edu.wpi.first.wpilibj.Timer;
+
  public class Indexer extends Subsystem {
 
    private PeriodicIO mPeriodicIO = new PeriodicIO();
    private TalonFX indexerMotor = new TalonFX(Ports.Indexer, "Minivore");
-  //  private BeamBreak indexerBeamBreak = new BeamBreak(Ports.IndexerBeamBreakPort);
+   private boolean lastBeam = false;
+   private BeamBreak indexerBeamBreak = new BeamBreak(Ports.IndexerBeamBreakPort);
    private TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
 
 
@@ -31,8 +37,9 @@ import com.uni.lib.TalonConfigs;
    }
    public enum State{
     OFF(0),
-    RECIEVING(0.5),
-    TRANSFERING(0.5);
+    RECIEVING(-0.5),
+    TRANSFERING(-1),
+    REVERSE_TRANSFER(-.5);
 
     double output = 0;
     State(double output){
@@ -69,14 +76,31 @@ import com.uni.lib.TalonConfigs;
     mPeriodicIO.driveDemand = state.output;
    }
 
-   public Request hasPieceRequest(){
-    return new Request() { 
-        @Override 
+
+  public Request hasPieceRequest(boolean timeout) {
+    if (timeout) {
+      return new Request() {
+        @Override
         public boolean isFinished() {
-            return mPeriodicIO.hasPiece;
+          return mPeriodicIO.hasPiece;
         }
+      };
+    }
+    return new Request() {
+      double startTime;
+
+      @Override
+      public void initialize() {
+        startTime = Timer.getFPGATimestamp();
+      }
+
+      @Override
+      public boolean isFinished() {
+        return mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > 3;
+      }
     };
-   }
+  }
+
    public Request setPercentRequest(double percentage) {
      return new Request() {
 
@@ -100,14 +124,18 @@ import com.uni.lib.TalonConfigs;
      return mPeriodicIO.statorCurrent;
    }
 
+   double noteEntryTime = 0;
+   boolean noteHalfway = false;
    @Override
    public void writePeriodicOutputs() {
-    
+
      mPeriodicIO.drivePosition = indexerMotor.getPosition().getValueAsDouble();
      mPeriodicIO.velocity = indexerMotor.getVelocity().getValueAsDouble();
      mPeriodicIO.statorCurrent = indexerMotor.getStatorCurrent().getValueAsDouble();
-    //  mPeriodicIO.hasPiece = indexerBeamBreak.get();
-   }
+    if(lastBeam != indexerBeamBreak.get()&& lastBeam == false)
+      mPeriodicIO.hasPiece = !mPeriodicIO.hasPiece;
+    lastBeam = indexerBeamBreak.get();
+  }
 
    @Override
    public void readPeriodicInputs() {
@@ -116,7 +144,7 @@ import com.uni.lib.TalonConfigs;
 
    @Override
    public void outputTelemetry() {
-
+    Logger.recordOutput("indexer current", indexerMotor.getStatorCurrent().getValueAsDouble());
    }
 
    @Override

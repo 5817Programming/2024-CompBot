@@ -19,36 +19,42 @@ public class M7 extends AutoBase{
 
     @Override
     public void auto() {
-        s.trajectoryState(path,9,initRotation);
+        s.trajectoryState(path,initRotation);
         s.shootState();
 
         s.waitForTrajectoryState(0.7);
-        s.intakeState(false,1.8);
+        s.intakeState(false);
+        s.prepareShooterSetpointsRequest(1.8);
         s.waitForTrajectoryState(1.8);
         s.shootState();
 
         s.waitForTrajectoryState(2);
-        s.intakeState(false,2.89);
+        s.intakeState(false);
+        s.prepareShooterSetpointsRequest(2.89);
         s.waitForTrajectoryState(2.89);
         s.shootState();
 
         s.waitForTrajectoryState(3.2);
-        s.intakeState(false,3.9);
+        s.intakeState(false);
+        s.prepareShooterSetpointsRequest(3.9);
         s.waitForTrajectoryState(3.9);
         s.shootState();
 
         s.waitForTrajectoryState(5.2);
-        s.intakeState(false,7.35);
+        s.intakeState(false);
+        s.prepareShooterSetpointsRequest(7.35);
         s.waitForTrajectoryState(7.35);
         s.shootState();
 
         s.waitForTrajectoryState(8.13);
-        s.intakeState(false,10.15);
+        s.intakeState(false);
+        s.prepareShooterSetpointsRequest(10.15);
         s.waitForTrajectoryState(10.15);
         s.shootState();
 
         s.waitForTrajectoryState(11.24);
-        s.intakeState(false,12.94);
+        s.intakeState(false);
+        s.prepareShooterSetpointsRequest(12.94);
         s.waitForTrajectoryState(12.94);
         s.shootState();
 

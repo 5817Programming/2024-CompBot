@@ -23,8 +23,8 @@ public class TargetPiecePlanner {
         double objectYDegreesCamera = visionupdate.get().getCameraToTarget().x();
         Rotation2d targetHeading = currentHeading.rotateBy(objectYDegreesCamera);
         Logger.recordOutput("objectTarget", targetHeading.getDegrees());
-        headingController.setTargetHeading(targetHeading);
-        double output = headingController.getRotationCorrection(currentHeading, timeStamp);   
+        headingController.setTargetHeading(targetHeading.inverse());
+        double output = headingController.getRotationCorrection(currentHeading.inverse(), timeStamp);   
         return output;
     }
 

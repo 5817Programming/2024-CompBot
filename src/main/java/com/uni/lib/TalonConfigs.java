@@ -14,8 +14,8 @@ public class TalonConfigs {
         TalonFXConfiguration motionMagicConfig = new TalonFXConfiguration();
 
         motionMagicConfig.Slot0.kP = 6;
-        motionMagicConfig.Slot0.kS = 0.8;
-        motionMagicConfig.Slot0.kV = .1224;
+        motionMagicConfig.Slot0.kS = 0;
+        motionMagicConfig.Slot0.kV = 0;
         motionMagicConfig.MotionMagic.MotionMagicCruiseVelocity = 98;
         motionMagicConfig.MotionMagic.MotionMagicAcceleration = 1000;
         motionMagicConfig.CurrentLimits.StatorCurrentLimit = 80;

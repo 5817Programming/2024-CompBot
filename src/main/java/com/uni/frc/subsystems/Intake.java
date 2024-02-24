@@ -16,10 +16,7 @@
     private BeamBreak intakeBeamBreak = new BeamBreak(Ports.IntakeBeamBreakPort);
     private TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
     private State currentState;
-    private boolean stateChanged;
-    private boolean driverHaptics;
-    private boolean hasPiece;
-    private double timeEnteredState = 0;
+
 
     public static Intake instance = null;
 
@@ -33,18 +30,12 @@
     public Intake() {
       configMotors();
 
-      currentState = State.Off;
-      stateChanged = false;
-      driverHaptics = false;
-      hasPiece = false;
+      currentState = State.OFF;
     }
 
     public enum State {
-      Recieving(.5),
-      Intaking(1),
-      Feeding(1),
-      Holding(0),
-      Off(0);
+      INTAKING(-0.8),
+      OFF(0);
 
       double output = 0;
 
@@ -68,16 +59,9 @@
       mPeriodicIO.driveDemand = Percentage;
     }
 
-    public void setState(State state) {
-      if (state != currentState)
-        stateChanged = true;
-      currentState = state;
-      timeEnteredState = Timer.getFPGATimestamp();
-    }
 
     public void conformToState(State state) {
-      setState(state);
-      setIntakePercentRequest(state.output);
+      intakePercent(state.output);
     }
 
     public Request hasPeiceRequest(){
@@ -111,67 +95,6 @@
 
     }
 
-    @Override
-    public void update() {
-      double currentTime = Timer.getFPGATimestamp();
-      switch (currentState) {
-        case Intaking:
-          if (stateChanged) {
-            setRamp(.5);
-            driverHaptics = false;
-            hasPiece = false;
-          }
-          if (getStatorCurrent() < 20) {
-            conformToState(State.Recieving);
-          }
-
-          break;
-        case Recieving:
-          if (stateChanged) {
-            driverHaptics = true;
-            hasPiece = true;
-          }
-          if (currentTime - timeEnteredState > .3) {
-            setState(State.Holding);
-          }
-          break;
-        case Off:
-          driverHaptics = false;
-          break;
-        case Feeding:
-          if (stateChanged) {
-            setRamp(0);
-            hasPiece = false;
-            driverHaptics = false;
-          }
-          if (currentTime - timeEnteredState > .3) {
-            stop();
-            setRamp(.5);
-            hasPiece = false;
-            driverHaptics = false;
-          }
-          break;
-        case Holding:
-          if(currentTime - timeEnteredState > 1) {
-            intakePercent(2/12);
-            System.out.println("Auto Ejecting Piece");
-            hasPiece = false;
-            driverHaptics = false;
-          }
-          break;
-
-      }
-
-    }
-
-    public Request hasPieceRequest(){
-      return new Request() {
-        @Override
-          public boolean isFinished() {
-              return !stateChanged && hasPiece;
-          }
-      };
-    }
 
     public double getStatorCurrent() {
       return mPeriodicIO.statorCurrent;

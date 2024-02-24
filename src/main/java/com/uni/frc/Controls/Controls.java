@@ -10,9 +10,11 @@ import com.uni.frc.Ports;
 import com.uni.frc.Planners.AutoAlignPointSelector;
 import com.uni.frc.subsystems.Indexer;
 import com.uni.frc.subsystems.Intake;
+import com.uni.frc.subsystems.Pivot;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.Shooter;
 import com.uni.frc.subsystems.SuperStructure;
+import com.uni.frc.subsystems.SuperStructure.SuperState;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.frc.subsystems.Swerve.SwerveDrive.State;
 import com.uni.lib.geometry.Pose2d;
@@ -48,29 +50,9 @@ double percent = 0;
     public void update() {
         Driver.update();
         CoDriver.update();
-        var timestamp = Timer.getFPGATimestamp();
         s = SuperStructure.getInstance();
 
-
-        if(Driver.YButton.isActive())
-            Indexer.getInstance().setPercent(0.2);
-        if(Driver.XButton.isActive())
-            s.intakePercent(-1);
-        else
-            s.intakePercent(0);
-        if(Driver.AButton.isActive())
-            Indexer.getInstance().setPercent(-0.6);
-        else
-            Indexer.getInstance().setPercent(0);
-        if(Driver.BButton.isActive())
-            Shooter.getInstance().setPercent(-1);
-        else
-            Shooter.getInstance().setPercent(0);
         
-
-
-
-
         // if(Driver.RightBumper.isActive()){
         //     s.intakePercent(-percent);
         // }
@@ -83,29 +65,14 @@ double percent = 0;
         if (Driver.LeftTrigger.getValue() > 0.2) {
             switch (currentScoreMode) {
                 case SPEAKER:
-                    swerve.setState(State.AIMING);
-                    s.prepareShooterSetpoints(timestamp);
-                    //TODO SHOOT SEQUENCE
+                    s.setState(SuperState.SHOOTING);
                     break;
             
                 case AMP:
-
-                     Optional<Pose2d> targetSnap = AutoAlignPointSelector
-                    .chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
-                    if (targetSnap.isEmpty()) {
-                        swerve.setState(State.MANUAL);
-
-                    } else {
-                        swerve.setAlignment(targetSnap.get());
-                        swerve.setState(State.ALIGNMENT);
-                        //TODO AMP SEQUENCE
-                    }
-                    
+                    s.setState(SuperState.AMP);
                     break;
         } }
-        else{
-            swerve.setState(State.MANUAL);
-        }
+
            
             
         
@@ -113,10 +80,14 @@ double percent = 0;
         //     s.onTheFlyTrajectoryState(new Pose2d(8,2, Rotation2d.fromDegrees(180)), timestamp);
 
         
-        if(Driver.RightTrigger.getValue()>0.2){
-            swerve.setState(State.TARGETOBJECT);
-            s.intakeState(false);
+        if(Driver.RightTrigger.getValue()>0.2){ 
+            s.setState(SuperState.INTAKING);
+        }else if(Driver.RightBumper.isActive()){
+            s.setState(SuperState.SHOOTING);
         } 
+        else{
+            s.setState(SuperState.IDLE);
+        }
         swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), Driver.RightStickX.getValue());
     }}
 

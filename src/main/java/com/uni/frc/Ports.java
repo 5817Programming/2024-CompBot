@@ -40,18 +40,19 @@ public class Ports {
    
         public static final int Intake = 22;
         public static final int shooter1 = 18;
-        public static final int shooter2 = 19;
+        public static final int shooter2 = 26;
         public static final int Pivot1 = 13;
         public static final int Pivot2 = 14;
 
         public static final int Wrist = 0;
         public static final int Hand = 0;
-        public static final int Indexer = 26; 
+        public static final int Indexer = 19; 
         public static final int IndexerBeamBreakPort = 0;
         public static final int IntakeBeamBreakPort = 0;
         public static final int handBeamBreak = 0;
         public static final int elevatorMotor1 = 0;
         public static final int elevatorMotor2 = 0;
+        public static final int Arm = 0;
 
 
 

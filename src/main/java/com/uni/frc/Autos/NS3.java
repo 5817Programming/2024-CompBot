@@ -19,7 +19,7 @@ public class NS3 extends AutoBase{
 
     @Override
     public void auto() {
-        s.trajectoryState(path,5,initRotation);
+        s.trajectoryState(path,initRotation);
         s.waitState(15, false);
     }
 }

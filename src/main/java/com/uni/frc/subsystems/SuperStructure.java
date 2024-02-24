@@ -8,14 +8,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.Constants;
+import com.uni.frc.Autos.Shoot;
+import com.uni.frc.Planners.AutoAlignPointSelector;
 import com.uni.frc.Planners.DriveMotionPlanner;
 import com.uni.frc.Planners.ShootingUtils;
 import com.uni.frc.Planners.ShootingUtils.NoteState;
 import com.uni.frc.Planners.ShootingUtils.ShootingParameters;
+import com.uni.frc.subsystems.Pivot.State;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.frc.subsystems.Requests.RequestList;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
@@ -30,31 +35,35 @@ import edu.wpi.first.wpilibj.Timer;
 
 /** Add your docs here. */
 public class SuperStructure extends Subsystem {
-    public SwerveDrive swerve;
-    public Intake mIntake;
-    public OdometryLimeLight vision;
-    public DriveMotionPlanner driveMotionPlanner;
-    public Logger logger;
-    public DriveMotionPlanner dMotionPlanner;
-    public RobotState mRobotState;
-    public Indexer mIndexer;
-    public Pivot mPivot;
-    public Shooter mShooter;
-    public Wrist mWrist;
-    public Hand mHand;
+    protected Intake mIntake;
+    protected OdometryLimeLight vision;
+    protected DriveMotionPlanner driveMotionPlanner;
+    protected Logger logger;
+    protected DriveMotionPlanner dMotionPlanner;
+    protected RobotState mRobotState;
+    protected Indexer mIndexer;
+    protected Pivot mPivot;
+    protected Shooter mShooter;
+    protected Wrist mWrist;
+    protected Hand mHand;
+    protected Arm mArm;
+    protected SwerveDrive mDrive;
+
 
     private ArrayList<RequestList> queuedRequests;
 
     public SuperStructure() {
-        swerve = SwerveDrive.getInstance();
         vision = OdometryLimeLight.getInstance();
         driveMotionPlanner = DriveMotionPlanner.getInstance();
+        mHand = Hand.getInstance();
+        mArm = Arm.getInstance();
         mRobotState = RobotState.getInstance();
         mIntake = Intake.getInstance();
         mIndexer = Indexer.getInstance();
         mPivot = Pivot.getInstance();
         mShooter = Shooter.getInstance();
         mWrist = Wrist.getInstance();
+        mDrive = SwerveDrive.getInstance();
         queuedRequests = new ArrayList<>();
 
     }
@@ -74,13 +83,7 @@ public class SuperStructure extends Subsystem {
     private boolean activeRequestsComplete = true;
     private String currentRequestLog;
     private boolean stateChanged = false;
-    private boolean hasPiece = false;
     private SuperState currentState = SuperState.OFF;
-    private SuperState desiredState = SuperState.OFF;
-    private ShootingState shootingState = ShootingState.OFF;
-    private ShootingState desiredShootingState = ShootingState.OFF;
-    private ClimbState climbState = ClimbState.OFF;
-    private ClimbState desiredClimbState = ClimbState.OFF;
 
     private boolean allRequestsComplete;
 
@@ -99,30 +102,17 @@ public class SuperStructure extends Subsystem {
         allRequestsComplete = false;
     }
 
-    private enum SuperState{
+    public enum SuperState{
         INTAKING,
         SHOOTING,
         CLIMB,
         AMP,
         SOURCE,
-        OFF
+        OFF,
+        IDLE
     }
 
-    private enum ShootingState{
-        OFF,
-        NOPIECE,
-        PREPARED,
-        RAMPING,
-        TRANSFERING,
-        SHOOTING,
-    }
-    private enum ClimbState{
-        OFFCHAIN,
-        ONCHAIN,
-        TRAPPING,
-        OFF,
-    }
-    private void setState(SuperState state){
+    public void setState(SuperState state){
         if(currentState != state)
             stateChanged = true;
         currentState = state;
@@ -199,84 +189,59 @@ public class SuperStructure extends Subsystem {
     public void replaceQueue(List<RequestList> lists) {
         setQueueRequests(lists);
     }
-    public void setDesiredState(SuperState state){
-        desiredState = state;
-    }
-    public void processShootingState(double timestamp){
-        
-        switch (shootingState){
-            case NOPIECE:
-                
-            case RAMPING:
-                if(prepareShooterSetpoints(timestamp)){
-                    shootingState = ShootingState.PREPARED;
-                }
-                break;
-            case SHOOTING:
-                mIndexer.conformToState(Indexer.State.TRANSFERING);
-                break;
-            case OFF:
 
-                break;
-            case TRANSFERING:
-                transferState();
-                break;
-            case PREPARED:
-                if(readyToShoot()){
-                    shootingState = ShootingState.SHOOTING;
-                }
-                break;
-        }
-    }
-    public void processClimbState(double timestamp){
-        
-        switch (climbState) {//TODO handle states
-            case TRAPPING:
 
-                break;
-            case OFFCHAIN:
-                break;
-            case ONCHAIN:
-                break;
-            case OFF:
-                break;
-            
-        }
-    stateChanged = false;
 
-    }
-
-    public boolean readyToShoot(){
-        return true&&desiredShootingState==ShootingState.SHOOTING;
-    }
     
     public void processState(double timestamp){
-        if(desiredState != currentState){
-            switch (desiredState) {
+        Logger.recordOutput("current SuperState", currentState);
+            switch (currentState) {
                 case SHOOTING: 
-                    shootingState = ShootingState.RAMPING;
+                    if(stateChanged){
+                        shootState();
+                    }
+                    prepareShooterSetpoints(timestamp);
+                    mDrive.setState(SwerveDrive.State.AIMING);
                     break;
                 case AMP:
-                    shootingState = ShootingState.TRANSFERING;
+                    if(stateChanged){
+                        scoreAmpState();
+                    }
+                    Optional<Pose2d> targetSnap = AutoAlignPointSelector
+                    .chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
+                    if (targetSnap.isEmpty()) {
+                        mDrive.setState(SwerveDrive.State.MANUAL);
+
+                    } else {
+                        mDrive.setAlignment(targetSnap.get());
+                        mDrive.setState(SwerveDrive.State.ALIGNMENT);
+                    }                
                 case INTAKING:
+                    if(stateChanged)
+                        intakeState(true);
                     break;
                 case CLIMB:
                     break;
                 case SOURCE:
+                    mDrive.setState(SwerveDrive.State.ALIGNMENT);
                     break;
-                case OFF:
-                    mIntake.setState(Intake.State.Off);
-                    shootingState = ShootingState.OFF;
-                    climbState = ClimbState.OFF;
-                    mHand.stateRequest(Hand.State.OFF);
+                case IDLE:
+                    clearQueues();
+                    mDrive.setState(SwerveDrive.State.MANUAL);
+                    mPivot.setMotionMagic(-1);
+                    mIntake.conformToState(Intake.State.OFF);
+                    mIndexer.conformToState(Indexer.State.OFF);
+                    mShooter.conformToState(Shooter.State.OFF);
+                    break;
+                case OFF:  
+                  
                     break;
      
 
             }
-        }
-        processShootingState(timestamp);
         stateChanged = false;
     }
+
 
   
     public void update() {
@@ -327,15 +292,21 @@ public class SuperStructure extends Subsystem {
                 if (!queuedRequests.isEmpty()) {
                     setActiveRequests(queuedRequests.remove(0));
                 } else {
-                    activeRequestsComplete = true;
-
+                    allRequestsComplete = true;
                 }
             }
 
         }
-        // processState(timeStamp);
+        processState(timeStamp);
     }
-
+    public Request prepareShooterSetpointsRequest(double timestamp){
+        return new Request() {
+            @Override
+            public void act() {
+                prepareShooterSetpoints(timestamp);
+            }
+        };
+    }
 
     public boolean prepareShooterSetpoints(double timestamp){
         
@@ -346,7 +317,7 @@ public class SuperStructure extends Subsystem {
 
         if(allowShootWhileMove){
             mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
-            mShooter.setPercent(0);
+            mShooter.conformToState(Shooter.State.SHOOTING);
         }else{
              mPivot.conformToState(shootingParameters.uncompensatedDesiredPivotAngle);
             mShooter.setPercent(shootingParameters.uncompensatedDesiredShooterSpeed);
@@ -357,11 +328,6 @@ public class SuperStructure extends Subsystem {
         return ShootingUtils.pivotAtSetpoint(shootingParameters, Constants.PivotConstants.kDeadband, allowShootWhileMove)
                 && ShootingUtils.shooterAtSetpoint(shootingParameters, Constants.ShooterConstants.kDeadband, allowShootWhileMove);//TODO deadband
     }
-
-
-
-
-
 
     private ShootingParameters getShootingParams(Pose2d currentPose) {
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> shotTimeMap = Constants.ShooterConstants.SHOT_TRAVEL_TIME_TREE_MAP;
@@ -394,13 +360,13 @@ public class SuperStructure extends Subsystem {
         request(request);
     }
 
-    public void trajectoryState(PathPlannerTrajectory trajectory, double nodes,double initRotation) { 
+    public void trajectoryState(PathPlannerTrajectory trajectory,double initRotation) { 
         RequestList request = new RequestList(Arrays.asList(
                 logCurrentRequest("trajectory")
         ), true);
         RequestList queue = new RequestList(Arrays.asList(
-                driveMotionPlanner.setTrajectoryRequest(trajectory, nodes,initRotation, true),
-                swerve.setStateRequest(SwerveDrive.State.TRAJECTORY),
+                driveMotionPlanner.setTrajectoryRequest(trajectory,initRotation, true),
+                mDrive.setStateRequest(SwerveDrive.State.TRAJECTORY),
                 driveMotionPlanner.startPathRequest(true)), false);
         queue(request);
         queue(queue);
@@ -412,42 +378,59 @@ public class SuperStructure extends Subsystem {
             driveMotionPlanner.generatePathRequest(
                 mRobotState.getKalmanPose(timestamp),
                 endPose,
-                ChassisSpeeds.fromTwist2d(mRobotState.getPredictedVelocity(), swerve.getRobotHeading()),
+                ChassisSpeeds.fromTwist2d(mRobotState.getPredictedVelocity(), mDrive.getRobotHeading()),
                 false),
-            swerve.setStateRequest(SwerveDrive.State.TRAJECTORY),
+            mDrive.setStateRequest(SwerveDrive.State.TRAJECTORY),
             driveMotionPlanner.startPathRequest(false)
         ), false);
 
         request(request);
     }
 
-    public void intakeState(boolean Override,double firingPositionTime){
-        intakeState(Override, PathStateGenerator.getInstance().getDesiredPose2d(false,firingPositionTime));
-    }
+    // public void intakeState(boolean Override,double firingPositionTime){
+    //     intakeState(Override, PathStateGenerator.getInstance().getDesiredPose2d(false,firingPositionTime));
+    // }
 
-    public void intakeState(boolean Override,Pose2d firingPosition){
+    // public void intakeState(boolean Override,Pose2d firingPosition){
+
+    //     RequestList request = new RequestList(Arrays.asList(
+    //         logCurrentRequest("Intaking"),
+    //         mIntake.stateRequest(Intake.State.Intaking),
+    //         mIntake.hasPieceRequest()
+    //     ), true);
+    //     RequestList queue = new RequestList(Arrays.asList(
+    //         logCurrentRequest("Transfering"),
+    //         mIntake.hasPieceRequest(),
+    //         mIntake.stateRequest(Intake.State.Feeding),
+    //         mPivot.stateRequest(getShootingParams(firingPosition).uncompensatedDesiredPivotAngle),
+    //         mShooter.setPercentRequest(getShootingParams(firingPosition).uncompensatedDesiredShooterSpeed)
+    //     ), false);
+
+    //     if(Override){
+    //         request(request,queue);
+    //     }
+    //     else{
+    //         queue(request);
+    //         queue(queue);
+    //     }
+    // }
+    public void intakeState(boolean Override){
 
         RequestList request = new RequestList(Arrays.asList(
             logCurrentRequest("Intaking"),
-            mIntake.stateRequest(Intake.State.Intaking),
-            mIntake.hasPieceRequest()
-        ), true);
-        RequestList queue = new RequestList(Arrays.asList(
-            logCurrentRequest("Transfering"),
-            mIntake.hasPieceRequest(),
-            mIntake.stateRequest(Intake.State.Feeding),
-            mPivot.stateRequest(getShootingParams(firingPosition).uncompensatedDesiredPivotAngle),
-            mShooter.setPercentRequest(getShootingParams(firingPosition).uncompensatedDesiredShooterSpeed)
-            
-
+            mPivot.stateRequest(-10.0),
+            mPivot.atTargetRequest(),
+            mIntake.stateRequest(Intake.State.INTAKING),
+            mIndexer.stateRequest(Indexer.State.RECIEVING),
+            mIndexer.hasPieceRequest(!Override),
+            mIndexer.stateRequest(Indexer.State.OFF),
+            mIntake.stateRequest(Intake.State.OFF)
         ), false);
-
         if(Override){
-            request(request,queue);
+            request(request);
         }
         else{
             queue(request);
-            queue(queue);
         }
     }
 
@@ -457,56 +440,19 @@ public class SuperStructure extends Subsystem {
                 false);
         queue(request);
     }
-    public Request superStateRequest(SuperState state){
-        return new Request() {
-            @Override
-            public void act() {
-                currentState = state;
-            }
-        };
-    }
     public void shootState(){
-        double timestamp = Timer.getFPGATimestamp();
-        Pose2d currentPose = RobotState.getInstance().getKalmanPose(timestamp);
-         RequestList request = new RequestList(Arrays.asList(
-            logCurrentRequest("Shooting")
 
-        ), true);
         RequestList queue = new RequestList(Arrays.asList(
-            waitPreparedRequest(currentPose),
+            waitRequest(1.5),//TODO SHOOTER
+            mPivot.atTargetRequest(),
             mIndexer.stateRequest(Indexer.State.TRANSFERING),
-            waitRequest(0.3),
-            mShooter.setPercentRequest(-0.5)
+            waitRequest(.3),
+            mShooter.stateRequest(Shooter.State.OFF),
+            mIndexer.stateRequest(Indexer.State.OFF),
+            mPivot.stateRequest(Pivot.State.MAXDOWN)
         ), false);
-            queue(request);
-            queue(queue);
-    
-    }
-    public Request waitPreparedRequest(Pose2d currentPose){
-        return new Request() {
-            @Override
-            public boolean isFinished() {
-                ShootingParameters shootingParameters = getShootingParams(currentPose);
-                return ShootingUtils.pivotAtSetpoint(shootingParameters, Constants.PivotConstants.kDeadband, false)
-                && ShootingUtils.shooterAtSetpoint(shootingParameters, Constants.ShooterConstants.kDeadband, false);//TODO deadband
-            }
-        };
-    }
-    public Request setShooterStateRequest(ShootingState state){
-        return new Request() {
-            @Override
-            public void act() {
-                shootingState = state;
-            }
-        };
-    }
-    public Request climbStateRequest(ClimbState state){
-        return new Request() {
-            @Override
-            public void act() {
-                climbState = state;
-            }
-        };
+
+        request(queue);
     }
     public Request logCurrentRequest(String newLog) {
         return new Request() {
@@ -517,28 +463,92 @@ public class SuperStructure extends Subsystem {
             }
         };
     }
-    public void speakerState(){
-            RequestList request = new RequestList(Arrays.asList(
-                setShooterStateRequest(ShootingState.RAMPING)
-            ),
-            false);
-        queue(request);
-    }
-    public void transferState(){
+
+    public void transferState(boolean Override){
         RequestList request = new RequestList(Arrays.asList(
-        mIndexer.setPercentRequest(0.5),
+
+        mPivot.stateRequest(Pivot.State.TRANSFER),
         mWrist.stateRequest(Wrist.State.TRANSFER),
-        mShooter.setPercentRequest(0.5),
+        mArm.stateRequest(Arm.State.TRANSFER),
+
+        mPivot.atTargetRequest(),
+        mWrist.atTargetRequest(),
+        mArm.atTargetRequest(),
+
+        mIndexer.stateRequest(Indexer.State.TRANSFERING),
+        mShooter.stateRequest(Shooter.State.TRANSFER),
         mHand.stateRequest(Hand.State.TRANSFERING),
-        mHand.hasPieceRequest(),
+        
+        mHand.hasPieceRequest(true),
+
         mHand.stateRequest(Hand.State.OFF),
         mWrist.stateRequest(Wrist.State.SHOOTING),
-        mShooter.setPercentRequest(0),
-        mIndexer.setPercentRequest(0)
+        mShooter.stateRequest(Shooter.State.OFF),
+        mIndexer.stateRequest(Indexer.State.OFF),
+        mPivot.stateRequest(Pivot.State.MAXDOWN)
         ),
         false);
-            queue(request);  
+        if(Override)
+        request(request);
+        else
+        queue(request);
+    }
+
+    public void scoreAmpState(){
+        RequestList request = new RequestList(Arrays.asList(
+            mPivot.stateRequest(Pivot.State.AMP),
+            mArm.stateRequest(Arm.State.AMP),
+            mWrist.stateRequest(Wrist.State.AMP),
+
+            mPivot.atTargetRequest(),
+            mArm.atTargetRequest(),
+            mWrist.atTargetRequest(),
+
+            mHand.stateRequest(Hand.State.SHOOTING),
+            waitRequest(.2),
+            mHand.stateRequest(Hand.State.OFF),
+
+            mPivot.stateRequest(Pivot.State.MAXDOWN),
+            mArm.stateRequest(Arm.State.MAXDOWN),
+            mWrist.stateRequest(Wrist.State.AMP)
+
+        ), false);
+        if(!mHand.hasPiece()&& mIndexer.hasPiece()){
+            transferState(true);
+            queue(request);
         }
+        else{
+            request(request);
+        }
+        
+    }
+    public void reverseTransferState(){
+        RequestList request = new RequestList(Arrays.asList(
+
+        mPivot.stateRequest(Pivot.State.TRANSFER),
+        mWrist.stateRequest(Wrist.State.TRANSFER),
+        mArm.stateRequest(Arm.State.TRANSFER),
+
+        mPivot.atTargetRequest(),
+        mWrist.atTargetRequest(),
+        mArm.atTargetRequest(),
+
+        mIndexer.stateRequest(Indexer.State.REVERSE_TRANSFER),
+        mShooter.stateRequest(Shooter.State.REVERSETRANSFER),
+        mHand.stateRequest(Hand.State.REVERSETRANSFER),
+
+        mIndexer.hasPieceRequest(true),
+
+        mHand.stateRequest(Hand.State.OFF),
+        mWrist.stateRequest(Wrist.State.SHOOTING),
+        mShooter.stateRequest(Shooter.State.OFF),
+        mIndexer.stateRequest(Indexer.State.OFF),
+        mPivot.stateRequest(Pivot.State.MAXDOWN),
+        mArm.stateRequest(Arm.State.MAXDOWN)
+        ),
+        false);
+        request(request);
+    }
     public void waitState(double waitTime, boolean Override){
         if(Override)
             request(waitRequest(waitTime));
@@ -546,7 +556,7 @@ public class SuperStructure extends Subsystem {
             queue(waitRequest(waitTime));
     }
 
-
+    
 
     public Request waitRequest(double waitTime) {
         return new Request() {
