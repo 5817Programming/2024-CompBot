@@ -26,6 +26,7 @@ public class AimingPlanner {
     private Pose2d mFieldToSpeaker= new Pose2d(16.28,5.6,new Rotation2d());
     private Optional<VisionUpdate> mVisionUpdate;
     private AimingRequest mAimingRequest;
+    private boolean isAimed = false;
     private double lastVisionTimestamp;
 
     public enum AimingRequest{
@@ -69,6 +70,10 @@ public class AimingPlanner {
         headingController.setTargetHeading(targetPose.getRotation().inverse());
         double rotationOutput = headingController.updateRotationCorrection(currentOdomToRobot.getRotation().inverse(), timeStamp);
 
+        if(Math.abs(rotationOutput) < .02)
+            isAimed = true;
+        else
+            isAimed = false;
         targetPose = new Pose2d(
             targetPose.getTranslation(),
             Rotation2d.fromDegrees(rotationOutput*1.75)
@@ -79,5 +84,9 @@ public class AimingPlanner {
         return targetPose;
     }
 
+
+    public boolean isAimed(){
+        return isAimed;
+    }
 
 }

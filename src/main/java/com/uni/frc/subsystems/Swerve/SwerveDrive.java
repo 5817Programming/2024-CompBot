@@ -348,6 +348,7 @@ public class SwerveDrive extends Subsystem {
         stateHasChanged = false;
     }
 
+
     public ChassisSpeeds updateAutoAlign(){
         final double now = Timer.getFPGATimestamp();
         var fieldToOdometry = robotState.getAbsoluteVisionPoseComponent(now);
@@ -407,6 +408,16 @@ public class SwerveDrive extends Subsystem {
         };
     }
 
+
+
+    public Request isAimedRequest(){
+        return new Request() {
+            @Override
+            public boolean isFinished(){
+                return mAimingPlanner.isAimed();
+            }
+        };
+    }
     public synchronized ChassisSpeeds getSetPoint(){
         var desiredThrottleSpeed = translationVector.x() * Constants.SwerveMaxspeedMPS;
         var desiredStrafeSpeed = translationVector.y() * Constants.SwerveMaxspeedMPS;

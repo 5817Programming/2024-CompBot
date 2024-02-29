@@ -23,8 +23,7 @@ import com.uni.lib.util.SynchronousPIDF;
 
 import edu.wpi.first.wpilibj.Timer;
 
-
-public class DriveMotionPlanner{
+public class DriveMotionPlanner {
 
     boolean useAllianceColor;
     private Translation2d targetFollowTranslation = new Translation2d();
@@ -36,7 +35,7 @@ public class DriveMotionPlanner{
     PathPlannerTrajectory trajectoryDesired;
     PathStateGenerator mPathStateGenerator;
     PathGenerator mPathGenerator;
-    PID2d OdometryPID = new PID2d(new SynchronousPIDF(.6,0,0),new SynchronousPIDF(.6,0,0));
+    PID2d OdometryPID = new PID2d(new SynchronousPIDF(.6, 0, 0), new SynchronousPIDF(.6, 0, 0));
     double lastTimestamp = 0;
     public static DriveMotionPlanner instance = null;
 
@@ -45,16 +44,18 @@ public class DriveMotionPlanner{
             instance = new DriveMotionPlanner();
         return instance;
     }
-    public DriveMotionPlanner(){
+
+    public DriveMotionPlanner() {
         mPathStateGenerator = PathStateGenerator.getInstance();
         mPathGenerator = new PathGenerator();
         // swerve = SwerveDrive.getInstance();
     }
-    public Rotation2d getTargetHeading(){
+
+    public Rotation2d getTargetHeading() {
         return targetHeading;
     }
 
-    public void setTrajectory(PathPlannerTrajectory trajectory,double initRotation, boolean useAllianceColor) {
+    public void setTrajectory(PathPlannerTrajectory trajectory, double initRotation, boolean useAllianceColor) {
         trajectoryFinished = false;
         this.useAllianceColor = useAllianceColor;
         mPathStateGenerator.setTrajectory(trajectory);
@@ -62,16 +63,17 @@ public class DriveMotionPlanner{
         RobotStateEstimator.getInstance().resetModuleOdometry(newpose);
         Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).flip().getDegrees());
 
-   }
+    }
+
     public void setTrajectoryOnTheFly(PathPlannerTrajectory trajectory, boolean useAllianceColor) {
         trajectoryFinished = false;
         this.useAllianceColor = useAllianceColor;
         mPathStateGenerator.setTrajectory(trajectory);
-        
+
         Pose2d newpose = RobotState.getInstance().getKalmanPose(Timer.getFPGATimestamp());
         RobotStateEstimator.getInstance().resetModuleOdometry(newpose);
         RobotState.getInstance().reset(Timer.getFPGATimestamp(), newpose);
-   }
+    }
 
     public void startPath(boolean useAllianceColor) {
         trajectoryStarted = true;
@@ -82,47 +84,50 @@ public class DriveMotionPlanner{
     public void resetTimer() {
         PathStateGenerator.getInstance().resetTimer();
     }
-    public Request setTrajectoryRequest(PathPlannerTrajectory trajectory,double initRotation, boolean useAllianceColor) {
+
+    public Request setTrajectoryRequest(PathPlannerTrajectory trajectory, double initRotation,
+            boolean useAllianceColor) {
         return new Request() {
 
             @Override
             public void act() {
-                setTrajectory(trajectory,initRotation, useAllianceColor);
+                setTrajectory(trajectory, initRotation, useAllianceColor);
             }
 
         };
     }
 
-      public void updateTrajectory() {
+    public void updateTrajectory() {
         Pose2d desiredPose = mPathStateGenerator.getDesiredPose2d(useAllianceColor);
         targetHeading = desiredPose.getRotation().inverse();
         targetFollowTranslation = desiredPose.getTranslation();
     }
 
-
-        public Translation2d updateFollowedTranslation2d(double timestamp) {
+    public Translation2d updateFollowedTranslation2d(double timestamp) {
         double dt = timestamp - lastTimestamp;
-        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestPoseFromOdom().getValue().getTranslation();
+        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestPoseFromOdom().getValue()
+                .getTranslation();
         OdometryPID.x().setOutputRange(-1, 1);
         OdometryPID.y().setOutputRange(-1, 1);
-        Logger.recordOutput("Desired Pose",Pose2d.fromTranslation(targetFollowTranslation).toWPI());
+        Logger.recordOutput("Desired Pose", Pose2d.fromTranslation(targetFollowTranslation).toWPI());
         double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.x(), dt);
         double yError = OdometryPID.y().calculate(targetFollowTranslation.y() - currentRobotPositionFromStart.y(), dt);
         lastTimestamp = timestamp;
-        if (((Math.abs(xError) + Math.abs(yError)) / 2 < .05 && PathStateGenerator.getInstance().isFinished())||trajectoryFinished) {
+        if (((Math.abs(xError) + Math.abs(yError)) / 2 < .05 && PathStateGenerator.getInstance().isFinished())
+                || trajectoryFinished) {
             trajectoryFinished = true;
             return new Translation2d();
         }
         return new Translation2d(xError, -yError);
     }
 
-    public void generateAndPrepareTrajectory(Pose2d startPose, Pose2d endPose, ChassisSpeeds currentVelocity, boolean useAllianceColor){
+    public void generateAndPrepareTrajectory(Pose2d startPose, Pose2d endPose, ChassisSpeeds currentVelocity,
+            boolean useAllianceColor) {
         PathPlannerTrajectory trajectory = mPathGenerator.generatePath(
-            startPose,
-            new PathConstraints(2.5, 7, 1000000, 1000000),
-            endPose,
-            new ChassisSpeeds()
-        );
+                startPose,
+                new PathConstraints(2.5, 7, 1000000, 1000000),
+                endPose,
+                new ChassisSpeeds());
         setTrajectoryOnTheFly(trajectory, useAllianceColor);
     }
     // public Request generateTrajectoryRequest(int node) {
@@ -157,15 +162,17 @@ public class DriveMotionPlanner{
 
     // }
 
-public Request generatePathRequest(Pose2d start, Pose2d end, ChassisSpeeds currentVelocity, boolean useAllianceColor){
-    return new Request() {
-        @Override
-        public void act(){
-            generateAndPrepareTrajectory(start, end, currentVelocity, useAllianceColor);
-        }
-    };
-}
-public Request startPathRequest(boolean useAllianceColor) {
+    public Request generatePathRequest(Pose2d start, Pose2d end, ChassisSpeeds currentVelocity,
+            boolean useAllianceColor) {
+        return new Request() {
+            @Override
+            public void act() {
+                generateAndPrepareTrajectory(start, end, currentVelocity, useAllianceColor);
+            }
+        };
+    }
+
+    public Request startPathRequest(boolean useAllianceColor) {
 
         return new Request() {
             @Override
@@ -173,15 +180,8 @@ public Request startPathRequest(boolean useAllianceColor) {
                 startPath(useAllianceColor);
             }
         };
-}
+    }
 
-        public Request waitForTrajectoryRequest(double time) {
-        return new Request() {
-            @Override
-            public boolean isFinished() {
-                return mPathStateGenerator.atPositionOfTime(time, RobotState.getInstance().getLatestPoseFromOdom().getValue().getTranslation());
-            }
-        };}
     public Request waitForTrajectoryRequest() {
         return new Request() {
             @Override
@@ -190,6 +190,16 @@ public Request startPathRequest(boolean useAllianceColor) {
             }
         };
     }
-    
+
+    public Request waitForTrajectoryRequest(double timestamp) {
+        return new Request() {
+            @Override
+            public boolean isFinished() {
+                if (mPathStateGenerator.getTime() == 0)
+                    return false;
+                return mPathStateGenerator.getTime() > timestamp;
+            }
+        };
+    };
+
 }
- 

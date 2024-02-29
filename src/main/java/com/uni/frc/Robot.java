@@ -130,8 +130,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-  //   if(s.getCurrentLoggedRequest() == "Intaking"&&Timer.getFPGATimestamp()>0.3)
-  //     s.prepareShooterSetpoints(Timer.getFPGATimestamp());
+    s.prepareShooterSetpoints();
   }
 
   /** This function is called once when teleop is enabled. */  

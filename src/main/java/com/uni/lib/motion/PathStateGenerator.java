@@ -104,9 +104,7 @@ public class PathStateGenerator{
     return this.timer.hasElapsed(transformedTrajectory.getTotalTimeSeconds()+ .2);
 
   }
-  public boolean atPositionOfTime(double time, Translation2d currentPose){
-    return currentPose.inverse().translateBy(transformedTrajectory.sample(time).getTargetHolonomicPose().getTranslation()).norm()>0.1;
-  }
+
 
   // public double percentageDone() {
   //   return (this.timer.get() / (transformedTrajectory.getTotalTimeSeconds() + .2));

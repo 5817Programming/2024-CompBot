@@ -135,8 +135,15 @@ import com.uni.lib.TalonConfigs;
     return new Request(){
       @Override
       public boolean isFinished() {
-          // TODO Auto-generated method stub
           return Math.abs(shooterMotor1.getVelocity().getValueAsDouble()-(80*.8)) < 3;
+      }
+    };
+   }
+   public Request atTargetRequest(double percent){
+    return new Request(){
+      @Override
+      public boolean isFinished() {
+          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble()-(80*percent)) < 3;
       }
     };
    }
