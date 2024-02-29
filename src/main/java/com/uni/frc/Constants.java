@@ -96,10 +96,10 @@ public class Constants {
     // Scrub Factors
     public static final boolean kSimulateReversedCarpet = false;
     public static final double[] kWheelScrubFactors = new double[] { 1.0, 1.0, 1.0, 1.0 };
-    public static final double kXScrubFactorP = isCompbot?0.935:0.85;
-    public static final double kYScrubFactorP = isCompbot?1:.875;
-    public static final double kXScrubFactorN = isCompbot?0.935:0.85;
-    public static final double kYScrubFactorN = isCompbot?.86:.875;
+    public static final double kXScrubFactorP = isCompbot?.97:0.85;
+    public static final double kYScrubFactorP = isCompbot?.97:.875;
+    public static final double kXScrubFactorN = isCompbot?.97:0.85;
+    public static final double kYScrubFactorN = isCompbot?.97:.875;
 
 
     public static final double driveKS = (0.32 / 12);
@@ -144,7 +144,7 @@ public class Constants {
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = kMaxAccelerationMetersPerSecondSquared /
     Math.hypot(mRobotBaseLength / 2.0, mRobotBaseWidth / 2.0);
 
-    public static final double kFrontRightStartingEncoderPosition = isCompbot ? -164.5 : -86; // -354.950352
+    public static final double kFrontRightStartingEncoderPosition = isCompbot ? -173.8 : -86; // -354.950352
     public static final double kFrontLeftStartingEncoderPosition = isCompbot ? -141.5 : -160; // -263.094811
     public static final double kRearLeftStartingEncoderPosition = isCompbot ? -104.4: -355; // -121.094031
     public static final double kRearRightStartingEncoderPosition =isCompbot ? -156.2: -265; // -355.170825
@@ -163,8 +163,8 @@ public class Constants {
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SHOT_TRAVEL_TIME_TREE_MAP = new InterpolatingTreeMap<>();
         public static final double kDeadband = 0;;
         static {
-            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(10.0), new InterpolatingDouble(0.0));
+            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.0038));
+            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(0.0112));
         }
 
     }
@@ -212,15 +212,30 @@ public class Constants {
 
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kNewPivotShootingMap = new InterpolatingTreeMap<>();
         static {
-            kNewPivotShootingMap.put(new InterpolatingDouble(0.8), new InterpolatingDouble(-16.0));
-            kNewPivotShootingMap.put(new InterpolatingDouble(6.0), new InterpolatingDouble(-1.0));
+            kNewPivotShootingMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(-0.179));
+            kNewPivotShootingMap.put(new InterpolatingDouble(1.5), new InterpolatingDouble(-.21));
+            kNewPivotShootingMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(-.24));
+            kNewPivotShootingMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(-.264));
+            kNewPivotShootingMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(-.275));
+            kNewPivotShootingMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(-.292));
+            kNewPivotShootingMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(-0.303));
+            kNewPivotShootingMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(-0.316));
+            kNewPivotShootingMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(-0.323));
+            kNewPivotShootingMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(-0.330));
         }
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kMediumPivotShootingMap = new InterpolatingTreeMap<>();
         static {
-            kMediumPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            kMediumPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            kMediumPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            kMediumPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            kMediumPivotShootingMap.put(new InterpolatingDouble(0.8), new InterpolatingDouble(-0.179));
+            kMediumPivotShootingMap.put(new InterpolatingDouble(1.3), new InterpolatingDouble(-.21));
+            kMediumPivotShootingMap.put(new InterpolatingDouble(1.8), new InterpolatingDouble(-.24));
+            kMediumPivotShootingMap.put(new InterpolatingDouble(2.3), new InterpolatingDouble(-.264));
+            kMediumPivotShootingMap.put(new InterpolatingDouble(2.8), new InterpolatingDouble(-.283));
+            kMediumPivotShootingMap.put(new InterpolatingDouble(3.3), new InterpolatingDouble(-.3));
+            kMediumPivotShootingMap.put(new InterpolatingDouble(3.8), new InterpolatingDouble(-0.313));
+            kMediumPivotShootingMap.put(new InterpolatingDouble(4.3), new InterpolatingDouble(-0.326));
+            kMediumPivotShootingMap.put(new InterpolatingDouble(4.8), new InterpolatingDouble(-0.333));
+            kMediumPivotShootingMap.put(new InterpolatingDouble(5.3), new InterpolatingDouble(-0.34));
+
         }
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kOldPivotShootingMap = new InterpolatingTreeMap<>();
         static {
@@ -243,13 +258,13 @@ public class Constants {
 
     public static final class VisionConstants {
         public static final int APRIL_PIPLINE = 0;
-        public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 25;
+        public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 15;
 
-        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(.072,-.07),
+        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(0,0),
                 Rotation2d.fromDegrees(0));
 
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);
-        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(21);
+        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(24);
 
         public static final double IMAGE_CAPTURE_LATENCY = 11.0;
        

@@ -128,6 +128,7 @@ public class CompConstants {
         public static final double SHOOTING = 0;
         public static final double MAX_UP = 0;
         public static final double MAX_DOWN = 0;
+        public static final double INTAKING = 0;
 
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> ANGLE_TREEMAP = new InterpolatingTreeMap<>();
         static{

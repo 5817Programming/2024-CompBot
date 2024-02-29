@@ -2,6 +2,14 @@ package com.uni.frc.Autos;
 
 
 
+import java.util.List;
+
+import org.ejml.dense.row.CommonOps_MT_CDRM;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.EventMarker;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.subsystems.SuperStructure;
@@ -9,54 +17,55 @@ import com.uni.frc.subsystems.Swerve.SwerveDrive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.Command;
 
 
 public class M7 extends AutoBase{
     SuperStructure s = SuperStructure.getInstance();
     SwerveDrive mSwerve = SwerveDrive.getInstance();
     double initRotation = -2;
-    PathPlannerTrajectory path = PathPlannerPath.fromPathFile("M7 SPEED").getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
+    PathPlannerPath path = PathPlannerPath.fromPathFile("M7 SPEED");
+    PathPlannerTrajectory trajectory = path.getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
+    List<EventMarker> eventMarkers = path.getEventMarkers();
 
     @Override
-    public void auto() {
-        s.trajectoryState(path,initRotation);
-        s.shootState();
+    public void auto(){
+        s.trajectoryState(trajectory, initRotation);
+        eventWaitState();
+        s.shootState(false);
 
-        s.waitForTrajectoryState(0.7);
+        eventWaitState();
         s.intakeState(false);
-        s.prepareShooterSetpointsRequest(1.8);
-        s.waitForTrajectoryState(1.8);
-        s.shootState();
+        eventWaitState();
+        s.shootState(false);
+        eventWaitState();
 
-        s.waitForTrajectoryState(2);
+        eventWaitState();
         s.intakeState(false);
-        s.prepareShooterSetpointsRequest(2.89);
-        s.waitForTrajectoryState(2.89);
-        s.shootState();
+        eventWaitState();
+        s.shootState(false);
 
-        s.waitForTrajectoryState(3.2);
+        eventWaitState();
         s.intakeState(false);
-        s.prepareShooterSetpointsRequest(3.9);
-        s.waitForTrajectoryState(3.9);
-        s.shootState();
+        eventWaitState();
+        s.shootState(false);
+        
+        eventWaitState();
+        s.intakeState(false);
+        eventWaitState();
+        s.shootState(false);
 
-        s.waitForTrajectoryState(5.2);
+        eventWaitState();
         s.intakeState(false);
-        s.prepareShooterSetpointsRequest(7.35);
-        s.waitForTrajectoryState(7.35);
-        s.shootState();
+        eventWaitState();
+        s.shootState(false);
 
-        s.waitForTrajectoryState(8.13);
+        eventWaitState();
         s.intakeState(false);
-        s.prepareShooterSetpointsRequest(10.15);
-        s.waitForTrajectoryState(10.15);
-        s.shootState();
+        eventWaitState();
+        s.shootState(false);
 
-        s.waitForTrajectoryState(11.24);
-        s.intakeState(false);
-        s.prepareShooterSetpointsRequest(12.94);
-        s.waitForTrajectoryState(12.94);
-        s.shootState();
+        s.waitState(25, false);
 
 
 

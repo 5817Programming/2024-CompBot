@@ -48,12 +48,11 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
     public enum State {
       AMP(PivotConstants.AMP),
-      SPEAKER(PivotConstants.SPEAKER),
       TRANSFER(PivotConstants.SPEAKER),
       TRAP(PivotConstants.SPEAKER),
       MAXUP(PivotConstants.MAX_UP),
-      MAXDOWN(PivotConstants.MAX_DOWN),
-      SHOOTING(PivotConstants.MAX_DOWN);
+      MAXDOWN(-.350),
+      INTAKING(PivotConstants.INTAKING);
 
       double output = 0;
       State(double output){
@@ -101,7 +100,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
     public boolean atTarget(){
       System.out.println(Math.abs(mPeriodicIO.rotationDemand -mPeriodicIO.rotationPosition));
-      return Math.abs(mPeriodicIO.rotationDemand -mPeriodicIO.rotationPosition) <1;
+      return Math.abs(mPeriodicIO.rotationDemand -mPeriodicIO.rotationPosition) <.01;
     }
 
     public void conformToState(State state) {
@@ -109,7 +108,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
       setMotionMagic(state.output);
     }
     public void conformToState(double Override) {
-      setState(State.SHOOTING);
       setMotionMagic(Override);
     }
 
@@ -120,7 +118,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
     }
 
     public void setPercent(){
-      // pivotMotor1.setControl(new DutyCycleOut(mPeriodicIO.rotationDemand, true, false, false, false));
+      pivotMotor1.setControl(new DutyCycleOut(mPeriodicIO.rotationDemand, true, false, false, false));
     }
 
     public Request stateRequest(State state) {
@@ -191,7 +189,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
     @Override
     public void outputTelemetry() {
       Logger.recordOutput("Pivot Position", pivotMotor1.getPosition().getValue());
-      Logger.recordOutput("Pivot Absolute Position",encoder.getAbsolutePosition().getValue()*360);
+      Logger.recordOutput("Pivot Absolute Position",encoder.getAbsolutePosition().getValue());
+      Logger.recordOutput("pivot demand", mPeriodicIO.rotationDemand);
 
     }
 

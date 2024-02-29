@@ -1,7 +1,9 @@
 package com.uni.frc.subsystems;
 
 
- import com.ctre.phoenix6.configs.TalonFXConfiguration;
+ import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
@@ -16,7 +18,7 @@ import com.uni.lib.TalonConfigs;
    private PeriodicIO mPeriodicIO = new PeriodicIO();
    private TalonFX shooterMotor1 = new TalonFX(Ports.shooter1, "Minivore");
    private TalonFX shooterMotor2 = new TalonFX(Ports.shooter2, "Minivore");
-   public State currentState = State.OFF;
+   public State currentState = State.IDLE;
    private TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
    private double spinOffset = 0;
    public static Shooter instance = null;
@@ -33,10 +35,11 @@ import com.uni.lib.TalonConfigs;
    }
 
    public enum State{
-    SHOOTING(-1),
+    PARTIALRAMP(.7),
+    SHOOTING(1),
     TRANSFER(0.5),
     REVERSETRANSFER(-.5),
-    OFF(0);
+    IDLE(0);
 
     double output = 0;
     State(double output){
@@ -128,6 +131,16 @@ import com.uni.lib.TalonConfigs;
      return mPeriodicIO.statorCurrent;
    }
 
+   public Request atTargetRequest(){
+    return new Request(){
+      @Override
+      public boolean isFinished() {
+          // TODO Auto-generated method stub
+          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble()-(80*.9)) < 3;
+      }
+    };
+   }
+
    @Override
    public void writePeriodicOutputs() {
      mPeriodicIO.drivePosition = shooterMotor1.getPosition().getValueAsDouble();
@@ -137,16 +150,20 @@ import com.uni.lib.TalonConfigs;
 
    @Override
    public void readPeriodicInputs() {
-      // shooterMotor1.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand).withEnableFOC(true));//TODO
-      // shooterMotor2.setControl(new DutyCycleOut(mPeriodicIO.driveDemand*0.9).withEnableFOC(true));
+      shooterMotor1.setControl(new DutyCycleOut(mPeriodicIO.driveDemand).withEnableFOC(true));//TODO
+      shooterMotor2.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand*0.7).withEnableFOC(true));
+      
+      
+      
+      // hEnableFOC(true));
 
-      shooterMotor1.setControl(new MotionMagicVelocityDutyCycle(-1).withEnableFOC(true));
-      shooterMotor2.setControl(new MotionMagicVelocityDutyCycle(0.9).withEnableFOC(true));
+      // shooterMotor1.setControl(new MotionMagicVelocityDutyCycle(mPeriodicIO.driveDemand).withEnableFOC(true));
+      // shooterMotor2.setControl(new MotionMagicVelocityDutyCycle(-mPeriodicIO.driveDemand).withEnableFOC(true));
    }
 
    @Override
    public void outputTelemetry() {
-
+      Logger.recordOutput("zVelocity",shooterMotor1.getVelocity().getValueAsDouble());
    }
 
    @Override

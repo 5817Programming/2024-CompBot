@@ -4,8 +4,11 @@
 
 package com.uni.lib;
 
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.uni.frc.Constants;
+import com.uni.frc.Ports;
 
 /** Add your docs here. */
 public class TalonConfigs {
@@ -32,7 +35,6 @@ public class TalonConfigs {
         driveConfigs.Slot0.kP = .05;
         driveConfigs.Slot0.kI = 0;
         driveConfigs.Slot0.kD = 0;
-        driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.2; 
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
 
         driveConfigs.MotionMagic.MotionMagicCruiseVelocity = 80;
@@ -46,16 +48,19 @@ public class TalonConfigs {
         driveConfigs.Slot0.kV = 0;
         driveConfigs.Slot0.kS = 0;
         driveConfigs.Slot0.kA = 0;
-        driveConfigs.Slot0.kP = 1.5;
+        driveConfigs.Slot0.kP = -40;
         driveConfigs.Slot0.kI = 0;
         driveConfigs.Slot0.kD = 0;
-        driveConfigs.Slot0.kG = -.3;
-        
+        driveConfigs.Slot0.kG = -0.175;
+        driveConfigs.Feedback.FeedbackRemoteSensorID = Ports.PivotEncoder;
+        driveConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+
         driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 
+        driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
 
 
-        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = 200;
-        driveConfigs.MotionMagic.MotionMagicAcceleration = 200;
+        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = 5;
+        driveConfigs.MotionMagic.MotionMagicAcceleration = 4;
 
       return driveConfigs;
 
@@ -146,10 +151,10 @@ public class TalonConfigs {
     }
   public static TalonFXConfiguration shooterConfigs() {
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
-        driveConfigs.Slot0.kV = .12;
-        driveConfigs.Slot0.kS = .25;
-        driveConfigs.Slot0.kA = .01;
-        driveConfigs.Slot0.kP = .11;
+        driveConfigs.Slot0.kV = 0.01;
+        driveConfigs.Slot0.kS = 0;
+        driveConfigs.Slot0.kA = 0;
+        driveConfigs.Slot0.kP = 0.04;
         driveConfigs.Slot0.kI = 0;
         driveConfigs.Slot0.kD = 0;
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;

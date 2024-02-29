@@ -5,6 +5,9 @@
 package com.uni.frc.Planners;
 
 import java.util.Optional;
+
+import org.littletonrobotics.junction.Logger;
+
 import com.uni.frc.Constants;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight.VisionUpdate;
@@ -52,10 +55,10 @@ public class AimingPlanner {
                 double estimatedTimeFrame = 0;
                 Pose2d odomToTargetPoint = visionPoseComponent.inverse().transformBy(mFieldToSpeaker);
                 double travelDistance = odomToTargetPoint.transformBy(currentOdomToRobot).getTranslation().norm();
-                if(currentVelocity.norm() < 1.5){
                 estimatedTimeFrame = mShotTimeMap.getInterpolated(new InterpolatingDouble(travelDistance)).value; //TODO
-                }
                 Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(estimatedTimeFrame).rotateBy(currentOdomToRobot.getRotation().inverse());
+
+                Logger.recordOutput("poseAttmie", poseAtTimeFrame.toWPI());
                 Pose2d futureOdomToTargetPoint = poseAtTimeFrame.inverse().transformBy(odomToTargetPoint).inverse();
                 Rotation2d targetRotation = futureOdomToTargetPoint.getTranslation().getAngle().inverse();
                 targetPose = new Pose2d(futureOdomToTargetPoint.getTranslation(), targetRotation);

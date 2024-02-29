@@ -13,7 +13,6 @@
   public class Intake extends Subsystem {
     private PeriodicIO mPeriodicIO = new PeriodicIO();
     private TalonFX intakeMotor = new TalonFX(Ports.Intake, "Minivore");
-    private BeamBreak intakeBeamBreak = new BeamBreak(Ports.IntakeBeamBreakPort);
     private TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
     private State currentState;
 
@@ -33,8 +32,11 @@
       currentState = State.OFF;
     }
 
+
+
     public enum State {
-      INTAKING(-0.8),
+      INTAKING(-0.7),
+      OUTTAKING(0.7),
       OFF(0);
 
       double output = 0;
@@ -102,7 +104,6 @@
 
     @Override
     public void writePeriodicOutputs() {
-      mPeriodicIO.hasPiece = intakeBeamBreak.get();
       mPeriodicIO.drivePosition = intakeMotor.getPosition().getValueAsDouble();
       mPeriodicIO.velocity = intakeMotor.getVelocity().getValueAsDouble();
       mPeriodicIO.statorCurrent = intakeMotor.getStatorCurrent().getValueAsDouble();

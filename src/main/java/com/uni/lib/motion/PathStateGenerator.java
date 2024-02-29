@@ -46,6 +46,10 @@ public class PathStateGenerator{
     this.transformedTrajectory = trajectory;
   }
 
+  public Pose2d sample(double timestamp){
+    return new Pose2d(transformedTrajectory.sample(timestamp).getTargetHolonomicPose());
+  }
+
   public Pose2d getDesiredPose2d(boolean useAllianceColor) {
     return getDesiredPose2d(useAllianceColor,timer.get());
   }

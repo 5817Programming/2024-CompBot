@@ -4,6 +4,8 @@
 
 package com.uni.frc.Planners;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.uni.frc.Constants;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Twist2d;
@@ -75,12 +77,15 @@ public class ShootingUtils {
         Twist2d currentVelocity){
         double effectiveDistance = shooterToTarget.getTranslation().norm();
         double lookahead_time = shotTimeTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
-        Pose2d compensatedShooterToTarget = shooterToTarget.transformBy(Pose2d.projectTwist(currentVelocity.scaled(lookahead_time+kShotTime)));
-        
+        Pose2d compensatedShooterToTarget = shooterToTarget.transformBy(Pose2d.projectTwist(currentVelocity.scaled(0.02)));
+
+        Logger.recordOutput("Compensated Position", compensatedShooterToTarget.toWPI());
+        Logger.recordOutput("Time", lookahead_time);
+
         double compensatedDistance = compensatedShooterToTarget.getTranslation().norm();
 
         double desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
-        double compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
+        double compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
         double uncompensatedDesiredPivotAngleError = Math.abs(desiredPivotAngle - pivotAngle);
         double compensatedDesiredPivotAngleError = Math.abs(compensatedPivotAngle - pivotAngle);
 

@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 public class Hand extends Subsystem {
   private PeriodicIO mPeriodicIO = new PeriodicIO();
   private TalonFX handMotor = new TalonFX(Ports.Hand);
-  private BeamBreak handBeamBreak = new BeamBreak(Ports.handBeamBreak);
+  // private BeamBreak handBeamBreak = new BeamBreak(Ports.handBeamBreak);
 
   private TalonFXConfiguration handConfig = TalonConfigs.handConfigs();
   public static Hand instance = null;
@@ -144,7 +144,7 @@ public class Hand extends Subsystem {
     mPeriodicIO.drivePosition = handMotor.getPosition().getValueAsDouble();
     mPeriodicIO.velocity = handMotor.getVelocity().getValueAsDouble();
     mPeriodicIO.statorCurrent = (handMotor.getStatorCurrent().getValueAsDouble());
-    mPeriodicIO.hasPiece = handBeamBreak.get();
+    // mPeriodicIO.hasPiece = handBeamBreak.get();
   }
 
   @Override

@@ -29,6 +29,7 @@ import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.RobotStateEstimator;
 import com.uni.frc.subsystems.Shooter;
 import com.uni.frc.subsystems.SuperStructure;
+import com.uni.frc.subsystems.SuperStructure.SuperState;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.frc.subsystems.Vision.ObjectLimeLight;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight;
@@ -51,6 +52,7 @@ public class Robot extends LoggedRobot {
 
   Controls controls;
   SubsystemManager subsystemManager;
+  SuperStructure s = SuperStructure.getInstance();
   SwerveDrive swerve;
   double yaw;
   OdometryLimeLight vision;
@@ -121,13 +123,15 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve = SwerveDrive.getInstance();
     swerve.fieldzeroSwerve();
     swerve.zeroModules();
-    new M8().runAuto();
+    SuperStructure.getInstance().setState(SuperState.AUTO);
+    new M7().runAuto();
      }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-
+    if(s.getCurrentLoggedRequest() == "Intaking")
+      s.prepareShooterSetpoints(Timer.getFPGATimestamp());
   }
 
   /** This function is called once when teleop is enabled. */  

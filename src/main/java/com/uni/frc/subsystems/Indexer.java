@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj.Timer;
    private PeriodicIO mPeriodicIO = new PeriodicIO();
    private TalonFX indexerMotor = new TalonFX(Ports.Indexer, "Minivore");
    private boolean lastBeam = false;
-   private BeamBreak indexerBeamBreak = new BeamBreak(Ports.IndexerBeamBreakPort);
-   private TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
+   private BeamBreak indexerBeamBreak;
+   private TalonFXConfiguration indexerConfig;
 
 
    public static Indexer instance = null;
@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.Timer;
    /** Creates a new intake. */
    public Indexer() {
      configMotors();
+     indexerBeamBreak = new BeamBreak(0);
    }
    public enum State{
     OFF(0),
@@ -78,7 +79,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 
   public Request hasPieceRequest(boolean timeout) {
-    if (timeout) {
+    if (!timeout) {
       return new Request() {
         @Override
         public boolean isFinished() {
@@ -123,7 +124,18 @@ import edu.wpi.first.wpilibj.Timer;
    public double getStatorCurrent() {
      return mPeriodicIO.statorCurrent;
    }
+   public Request setHasPieceRequest(boolean hasPiece){
+    return new Request() {
+      @Override
+      public void act() {
+            mPeriodicIO.hasPiece = hasPiece;
+      }
+    };
+  }
 
+  public void setPiece(Boolean piece){
+    mPeriodicIO.hasPiece = piece;
+  }
    double noteEntryTime = 0;
    boolean noteHalfway = false;
    @Override
@@ -132,7 +144,8 @@ import edu.wpi.first.wpilibj.Timer;
      mPeriodicIO.drivePosition = indexerMotor.getPosition().getValueAsDouble();
      mPeriodicIO.velocity = indexerMotor.getVelocity().getValueAsDouble();
      mPeriodicIO.statorCurrent = indexerMotor.getStatorCurrent().getValueAsDouble();
-    if(lastBeam != indexerBeamBreak.get()&& lastBeam == false)
+
+    if(lastBeam != indexerBeamBreak.get()&& lastBeam==true)
       mPeriodicIO.hasPiece = !mPeriodicIO.hasPiece;
     lastBeam = indexerBeamBreak.get();
   }
@@ -144,6 +157,8 @@ import edu.wpi.first.wpilibj.Timer;
 
    @Override
    public void outputTelemetry() {
+    Logger.recordOutput("indexer beambreak ", indexerBeamBreak.get());
+    Logger.recordOutput("indexer hasPiece ", mPeriodicIO.hasPiece);
     Logger.recordOutput("indexer current", indexerMotor.getStatorCurrent().getValueAsDouble());
    }
 
