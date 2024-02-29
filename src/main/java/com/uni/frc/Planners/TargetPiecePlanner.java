@@ -5,7 +5,6 @@
 package com.uni.frc.Planners;
 
 import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
 
 import com.uni.frc.subsystems.Vision.ObjectLimeLight.VisionObjectUpdate;
 import com.uni.lib.HeadingController;
@@ -22,7 +21,6 @@ public class TargetPiecePlanner {
         }
         double objectYDegreesCamera = visionupdate.get().getCameraToTarget().x();
         Rotation2d targetHeading = currentHeading.rotateBy(objectYDegreesCamera);
-        Logger.recordOutput("objectTarget", targetHeading.getDegrees());
         headingController.setTargetHeading(targetHeading.inverse());
         double output = headingController.getRotationCorrection(currentHeading.inverse(), timeStamp);   
         return output;

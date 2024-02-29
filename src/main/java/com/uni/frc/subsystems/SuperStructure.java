@@ -89,7 +89,8 @@ public class SuperStructure extends Subsystem {
     private String currentRequestLog;
     private boolean stateChanged = false;
     private SuperState currentState = SuperState.OFF;
-
+    private Mode currentMode = Mode.SHOOTING;
+    private boolean modeChanged = false;
     private boolean allRequestsComplete;
 
     private boolean requestsCompleted() {
@@ -109,9 +110,8 @@ public class SuperStructure extends Subsystem {
 
     public enum SuperState {
         INTAKING,
-        SHOOTING,
         CLIMB,
-        AMP,
+        SCORE,
         SOURCE,
         OFF,
         IDLE,
@@ -119,10 +119,21 @@ public class SuperStructure extends Subsystem {
         OUTTAKING
     }
 
+    public enum Mode {
+        SHOOTING,
+        AMP
+    }
+
     public void setState(SuperState state) {
         if (currentState != state)
             stateChanged = true;
         currentState = state;
+    }
+
+    public void setMode(Mode mode) {
+        if (currentMode != mode)
+            modeChanged = true;
+        currentMode = mode;
     }
 
     private void setQueueRequests(RequestList r) {
@@ -201,30 +212,40 @@ public class SuperStructure extends Subsystem {
     public void processState(double timestamp) {
         Logger.recordOutput("current SuperState", currentState);
         switch (currentState) {
-            case SHOOTING:
-                if (stateChanged) {
-                    shootState(true);
+            case SCORE:
+                switch (currentMode) {
+                    case SHOOTING:
+                        if (stateChanged) {
+                            shootState(true);
+                        }
+
+                        prepareShooterSetpoints(timestamp);
+                        mDrive.setState(SwerveDrive.State.AIMING);
+                        break;
+
+                    case AMP:
+                        if (stateChanged) {
+                            scoreAmpState();
+                        }
+                        Optional<Pose2d> targetSnap = AutoAlignPointSelector
+                                .chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
+                        if (targetSnap.isEmpty()) {
+                            mDrive.setState(SwerveDrive.State.MANUAL);
+
+                        } else {
+                            mDrive.setAlignment(targetSnap.get());
+                            mDrive.setState(SwerveDrive.State.ALIGNMENT);
+                        }
+                        break;
                 }
 
-                prepareShooterSetpoints(timestamp);
-                mDrive.setState(SwerveDrive.State.AIMING);
                 break;
-            case AMP:
-                if (stateChanged) {
-                    scoreAmpState();
-                }
-                Optional<Pose2d> targetSnap = AutoAlignPointSelector
-                        .chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
-                if (targetSnap.isEmpty()) {
-                    mDrive.setState(SwerveDrive.State.MANUAL);
 
-                } else {
-                    mDrive.setAlignment(targetSnap.get());
-                    mDrive.setState(SwerveDrive.State.ALIGNMENT);
-                }
             case INTAKING:
-                if (stateChanged && !DriverStation.isAutonomous())
+                if (stateChanged && !DriverStation.isAutonomous()) {
                     intakeState(true);
+                    mDrive.setState(SwerveDrive.State.TARGETOBJECT);
+                }
                 break;
             case OUTTAKING:
                 mIntake.conformToState(Intake.State.OUTTAKING);
@@ -235,7 +256,9 @@ public class SuperStructure extends Subsystem {
                 mDrive.setState(SwerveDrive.State.ALIGNMENT);
                 break;
             case IDLE:
-                clearQueues();
+                if(stateChanged)
+                    clearQueues();
+                
                 mDrive.setState(SwerveDrive.State.MANUAL);
                 mIntake.conformToState(Intake.State.OFF);
                 mIndexer.conformToState(Indexer.State.OFF);
@@ -247,7 +270,9 @@ public class SuperStructure extends Subsystem {
                     mShooter.conformToState(Shooter.State.IDLE);
                     mPivot.conformToState(Pivot.State.MAXDOWN);
                 }
-
+                if(modeChanged && currentMode == Mode.AMP){
+                    transferState(activeRequestsComplete);
+                }
                 break;
             case OFF:
                 mPivot.stop();
@@ -264,6 +289,7 @@ public class SuperStructure extends Subsystem {
 
         }
         stateChanged = false;
+        modeChanged = false;
     }
 
     public boolean inZone(double timestamp) {

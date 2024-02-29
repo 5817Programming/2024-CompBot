@@ -4,9 +4,6 @@
 
 package com.uni.frc.Autos;
 
-import java.util.List;
-
-import com.pathplanner.lib.path.EventMarker;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 

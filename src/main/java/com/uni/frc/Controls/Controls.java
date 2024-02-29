@@ -3,24 +3,12 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package com.uni.frc.Controls;
-
-import java.util.Optional;
-
 import com.uni.frc.Ports;
-import com.uni.frc.Planners.AutoAlignPointSelector;
-import com.uni.frc.subsystems.Indexer;
-import com.uni.frc.subsystems.Intake;
-import com.uni.frc.subsystems.Pivot;
-import com.uni.frc.subsystems.RobotState;
-import com.uni.frc.subsystems.Shooter;
+
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.SuperStructure.SuperState;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
-import com.uni.frc.subsystems.Swerve.SwerveDrive.State;
-import com.uni.lib.geometry.Pose2d;
-import com.uni.lib.geometry.Rotation2d;
 
-import edu.wpi.first.wpilibj.Timer;
 
 public class Controls {
     SuperStructure s;
@@ -41,12 +29,8 @@ public class Controls {
         CoDriver = new Controller(Ports.XBOX_2);
         swerve = SwerveDrive.getInstance();
     }
-    public enum scoreMode{
-        AMP,
-        SPEAKER
-    }
-    scoreMode currentScoreMode = scoreMode.SPEAKER;
-double percent = 0;
+
+    double percent = 0;
     public void update() {
         Driver.update();
         CoDriver.update();
@@ -62,16 +46,7 @@ double percent = 0;
 
         if (Driver.StartButton.isPressed())
             swerve.resetGryo(180);
-        if (Driver.LeftTrigger.getValue() > 0.2) {
-            switch (currentScoreMode) {
-                case SPEAKER:
-                    s.setState(SuperState.SHOOTING);
-                    break;
-            
-                case AMP:
-                    s.setState(SuperState.AMP);
-                    break;
-        } }
+
 
            
     
@@ -83,7 +58,7 @@ double percent = 0;
         else if(Driver.RightTrigger.getValue()>0.2){ 
             s.setState(SuperState.INTAKING);
         }else if(Driver.RightBumper.isActive()){
-            s.setState(SuperState.SHOOTING);
+            s.setState(SuperState.SCORE);
         } 
         else{
             s.setState(SuperState.IDLE);
