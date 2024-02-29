@@ -38,7 +38,8 @@ import edu.wpi.first.wpilibj.Timer;
    }
    public enum State{
     OFF(0),
-    RECIEVING(-0.5),
+    RECIEVING(-0.4
+  ),
     TRANSFERING(-1),
     REVERSE_TRANSFER(-.5);
 

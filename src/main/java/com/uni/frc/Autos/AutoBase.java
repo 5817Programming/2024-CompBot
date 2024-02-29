@@ -17,10 +17,7 @@ import com.uni.frc.subsystems.Swerve.SwerveDrive;
  * this class will also give its child the stop auto method because all autos will need it
  */
 public abstract class AutoBase {
-    private List<EventMarker> events;
-    private int event = 0;
     public abstract void auto();
-    SuperStructure s = SuperStructure.getInstance();
     public void runAuto(){
         auto();
 
@@ -31,12 +28,4 @@ public abstract class AutoBase {
         SwerveDrive.getInstance().setState(SwerveDrive.State.MANUAL);
     }
 
-    public void registerEventMarkers(List<EventMarker> markers){
-        events = markers;
-    }
-
-    public void eventWaitState(){
-        s.waitForEventState(event, events);
-        event += 1;
-    }
 }

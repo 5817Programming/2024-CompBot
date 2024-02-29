@@ -136,7 +136,7 @@ import com.uni.lib.TalonConfigs;
       @Override
       public boolean isFinished() {
           // TODO Auto-generated method stub
-          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble()-(80*.9)) < 3;
+          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble()-(80*.8)) < 3;
       }
     };
    }

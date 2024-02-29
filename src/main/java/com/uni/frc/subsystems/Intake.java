@@ -35,7 +35,7 @@
 
 
     public enum State {
-      INTAKING(-0.7),
+      INTAKING(-1),
       OUTTAKING(0.7),
       OFF(0);
 

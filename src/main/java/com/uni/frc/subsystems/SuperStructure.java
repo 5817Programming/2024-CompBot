@@ -115,7 +115,7 @@ public class SuperStructure extends Subsystem {
         SOURCE,
         OFF,
         IDLE,
-        AUTO
+        AUTO, OUTTAKING
     }
 
     public void setState(SuperState state){
@@ -227,6 +227,9 @@ public class SuperStructure extends Subsystem {
                     if(stateChanged)
                         intakeState(true);
                     break;
+                case OUTTAKING:
+                    mIntake.conformToState(Intake.State.OUTTAKING);
+                    break;
                 case CLIMB:
                     break;
                 case SOURCE:
@@ -237,7 +240,7 @@ public class SuperStructure extends Subsystem {
                     mDrive.setState(SwerveDrive.State.MANUAL);
                     mIntake.conformToState(Intake.State.OFF);
                     mIndexer.conformToState(Indexer.State.OFF);
-                    if(false){//mIndexer.hasPiece()&&inZone(timestamp)
+                    if(mIndexer.hasPiece()&&inZone(timestamp)){
                         ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
                         mShooter.conformToState(Shooter.State.PARTIALRAMP);
                         mPivot.setMotionMagic(shootingParameters.uncompensatedDesiredPivotAngle);
@@ -465,7 +468,7 @@ public class SuperStructure extends Subsystem {
 
         RequestList request = new RequestList(Arrays.asList(
             logCurrentRequest("Intaking"),
-            mPivot.stateRequest(-.206),
+            mPivot.stateRequest(-.226),
             mPivot.atTargetRequest(),
             mIntake.stateRequest(Intake.State.INTAKING),
             mIndexer.stateRequest(Indexer.State.RECIEVING),
@@ -485,15 +488,18 @@ public class SuperStructure extends Subsystem {
         }
     }
     public void waitForEventState(int event, List<EventMarker> markers){
-     EventMarker marker = markers.get(event);
+        EventMarker marker = markers.get(event);   
         Request queue = new Request() {
         @Override
         public boolean isFinished() {
+             Logger.recordOutput("ran",true);
             return marker.shouldTrigger(mRobotState.getPoseFromOdom(Timer.getFPGATimestamp()).toWPI());
         }   
         };
         queue(queue);
     }
+
+    
 
     public void shootState(boolean Override){
         if(Override){

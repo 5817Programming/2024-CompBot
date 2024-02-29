@@ -74,14 +74,13 @@ double percent = 0;
         } }
 
            
-        if(Driver.LeftTrigger.value >0.2)
-            Intake.getInstance().conformToState(Intake.State.OUTTAKING);
-        
+    
         // else if(Driver.BButton.isPressed()){
         //     s.onTheFlyTrajectoryState(new Pose2d(8,2, Rotation2d.fromDegrees(180)), timestamp);
 
-        
-        if(Driver.RightTrigger.getValue()>0.2){ 
+        if(Driver.LeftTrigger.value >0.2)
+            s.setState(SuperState.OUTTAKING);    
+        else if(Driver.RightTrigger.getValue()>0.2){ 
             s.setState(SuperState.INTAKING);
         }else if(Driver.RightBumper.isActive()){
             s.setState(SuperState.SHOOTING);

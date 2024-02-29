@@ -28,48 +28,57 @@ public class M7 extends AutoBase{
     PathPlannerTrajectory trajectory = path.getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
     List<EventMarker> eventMarkers = path.getEventMarkers();
 
+    private List<EventMarker> events;
+    private int event = 0;
+
     @Override
     public void auto(){
+        registerEventMarkers(eventMarkers);
         s.trajectoryState(trajectory, initRotation);
-        eventWaitState();
         s.shootState(false);
-
-        eventWaitState();
+        s.waitForEventState(0, events);
         s.intakeState(false);
-        eventWaitState();
-        s.shootState(false);
-        eventWaitState();
+        // eventWaitState();
+        // s.shootState(false);
+        // eventWaitState();
 
-        eventWaitState();
-        s.intakeState(false);
-        eventWaitState();
-        s.shootState(false);
+        // eventWaitState();
+        // s.intakeState(false);
+        // eventWaitState();
+        // s.shootState(false);
 
-        eventWaitState();
-        s.intakeState(false);
-        eventWaitState();
-        s.shootState(false);
+        // eventWaitState();
+        // s.intakeState(false);
+        // eventWaitState();
+        // s.shootState(false);
         
-        eventWaitState();
-        s.intakeState(false);
-        eventWaitState();
-        s.shootState(false);
+        // eventWaitState();
+        // s.intakeState(false);
+        // eventWaitState();
+        // s.shootState(false);
 
-        eventWaitState();
-        s.intakeState(false);
-        eventWaitState();
-        s.shootState(false);
+        // eventWaitState();
+        // s.intakeState(false);
+        // eventWaitState();
+        // s.shootState(false);
 
-        eventWaitState();
-        s.intakeState(false);
-        eventWaitState();
-        s.shootState(false);
+        // eventWaitState();
+        // s.intakeState(false);
+        // eventWaitState();
+        // s.shootState(false);
 
-        s.waitState(25, false);
+        // s.waitState(25, false);
 
 
 
     }
 
+    public void registerEventMarkers(List<EventMarker> markers){
+        events = markers;
+    }
+
+    public void eventWaitState(){
+        event += 1;
+    }
 
 }

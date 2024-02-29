@@ -146,7 +146,7 @@ public class Constants {
 
     public static final double kFrontRightStartingEncoderPosition = isCompbot ? -173.8 : -86; // -354.950352
     public static final double kFrontLeftStartingEncoderPosition = isCompbot ? -141.5 : -160; // -263.094811
-    public static final double kRearLeftStartingEncoderPosition = isCompbot ? -104.4: -355; // -121.094031
+    public static final double kRearLeftStartingEncoderPosition = isCompbot ? -107.4: -355; // -121.094031
     public static final double kRearRightStartingEncoderPosition =isCompbot ? -156.2: -265; // -355.170825
 
 
@@ -260,7 +260,7 @@ public class Constants {
         public static final int APRIL_PIPLINE = 0;
         public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 15;
 
-        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(0,0),
+        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(-0.514,0.304),
                 Rotation2d.fromDegrees(0));
 
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);
