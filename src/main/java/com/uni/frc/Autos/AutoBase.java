@@ -15,6 +15,9 @@ import com.uni.frc.subsystems.Swerve.SwerveDrive;
  */
 public abstract class AutoBase {
     public abstract void auto();
+    public void testAuto(){
+
+    }
 
     public void runAuto(){
         auto();

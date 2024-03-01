@@ -161,7 +161,12 @@ public class DriveMotionPlanner {
     // };
 
     // }
-
+    public Pose2d sample(double timestamp){
+        Pose2d pose = Pose2d.identity();
+        if(mPathStateGenerator.sample(timestamp) != null)
+            pose = mPathStateGenerator.sample(timestamp);
+        return pose;
+    }
     public Request generatePathRequest(Pose2d start, Pose2d end, ChassisSpeeds currentVelocity,
             boolean useAllianceColor) {
         return new Request() {

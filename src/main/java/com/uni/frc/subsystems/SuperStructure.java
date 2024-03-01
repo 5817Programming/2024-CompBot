@@ -502,20 +502,22 @@ public class SuperStructure extends Subsystem {
         }
 
     }
- public void intakeState(double timeout) {
-            RequestList request = new RequestList(Arrays.asList(
-                    logCurrentRequest("Intaking"),
-                    setStateRequest(SuperState.INTAKING),
-                    mPivot.stateRequest(-.226),
-                    mIntake.stateRequest(Intake.State.INTAKING),
-                    mIndexer.stateRequest(Indexer.State.RECIEVING),
-                    mIndexer.hasPieceRequest(timeout),
-                    setStateRequest(SuperState.AUTO),
-                    mIndexer.stateRequest(Indexer.State.OFF),
-                    mIntake.stateRequest(Intake.State.OFF)), false);
-            queue(request);
+
+    public void intakeState(double timeout) {
+        RequestList request = new RequestList(Arrays.asList(
+                logCurrentRequest("Intaking"),
+                setStateRequest(SuperState.INTAKING),
+                mPivot.stateRequest(-.226),
+                mIntake.stateRequest(Intake.State.INTAKING),
+                mIndexer.stateRequest(Indexer.State.RECIEVING),
+                mIndexer.hasPieceRequest(timeout),
+                setStateRequest(SuperState.AUTO),
+                mIndexer.stateRequest(Indexer.State.OFF),
+                mIntake.stateRequest(Intake.State.OFF)), false);
+        queue(request);
 
     }
+
     public void waitForEventState(double timestamp) {
         queue(mDriveMotionPlanner.waitForTrajectoryRequest(timestamp));
     }
@@ -537,6 +539,23 @@ public class SuperStructure extends Subsystem {
 
                     }
                 });
+    }
+
+    public void waitForPositionState(double time) {
+        Translation2d other = mDriveMotionPlanner.sample(time).getTranslation();
+        new Request() {
+            @Override
+            public boolean isFinished() {
+                if (DriverStation.getAlliance().get().equals(Alliance.Blue))
+                    return other.translateBy(
+                            mRobotState.getPoseFromOdom(Timer.getFPGATimestamp()).getTranslation().inverse())
+                            .norm() < .3;
+                return other.reflect().translateBy(
+                        mRobotState.getPoseFromOdom(Timer.getFPGATimestamp()).getTranslation().inverse())
+                        .norm() < .3;
+            }
+        };
+
     }
 
     public void shootState(boolean Override) {
