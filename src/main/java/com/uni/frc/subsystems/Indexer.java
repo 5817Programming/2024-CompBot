@@ -102,7 +102,21 @@ import edu.wpi.first.wpilibj.Timer;
       }
     };
   }
+  public Request hasPieceRequest(double timeout) {
+    return new Request() {
+      double startTime;
 
+      @Override
+      public void initialize() {
+        startTime = Timer.getFPGATimestamp();
+      }
+
+      @Override
+      public boolean isFinished() {
+        return mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > timeout;
+      }
+    };
+  }
    public Request setPercentRequest(double percentage) {
      return new Request() {
 

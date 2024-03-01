@@ -493,7 +493,7 @@ public class SuperStructure extends Subsystem {
                     mPivot.stateRequest(-.226),
                     mIntake.stateRequest(Intake.State.INTAKING),
                     mIndexer.stateRequest(Indexer.State.RECIEVING),
-                    // mIndexer.hasPieceRequest(true),
+                    mIndexer.hasPieceRequest(true),
                     setStateRequest(SuperState.AUTO),
                     mIndexer.stateRequest(Indexer.State.OFF),
                     mIntake.stateRequest(Intake.State.OFF)), false);
@@ -502,7 +502,20 @@ public class SuperStructure extends Subsystem {
         }
 
     }
+ public void intakeState(double timeout) {
+            RequestList request = new RequestList(Arrays.asList(
+                    logCurrentRequest("Intaking"),
+                    setStateRequest(SuperState.INTAKING),
+                    mPivot.stateRequest(-.226),
+                    mIntake.stateRequest(Intake.State.INTAKING),
+                    mIndexer.stateRequest(Indexer.State.RECIEVING),
+                    mIndexer.hasPieceRequest(timeout),
+                    setStateRequest(SuperState.AUTO),
+                    mIndexer.stateRequest(Indexer.State.OFF),
+                    mIntake.stateRequest(Intake.State.OFF)), false);
+            queue(request);
 
+    }
     public void waitForEventState(double timestamp) {
         queue(mDriveMotionPlanner.waitForTrajectoryRequest(timestamp));
     }

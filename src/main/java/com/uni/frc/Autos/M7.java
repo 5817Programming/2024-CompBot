@@ -23,17 +23,17 @@ public class M7 extends AutoBase {
         // s.shootState(false);
 
         s.waitForPositionState(new Translation2d(1.98,5.1));
-        s.intakeState(false);
+        s.intakeState(.2);
         s.waitForPositionState(new Translation2d(2.2,5.16));
         // s.shootState(false);
 
         s.waitForPositionState(new Translation2d(2.03,5.54));
-        s.intakeState(false);
+        s.intakeState(.2);
         s.waitForPositionState(new Translation2d(2.75,5.77));
         // s.shootState(false);
 
         s.waitForPositionState(new Translation2d(2.15,6.6));
-        s.intakeState(false);
+        s.intakeState(.2);
         s.waitForPositionState(new Translation2d(4.06,7.32));
         // s.shootState(false);
 
