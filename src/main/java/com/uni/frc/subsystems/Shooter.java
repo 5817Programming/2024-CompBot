@@ -143,7 +143,7 @@ import com.uni.lib.TalonConfigs;
     return new Request(){
       @Override
       public boolean isFinished() {
-          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble()-(80*percent)) < 3;
+          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble())>(80*percent);
       }
     };
    }
@@ -158,7 +158,7 @@ import com.uni.lib.TalonConfigs;
    @Override
    public void readPeriodicInputs() {
       shooterMotor1.setControl(new DutyCycleOut(mPeriodicIO.driveDemand).withEnableFOC(true));//TODO
-      shooterMotor2.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand*0.7).withEnableFOC(true));
+      shooterMotor2.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand).withEnableFOC(true));
       
       
       

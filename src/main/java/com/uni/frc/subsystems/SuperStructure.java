@@ -18,6 +18,7 @@ import com.pathplanner.lib.path.EventMarker;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.Constants;
 import com.uni.frc.Autos.Shoot;
+import com.uni.frc.Constants.FieldConstants;
 import com.uni.frc.Planners.AutoAlignPointSelector;
 import com.uni.frc.Planners.DriveMotionPlanner;
 import com.uni.frc.Planners.ShootingUtils;
@@ -29,6 +30,7 @@ import com.uni.frc.subsystems.Requests.RequestList;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight;
 import com.uni.lib.geometry.Pose2d;
+import com.uni.lib.geometry.Translation2d;
 import com.uni.lib.motion.PathStateGenerator;
 import com.uni.lib.swerve.ChassisSpeeds;
 import com.uni.lib.util.InterpolatingDouble;
@@ -256,9 +258,9 @@ public class SuperStructure extends Subsystem {
                 mDrive.setState(SwerveDrive.State.ALIGNMENT);
                 break;
             case IDLE:
-                if(stateChanged)
+                if (stateChanged)
                     clearQueues();
-                
+
                 mDrive.setState(SwerveDrive.State.MANUAL);
                 mIntake.conformToState(Intake.State.OFF);
                 mIndexer.conformToState(Indexer.State.OFF);
@@ -270,7 +272,7 @@ public class SuperStructure extends Subsystem {
                     mShooter.conformToState(Shooter.State.IDLE);
                     mPivot.conformToState(Pivot.State.MAXDOWN);
                 }
-                if(modeChanged && currentMode == Mode.AMP){
+                if (modeChanged && currentMode == Mode.AMP) {
                     transferState(activeRequestsComplete);
                 }
                 break;
@@ -284,7 +286,6 @@ public class SuperStructure extends Subsystem {
                 mHand.stop();
                 break;
             case AUTO:
-                mDrive.setState(SwerveDrive.State.TRAJECTORY);
                 break;
 
         }
@@ -473,40 +474,56 @@ public class SuperStructure extends Subsystem {
     // }
     public void intakeState(boolean Override) {
 
-        if (!mIndexer.hasPiece()) {
-            if (Override) {
-                RequestList request = new RequestList(Arrays.asList(
-                        logCurrentRequest("Intaking"),
-                        mPivot.stateRequest(-.226),
-                        mPivot.atTargetRequest(),
-                        mIntake.stateRequest(Intake.State.INTAKING),
-                        mIndexer.stateRequest(Indexer.State.RECIEVING),
-                        mIndexer.hasPieceRequest(!Override),
-                        waitRequest(0),
-                        mIndexer.stateRequest(Indexer.State.OFF),
-                        mIntake.stateRequest(Intake.State.OFF)), false);
-                request(request);
-            } else {
-                RequestList request = new RequestList(Arrays.asList(
-                        logCurrentRequest("Intaking"),
-                        setStateRequest(SuperState.INTAKING),
-                        mPivot.stateRequest(-.226),
-                        mPivot.atTargetRequest(),
-                        mIntake.stateRequest(Intake.State.INTAKING),
-                        mIndexer.stateRequest(Indexer.State.RECIEVING),
-                        mIndexer.hasPieceRequest(!Override),
-                        waitRequest(0),
-                        setStateRequest(SuperState.AUTO),
-                        mIndexer.stateRequest(Indexer.State.OFF),
-                        mIntake.stateRequest(Intake.State.OFF)), false);
+        if (Override) {
+            RequestList request = new RequestList(Arrays.asList(
+                    logCurrentRequest("Intaking"),
+                    mPivot.stateRequest(-.226),
+                    mPivot.atTargetRequest(),
+                    mIntake.stateRequest(Intake.State.INTAKING),
+                    mIndexer.stateRequest(Indexer.State.RECIEVING),
+                    mIndexer.hasPieceRequest(!Override),
+                    waitRequest(0),
+                    mIndexer.stateRequest(Indexer.State.OFF),
+                    mIntake.stateRequest(Intake.State.OFF)), false);
+            request(request);
+        } else {
+            RequestList request = new RequestList(Arrays.asList(
+                    logCurrentRequest("Intaking"),
+                    setStateRequest(SuperState.INTAKING),
+                    mPivot.stateRequest(-.226),
+                    mIntake.stateRequest(Intake.State.INTAKING),
+                    mIndexer.stateRequest(Indexer.State.RECIEVING),
+                    // mIndexer.hasPieceRequest(true),
+                    setStateRequest(SuperState.AUTO),
+                    mIndexer.stateRequest(Indexer.State.OFF),
+                    mIntake.stateRequest(Intake.State.OFF)), false);
 
-                queue(request);
-            }
+            queue(request);
         }
+
     }
 
     public void waitForEventState(double timestamp) {
         queue(mDriveMotionPlanner.waitForTrajectoryRequest(timestamp));
+    }
+
+    public void waitForPositionState(Translation2d other) {
+        queue(
+                new Request() {
+                    @Override
+                    public boolean isFinished() {
+                        Logger.recordOutput("event", Pose2d.fromTranslation(other.reflect()).toWPI());
+
+                        if (DriverStation.getAlliance().get().equals(Alliance.Blue))
+                            return other.translateBy(
+                                    mRobotState.getPoseFromOdom(Timer.getFPGATimestamp()).getTranslation().inverse())
+                                    .norm() < .3;
+                        return other.reflect().translateBy(
+                                mRobotState.getPoseFromOdom(Timer.getFPGATimestamp()).getTranslation().inverse())
+                                .norm() < .3;
+
+                    }
+                });
     }
 
     public void shootState(boolean Override) {
@@ -524,7 +541,7 @@ public class SuperStructure extends Subsystem {
         } else {
             RequestList queue = new RequestList(Arrays.asList(
                     mPivot.atTargetRequest(),
-                    mShooter.atTargetRequest(.5),
+                    // mShooter.atTargetRequest(.5),
                     mIndexer.stateRequest(Indexer.State.TRANSFERING),
                     waitRequest(.3),
                     mIndexer.stateRequest(Indexer.State.OFF),

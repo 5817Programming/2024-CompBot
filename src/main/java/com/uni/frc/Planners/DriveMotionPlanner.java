@@ -195,6 +195,7 @@ public class DriveMotionPlanner {
         return new Request() {
             @Override
             public boolean isFinished() {
+                System.out.println("running");
                 if (mPathStateGenerator.getTime() == 0)
                     return false;
                 return mPathStateGenerator.getTime() > timestamp;

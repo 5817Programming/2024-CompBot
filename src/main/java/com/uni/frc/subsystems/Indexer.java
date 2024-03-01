@@ -98,7 +98,7 @@ import edu.wpi.first.wpilibj.Timer;
 
       @Override
       public boolean isFinished() {
-        return mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > 3;
+        return mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > 0.5;
       }
     };
   }

@@ -4,6 +4,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
+import com.uni.lib.geometry.Pose2d;
+import com.uni.lib.geometry.Translation2d;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -18,43 +20,37 @@ public class M7 extends AutoBase {
     @Override
     public void auto() {
         s.trajectoryState(trajectory, initRotation);
-        s.shootState(false);
+        // s.shootState(false);
 
-        s.waitForEventState(.6);
+        s.waitForPositionState(new Translation2d(1.98,5.1));
         s.intakeState(false);
+        s.waitForPositionState(new Translation2d(2.2,5.16));
+        // s.shootState(false);
 
-        s.waitForEventState(1.5);
-        s.shootState(false);
-
-        s.waitForEventState(2.05);
+        s.waitForPositionState(new Translation2d(2.03,5.54));
         s.intakeState(false);
+        s.waitForPositionState(new Translation2d(2.75,5.77));
+        // s.shootState(false);
 
-        s.waitForEventState(2.8);
-        s.shootState(false);
-
-        s.waitForEventState(3.36);
+        s.waitForPositionState(new Translation2d(2.15,6.6));
         s.intakeState(false);
+        s.waitForPositionState(new Translation2d(4.06,7.32));
+        // s.shootState(false);
 
-        s.waitForEventState(4.23);
-        s.shootState(false);
-
-        s.waitForEventState(5.52);
+        s.waitForPositionState(new Translation2d(7.21,7.45));
         s.intakeState(false);
+        s.waitForPositionState(new Translation2d(5.59,6.19));
+        // s.shootState(false);
 
-        s.waitForEventState(7.82);
-        s.shootState(false);
-
-        s.waitForEventState(8.6);
+        s.waitForPositionState(new Translation2d(7.56,5.94));
         s.intakeState(false);
+        s.waitForPositionState(new Translation2d(5.59,6.19));
+        // s.shootState(false);
 
-        s.waitForEventState(10.92);
-        s.shootState(false);
-
-        s.waitForEventState(11.8);
+        s.waitForPositionState(new Translation2d(7.81,4.81));
         s.intakeState(false);
-
-        s.waitForEventState(13.76);
-        s.shootState(false);
+        s.waitForPositionState(new Translation2d(5.05,5.1));
+        // s.shootState(false);
 
     }
 

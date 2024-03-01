@@ -106,6 +106,9 @@ public class Translation2d implements ITranslation2d<Translation2d> {
     public Rotation2d direction() {
         return new Rotation2d(x_, y_, true);
     }
+    public Translation2d reflect(){
+        return new Translation2d(16.5-x(),y());
+    }
 
     /**
      * The inverse simply means a Translation2d that "undoes" this object.
