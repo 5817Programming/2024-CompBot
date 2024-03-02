@@ -141,6 +141,7 @@ public class TalonConfigs {
         driveConfigs.Slot0.kP = .11;
         driveConfigs.Slot0.kI = 0;
         driveConfigs.Slot0.kD = 0;
+        driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = .02;
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
 
 
@@ -157,6 +158,7 @@ public class TalonConfigs {
         driveConfigs.Slot0.kP = 0.04;
         driveConfigs.Slot0.kI = 0;
         driveConfigs.Slot0.kD = 0;
+        driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = .02;
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
 
 

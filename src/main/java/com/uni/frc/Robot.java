@@ -130,7 +130,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    // s.prepareShooterSetpoints();
+    s.prepareShooterSetpoints();
   }
 
   /** This function is called once when teleop is enabled. */  

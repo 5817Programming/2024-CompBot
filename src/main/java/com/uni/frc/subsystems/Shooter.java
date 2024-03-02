@@ -39,7 +39,7 @@ import com.uni.lib.TalonConfigs;
     SHOOTING(1),
     TRANSFER(0.5),
     REVERSETRANSFER(-.5),
-    IDLE(0);
+    IDLE(0.3);
 
     double output = 0;
     State(double output){

@@ -58,34 +58,31 @@ public class M7 extends AutoBase {
         s.trajectoryState(trajectory, initRotation);
         s.shootState(false);
 
-        s.waitForPositionState(.8);
-        s.intakeState(.2);
-        s.waitForPositionState(1.5);
+        s.waitForPositionState(.5);
+        s.intakeState(1);
         s.shootState(false);
 
-        s.waitForPositionState(2.3);
-        s.intakeState(.2);
-        s.waitForPositionState(3);
+        s.waitForPositionState(2);
+        s.intakeState(1);
         s.shootState(false);
 
-        s.waitForPositionState(3.8);
-        s.intakeState(.2);
-        s.waitForPositionState(4.65);
+        s.waitForPositionState(3.5);
+        s.intakeState(1);
         s.shootState(false);
 
-        s.waitForPositionState(6.05);
+        s.waitForPositionState(5.73);
         s.intakeState(false);
-        s.waitForPositionState(8.36);
+        s.waitForPositionState(7.86);
         s.shootState(false);
 
-        s.waitForPositionState(9.3);
+        s.waitForPositionState(8.8);
         s.intakeState(false);
-        s.waitForPositionState(11.6);
+        s.waitForPositionState(11.1);
         s.shootState(false);
 
-        s.waitForPositionState(12.7);
+        s.waitForPositionState(12.2);
         s.intakeState(false);
-        s.waitForPositionState(14.75);
+        s.waitForPositionState(14.25);
         s.shootState(false);
 
     }

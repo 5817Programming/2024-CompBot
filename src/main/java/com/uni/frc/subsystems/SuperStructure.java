@@ -508,12 +508,13 @@ public class SuperStructure extends Subsystem {
                 logCurrentRequest("Intaking"),
                 setStateRequest(SuperState.INTAKING),
                 mPivot.stateRequest(-.226),
-                mIntake.stateRequest(Intake.State.INTAKING),
+                // mIntake.stateRequest(Intake.State.INTAKING),
                 mIndexer.stateRequest(Indexer.State.RECIEVING),
-                mIndexer.hasPieceRequest(timeout),
+                waitRequest(.3),
+                // mIndexer.hasPieceRequest(timeout),
                 setStateRequest(SuperState.AUTO),
-                mIndexer.stateRequest(Indexer.State.OFF),
-                mIntake.stateRequest(Intake.State.OFF)), false);
+                mIndexer.stateRequest(Indexer.State.OFF)),false);
+                // mIntake.stateRequest(Intake.State.OFF)), false);
         queue(request);
 
     }
