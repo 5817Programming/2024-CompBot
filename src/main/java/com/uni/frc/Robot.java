@@ -59,6 +59,7 @@ public class Robot extends LoggedRobot {
   OdometryLimeLight vision;
   Music music;
   Gyro pigeon;
+  AutoBase auto = new M7();
   public SendableChooser<AutoBase> autoChooser = new SendableChooser<>();
 
 HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
@@ -126,12 +127,13 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve.zeroModules();
     SuperStructure.getInstance().setState(SuperState.AUTO);
     Pivot.getInstance().conformToState(Pivot.State.MAXUP);
-    new M7().runAuto();
+    auto.runAuto();
      }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    auto.updateAuto(Timer.getFPGATimestamp());
   }
 
   /** This function is called once when teleop is enabled. */  

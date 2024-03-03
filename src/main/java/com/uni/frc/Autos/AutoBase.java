@@ -4,8 +4,19 @@
 
 package com.uni.frc.Autos;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.uni.frc.Planners.DriveMotionPlanner;
+import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
+import com.uni.lib.geometry.Pose2d;
+import com.uni.lib.motion.PathStateGenerator;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 
 /** 
  * This is an abstract class
@@ -14,6 +25,13 @@ import com.uni.frc.subsystems.Swerve.SwerveDrive;
  * this class will also give its child the stop auto method because all autos will need it
  */
 public abstract class AutoBase {
+    public PathStateGenerator mPathStateGenerator;
+    public RobotState mRobotState;
+    public List<Pose2d> stopPoses;
+    public AutoBase(){
+        mPathStateGenerator = PathStateGenerator.getInstance();
+        mRobotState = RobotState.getInstance();
+    }
     public abstract void auto();
     public void testAuto(){
 
@@ -27,6 +45,29 @@ public abstract class AutoBase {
     public void stopAuto(){
         SuperStructure.getInstance().clearQueues();
         SwerveDrive.getInstance().setState(SwerveDrive.State.MANUAL);
+    }
+
+    public void registerTrajectoryStops(List<Double> stopTimeStamps){
+        for(double m: stopTimeStamps){
+            stopPoses.add(mPathStateGenerator.sample(m));
+        }
+    }
+
+    public void updateAuto(double timestamp){
+        if(!stopPoses.isEmpty())
+            for(Pose2d m: stopPoses){
+                if (DriverStation.getAlliance().get().equals(Alliance.Blue)){
+                    if(m.getTranslation().translateBy(mRobotState.getKalmanPose(timestamp).getTranslation().inverse()).norm() < .3){
+                        mPathStateGenerator.stopTimer();
+                        stopPoses.remove(m);
+                    }
+                }else{
+                    if(m.getTranslation().reflect().translateBy(mRobotState.getKalmanPose(timestamp).getTranslation().inverse()).norm() < .3){
+                        mPathStateGenerator.stopTimer();
+                        stopPoses.remove(m);
+                    }
+                }
+            }
     }
 
 }

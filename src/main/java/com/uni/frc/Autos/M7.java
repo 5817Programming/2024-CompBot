@@ -1,5 +1,7 @@
 package com.uni.frc.Autos;
 
+import java.util.Arrays;
+
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter.Indenter;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
@@ -28,25 +30,21 @@ public class M7 extends AutoBase {
         s.setPivotState(-.266);
         s.shootState(false);
         s.trajectoryState(trajectory, initRotation);
+        registerTrajectoryStops(Arrays.asList(1.13,2.93,4.28,7.51,10.67));
 
         s.waitForPositionState(0.75);
-        s.intakeState(.5);
+        s.intakeState(.5,-.288);
         s.stopTrajectoryState();
-        s.setPivotState(-.288);
         s.shootState(false);
         s.resumeTrajectoryState();
 
         s.waitForPositionState(2.2);
-        s.intakeState(.5);
-        s.stopTrajectoryState();
-        s.setPivotState(-.299);
+        s.intakeState(.5,-.299);
         s.shootState(false);
         s.resumeTrajectoryState();
 
         s.waitForPositionState(4.1);
-        s.intakeState(.5);
-        s.stopTrajectoryState();
-        s.setPivotState(-.299);
+        s.intakeState(.5,-.299);
         s.shootState(false);
         s.resumeTrajectoryState();
 
@@ -54,7 +52,6 @@ public class M7 extends AutoBase {
         s.intakeState(.7);
 
         s.waitForPositionState(7.5);
-        s.stopTrajectoryState();
         s.setPivotState(-.3);
         s.shootState(false);
         s.resumeTrajectoryState();
@@ -64,42 +61,9 @@ public class M7 extends AutoBase {
         s.intakeState(.9);
 
         s.waitForPositionState(10.75);
-        s.stopTrajectoryState();
         s.setPivotState(-.3);
         s.shootState(false);
         s.resumeTrajectoryState();
-    
-
-        // s.waitForPositionState(new Translation2d(1.98,5.1));
-        // s.intakeState(.2);
-        // s.waitForPositionState(new Translation2d(2.2,5.16));
-        // s.shootState(false);
-
-        // s.waitForPositionState(new Translation2d(2.03,5.54));
-        // s.intakeState(.2);
-        // s.waitForPositionState(new Translation2d(2.75,5.77));
-        // s.shootState(false);
-
-        // s.waitForPositionState(new Translation2d(2.15,6.6));
-        // s.intakeState(.2);
-        // s.waitForPositionState(new Translation2d(4.06,7.32));
-        // s.shootState(false);
-
-        // s.waitForPositionState(new Translation2d(7.21,7.45));
-        // s.intakeState(false);
-        // s.waitForPositionState(new Translation2d(5.59,6.19));
-        // s.shootState(false);
-
-        // s.waitForPositionState(new Translation2d(7.56,5.94));
-        // s.intakeState(false);
-        // s.waitForPositionState(new Translation2d(5.59,6.19));
-        // s.shootState(false);
-
-        // s.waitForPositionState(new Translation2d(7.81,4.81));
-        // s.intakeState(false);
-        // s.waitForPositionState(new Translation2d(5.05,5.1));
-        // s.shootState(false);
-
     }
     @Override
     public void testAuto() {

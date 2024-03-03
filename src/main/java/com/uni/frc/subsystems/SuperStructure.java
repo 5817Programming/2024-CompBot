@@ -546,18 +546,30 @@ public class SuperStructure extends Subsystem {
         RequestList request = new RequestList(Arrays.asList(
                 logCurrentRequest("Intaking"),
                 setStateRequest(SuperState.INTAKING),
-                // mPivot.stateRequest(-.226),
+                mPivot.stateRequest(-.226),
                 mIntake.stateRequest(Intake.State.INTAKING),
-                mIndexer.stateRequest(Indexer.State.RECIEVING)),false);
-                // waitRequest(.3),
-                // mIndexer.hasPieceRequest(timeout),
-                // setStateRequest(SuperState.AUTO),
-                // mIndexer.stateRequest(Indexer.State.OFF)),false);
-                // mIntake.stateRequest(Intake.State.OFF)), false);
+                mIndexer.stateRequest(Indexer.State.RECIEVING),
+                mIndexer.hasPieceRequest(timeout),
+                setStateRequest(SuperState.AUTO),
+                mIndexer.stateRequest(Indexer.State.OFF),
+                mIntake.stateRequest(Intake.State.OFF)), false);
         queue(request);
 
     }
+    public void intakeState(double timeout, double pivotOverride) {
+        RequestList request = new RequestList(Arrays.asList(
+                logCurrentRequest("Intaking"),
+                setStateRequest(SuperState.INTAKING),
+                mPivot.stateRequest(pivotOverride),
+                mIntake.stateRequest(Intake.State.INTAKING),
+                mIndexer.stateRequest(Indexer.State.RECIEVING),
+                mIndexer.hasPieceRequest(timeout),
+                setStateRequest(SuperState.AUTO),
+                mIndexer.stateRequest(Indexer.State.OFF),
+                mIntake.stateRequest(Intake.State.OFF)), false);
+        queue(request);
 
+    }
     public void waitForEventState(double timestamp) {
         queue(mDriveMotionPlanner.waitForTrajectoryRequest(timestamp));
     }
@@ -622,6 +634,7 @@ public class SuperStructure extends Subsystem {
         }
     }
 
+    
     public Request logCurrentRequest(String newLog) {
         return new Request() {
             @Override
