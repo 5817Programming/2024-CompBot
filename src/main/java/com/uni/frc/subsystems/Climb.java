@@ -2,9 +2,12 @@
 
   import javax.sound.sampled.Port;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
   import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
   import com.ctre.phoenix6.hardware.TalonFX;
  import com.uni.frc.Ports;
@@ -15,8 +18,8 @@ import com.uni.frc.CompConstants.ElevatorConstants;
 
   public class Climb extends Subsystem {
     private PeriodicIO mPeriodicIO = new PeriodicIO();
-    private TalonFX elevatorMotor1 = new TalonFX(Ports.elevatorMotor1);
-    private TalonFX elevatorMotor2 = new TalonFX(Ports.elevatorMotor2);
+    private TalonFX elevatorMotor1 = new TalonFX(Ports.elevatorMotor1,"Minivore");
+    private TalonFX elevatorMotor2 = new TalonFX(Ports.elevatorMotor2,"Minivore");
     
 
     private TalonFXConfiguration elevator1Config = TalonConfigs.elevatorConfigs();
@@ -35,6 +38,7 @@ import com.uni.frc.CompConstants.ElevatorConstants;
 
     /** Creates a new pivot. */
     public Climb() {
+      elevatorMotor1.setPosition(0);
       configMotors();
 
     }
@@ -65,7 +69,7 @@ import com.uni.frc.CompConstants.ElevatorConstants;
     }
 
     public void configMotors() {
-      elevator1Config = TalonConfigs.pivotConfigs();
+      elevator1Config = TalonConfigs.elevatorConfigs();
       elevatorMotor1.getConfigurator().apply(elevator1Config);
     }
 
@@ -75,7 +79,6 @@ import com.uni.frc.CompConstants.ElevatorConstants;
     }
 
     public void setPivotPercent(double percentage) {
-      mPeriodicIO.rotationControlMode = ControlMode.Percent;
       mPeriodicIO.rotationDemand = percentage;
     }
 
@@ -92,13 +95,14 @@ import com.uni.frc.CompConstants.ElevatorConstants;
     }
 
     public void motionMagic(){
-      elevatorMotor1.setControl(new MotionMagicVoltage(mPeriodicIO.rotationDemand));
-      elevatorMotor2.setControl(new Follower(Ports.elevatorMotor1, false));//TODO MAYBE OPPOSE
+      elevatorMotor1.setControl(new MotionMagicDutyCycle(mPeriodicIO.rotationDemand));
+      elevatorMotor2.setControl(new Follower(Ports.elevatorMotor1, true));//TODO MAYBE OPPOSE
     }   
 
     public void setPercent(){
       elevatorMotor1.setControl(new DutyCycleOut(mPeriodicIO.rotationDemand, true, false, false, false));
-     
+        elevatorMotor2.setControl(new Follower(Ports.elevatorMotor1, true));//TODO MAYBE OPPOSE
+
     }
 
     public Request stateRequest(State state) {
@@ -155,18 +159,16 @@ import com.uni.frc.CompConstants.ElevatorConstants;
 
     @Override
     public void readPeriodicInputs() {
-      switch (mPeriodicIO.rotationControlMode) {
-        case MotionMagic:
-          motionMagic();
-          break;
-        case Percent:
           setPercent();
-          break;
-      }
+
     }
 
     @Override
     public void outputTelemetry() {
+      Logger.recordOutput("climber encoder 1", mPeriodicIO.rotationDemand);
+      Logger.recordOutput("climber encoder 2", elevatorMotor2.getPosition().getValueAsDouble());
+      
+
     }
 
     @Override
@@ -180,6 +182,6 @@ import com.uni.frc.CompConstants.ElevatorConstants;
       double velocity = 0;
       double statorCurrent = 0;
 
-      double rotationDemand = 0.0;
+      double rotationDemand = 0;
     }
   }

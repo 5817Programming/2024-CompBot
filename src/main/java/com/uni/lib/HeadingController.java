@@ -48,7 +48,7 @@ public class HeadingController {
         double error = new Rotation2d(targetHeading).rotateBy(heading.inverse()).getDegrees();
         double dt = timestamp - lastTimestamp;
         lastTimestamp = timestamp;
-        if(Math.abs(error)< 1){
+        if(Math.abs(error)< 4){
             atTarget = true;
         }
         double correctionForce = pidController.calculate(error, dt);

@@ -122,11 +122,11 @@ public class CompConstants {
 
     public static final class PivotConstants{
         public static final double SPEAKER = 0;
-        public static final double AMP = 0;
+        public static final double AMP = -0.103-0.00555;
         public static final double TRAP = 0;
         public static final double TRANSFER = 0;
         public static final double SHOOTING = 0;
-        public static final double MAX_UP = 0;
+        public static final double MAX_UP = -.07;
         public static final double MAX_DOWN = 0;
         public static final double INTAKING = 0;
 

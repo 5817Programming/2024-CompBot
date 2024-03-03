@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.Timer;
 
    public static Indexer instance = null;
 
+   
    public static Indexer getInstance() { 
      if (instance == null)
        instance = new Indexer();
@@ -38,8 +39,7 @@ import edu.wpi.first.wpilibj.Timer;
    }
    public enum State{
     OFF(0),
-    RECIEVING(-0.4
-  ),
+    RECIEVING(-.5),
     TRANSFERING(-1),
     REVERSE_TRANSFER(-.5);
 

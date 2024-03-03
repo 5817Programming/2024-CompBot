@@ -56,10 +56,12 @@ public class SuperStructure extends Subsystem {
     protected Hand mHand;
     protected Arm mArm;
     protected SwerveDrive mDrive;
+    protected PathStateGenerator mPathStateGenerator;
 
     private ArrayList<RequestList> queuedRequests;
 
     public SuperStructure() {
+        mPathStateGenerator = PathStateGenerator.getInstance();
         vision = OdometryLimeLight.getInstance();
         mDriveMotionPlanner = DriveMotionPlanner.getInstance();
         mHand = Hand.getInstance();
@@ -218,11 +220,11 @@ public class SuperStructure extends Subsystem {
                 switch (currentMode) {
                     case SHOOTING:
                         if (stateChanged) {
-                            shootState(true);
+                            ampState();
                         }
 
-                        prepareShooterSetpoints(timestamp);
-                        mDrive.setState(SwerveDrive.State.AIMING);
+                        // prepareShooterSetpoints(timestamp);
+                        // mDrive.setState(SwerveDrive.State.AIMING);
                         break;
 
                     case AMP:
@@ -265,9 +267,9 @@ public class SuperStructure extends Subsystem {
                 mIntake.conformToState(Intake.State.OFF);
                 mIndexer.conformToState(Indexer.State.OFF);
                 if (mIndexer.hasPiece() && inZone(timestamp)) {
-                    ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
-                    mShooter.conformToState(Shooter.State.PARTIALRAMP);
-                    mPivot.setMotionMagic(shootingParameters.uncompensatedDesiredPivotAngle);
+                    // ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
+                    // mShooter.conformToState(Shooter.State.PARTIALRAMP);
+                    // mPivot.setMotionMagic(shootingParameters.uncompensatedDesiredPivotAngle);
                 } else {
                     mShooter.conformToState(Shooter.State.IDLE);
                     mPivot.conformToState(Pivot.State.MAXDOWN);
@@ -355,18 +357,32 @@ public class SuperStructure extends Subsystem {
         }
         processState(timeStamp);
     }
+    public void ampState(){
+        request(new RequestList(Arrays.asList(
+            mPivot.stateRequest(Pivot.State.AMP),
 
+            mPivot.atTargetRequest(),
+            mIndexer.stateRequest(Indexer.State.TRANSFERING),
+            mShooter.stateRequest(Shooter.State.IDLE),
+
+            waitRequest(10000),
+
+            mPivot.stateRequest(Pivot.State.MAXDOWN),
+            mIndexer.stateRequest(Indexer.State.OFF),
+            mIntake.stateRequest(Intake.State.OFF)
+        ),false));
+    }
     public boolean prepareShooterSetpoints(double timestamp) {
         ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
         Logger.recordOutput("desiredPivot", shootingParameters.compensatedDesiredPivotAngle);
-
+        mShooter.conformToState(Shooter.State.SHOOTING);
         boolean allowShootWhileMove = true; // TODO
         if (allowShootWhileMove) {
-            mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
-            mShooter.conformToState(Shooter.State.SHOOTING);
-        } else {
             mPivot.conformToState(shootingParameters.uncompensatedDesiredPivotAngle);
-            mShooter.setPercent(shootingParameters.uncompensatedDesiredShooterSpeed);
+            mShooter.setPowerDemand(shootingParameters.compensatedDesiredShooterSpeed);
+        } else {
+            mShooter.setPowerDemand(shootingParameters.uncompensatedDesiredShooterSpeed);
+            mPivot.conformToState(shootingParameters.uncompensatedDesiredPivotAngle);
         }
         mShooter.setSpin(shootingParameters.desiredSpin);
         mIndexer.setPiece(false);
@@ -379,7 +395,7 @@ public class SuperStructure extends Subsystem {
     public void prepareShooterSetpoints() {
         ShootingParameters shootingParameters = getShootingParams(
                 mRobotState.getPoseFromOdom(Timer.getFPGATimestamp()));
-        if (currentState != SuperState.INTAKING)
+        // if (currentState != SuperState.INTAKING)
             mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
         mShooter.conformToState(Shooter.State.SHOOTING);
         mShooter.setSpin(shootingParameters.desiredSpin);
@@ -391,23 +407,24 @@ public class SuperStructure extends Subsystem {
         double kShotTime = Constants.ShooterConstants.kShotTime;
 
         Pose2d speakerPose = Constants.getShooterPose();
-        Pose2d robotToTarget = Pose2d
-                .fromTranslation(speakerPose.getTranslation().translateBy(currentPose.getTranslation().inverse()));
         Logger.recordOutput("speakerPose", speakerPose.toWPI());
-        Logger.recordOutput("Robotargo", robotToTarget.toWPI());
 
         double pivotAngle = 0; // mPivot.getAngle(); TODO
         double shooterVelovity = 0; // mShooter.getVelocity; TODO
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = ShootingUtils
-                .getPivotMap(NoteState.NEW);
+                .getPivotMap(DriverStation.isAutonomous());
+        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> velocityMap = ShootingUtils
+                .getVelocityMap(DriverStation.isAutonomous());
 
         ShootingParameters shootingParameters = ShootingUtils.getShootingParameters(
-                robotToTarget,
+                currentPose,
+                speakerPose,
                 pivotAngle,
                 shooterVelovity,
                 kShotTime,
                 pivotMap,
                 shotTimeMap,
+                velocityMap,
                 mRobotState.getPredictedVelocity());// TODO change to measured when it works
         return shootingParameters;
     }
@@ -418,7 +435,29 @@ public class SuperStructure extends Subsystem {
 
         request(request);
     }
-
+    public void stopTrajectoryState(){
+        Request stopRequest = new Request() {
+            @Override
+            public void act() {
+                
+                mPathStateGenerator.stopTimer();
+            }
+        };
+       queue(stopRequest);
+    }
+    public void resumeTrajectoryState(){
+        Request stopRequest = new Request() {
+            @Override
+            public void act() {
+                
+                mPathStateGenerator.startTimer();            }
+        };
+       queue(stopRequest);
+    }
+    public void setPivotState(double position){
+        queue(mPivot.stateRequest(position));
+        queue(mPivot.atTargetRequest());
+    }
     public void trajectoryState(PathPlannerTrajectory trajectory, double initRotation) {
         RequestList request = new RequestList(Arrays.asList(
                 logCurrentRequest("trajectory")), true);
@@ -478,7 +517,7 @@ public class SuperStructure extends Subsystem {
             RequestList request = new RequestList(Arrays.asList(
                     logCurrentRequest("Intaking"),
                     mPivot.stateRequest(-.226),
-                    mPivot.atTargetRequest(),
+                    // mPivot.atTargetRequest(),
                     mIntake.stateRequest(Intake.State.INTAKING),
                     mIndexer.stateRequest(Indexer.State.RECIEVING),
                     mIndexer.hasPieceRequest(!Override),
@@ -507,13 +546,13 @@ public class SuperStructure extends Subsystem {
         RequestList request = new RequestList(Arrays.asList(
                 logCurrentRequest("Intaking"),
                 setStateRequest(SuperState.INTAKING),
-                mPivot.stateRequest(-.226),
-                // mIntake.stateRequest(Intake.State.INTAKING),
-                mIndexer.stateRequest(Indexer.State.RECIEVING),
-                waitRequest(.3),
+                // mPivot.stateRequest(-.226),
+                mIntake.stateRequest(Intake.State.INTAKING),
+                mIndexer.stateRequest(Indexer.State.RECIEVING)),false);
+                // waitRequest(.3),
                 // mIndexer.hasPieceRequest(timeout),
-                setStateRequest(SuperState.AUTO),
-                mIndexer.stateRequest(Indexer.State.OFF)),false);
+                // setStateRequest(SuperState.AUTO),
+                // mIndexer.stateRequest(Indexer.State.OFF)),false);
                 // mIntake.stateRequest(Intake.State.OFF)), false);
         queue(request);
 

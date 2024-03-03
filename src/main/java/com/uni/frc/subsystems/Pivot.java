@@ -205,6 +205,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
       double velocity = 0;
       double statorCurrent = 0;
 
-      double rotationDemand = 0;
+      double rotationDemand = -.07;
     }
   }
+  

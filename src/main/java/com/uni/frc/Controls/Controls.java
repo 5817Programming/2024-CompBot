@@ -3,8 +3,10 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package com.uni.frc.Controls;
-import com.uni.frc.Ports;
+import javax.swing.text.html.parser.DTD;
 
+import com.uni.frc.Ports;
+import com.uni.frc.subsystems.Climb;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.SuperStructure.SuperState;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
@@ -47,9 +49,13 @@ public class Controls {
         if (Driver.StartButton.isPressed())
             swerve.resetGryo(180);
 
-
-           
-    
+        if(Driver.AButton.isActive())
+            Climb.getInstance().setPivotPercent(-.3);
+        
+        else if(Driver.BButton.isActive())
+            Climb.getInstance().setPivotPercent(.3);
+        else
+            Climb.getInstance().setPivotPercent(0);
         // else if(Driver.BButton.isPressed()){
         //     s.onTheFlyTrajectoryState(new Pose2d(8,2, Rotation2d.fromDegrees(180)), timestamp);
 

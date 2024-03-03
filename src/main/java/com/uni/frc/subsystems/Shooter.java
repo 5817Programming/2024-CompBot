@@ -10,6 +10,8 @@ import com.ctre.phoenix6.controls.VelocityDutyCycle;
  import com.ctre.phoenix6.hardware.TalonFX;
 import com.uni.frc.Constants;
 import com.uni.frc.Ports;
+import com.uni.frc.CompConstants.PivotConstants;
+import com.uni.frc.CompConstants.ShooterConstants;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.lib.TalonConfigs;
 
@@ -21,6 +23,7 @@ import com.uni.lib.TalonConfigs;
    public State currentState = State.IDLE;
    private TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
    private double spinOffset = 0;
+   private double powerDemand = 1;
    public static Shooter instance = null;
 
    public static Shooter getInstance() {
@@ -37,16 +40,18 @@ import com.uni.lib.TalonConfigs;
    public enum State{
     PARTIALRAMP(.7),
     SHOOTING(1),
-    TRANSFER(0.5),
+    TRANSFER(0.3),
     REVERSETRANSFER(-.5),
-    IDLE(0.3);
+    IDLE(0.16);
 
     double output = 0;
     State(double output){
         this.output = output;
     }
    }
-
+   public void setPowerDemand(double demand){
+    this.powerDemand = demand;
+   }
    public void setRamp(double rampTime) {
      shooterMotor1.getConfigurator().refresh(shooterConfig);
      shooterMotor2.getConfigurator().refresh(shooterConfig);
@@ -135,7 +140,8 @@ import com.uni.lib.TalonConfigs;
     return new Request(){
       @Override
       public boolean isFinished() {
-          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble()-(80*.8)) < 3;
+          
+          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble())>(80*powerDemand) ;
       }
     };
    }
@@ -157,8 +163,8 @@ import com.uni.lib.TalonConfigs;
 
    @Override
    public void readPeriodicInputs() {
-      shooterMotor1.setControl(new DutyCycleOut(mPeriodicIO.driveDemand).withEnableFOC(true));//TODO
-      shooterMotor2.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand).withEnableFOC(true));
+      shooterMotor1.setControl(new DutyCycleOut(mPeriodicIO.driveDemand).withEnableFOC(true));//TODO add spin back
+      shooterMotor2.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand*1).withEnableFOC(true));
       
       
       

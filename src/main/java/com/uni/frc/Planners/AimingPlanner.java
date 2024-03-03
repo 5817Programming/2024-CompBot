@@ -57,7 +57,7 @@ public class AimingPlanner {
                 Pose2d odomToTargetPoint = visionPoseComponent.inverse().transformBy(mFieldToSpeaker);
                 double travelDistance = odomToTargetPoint.transformBy(currentOdomToRobot).getTranslation().norm();
                 estimatedTimeFrame = mShotTimeMap.getInterpolated(new InterpolatingDouble(travelDistance)).value; //TODO
-                Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(estimatedTimeFrame).rotateBy(currentOdomToRobot.getRotation().inverse());
+                Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(estimatedTimeFrame);
 
                 Logger.recordOutput("poseAttmie", poseAtTimeFrame.toWPI());
                 Pose2d futureOdomToTargetPoint = poseAtTimeFrame.inverse().transformBy(odomToTargetPoint).inverse();
@@ -67,13 +67,10 @@ public class AimingPlanner {
             case LimeLight:
                 
         }
-        headingController.setTargetHeading(targetPose.getRotation().inverse());
+        headingController.setTargetHeading(targetPose.getRotation().inverse().rotateBy(Rotation2d.fromDegrees(-1)));
         double rotationOutput = headingController.updateRotationCorrection(currentOdomToRobot.getRotation().inverse(), timeStamp);
         Logger.recordOutput("aimingoutput", rotationOutput);
-        if(Math.abs(rotationOutput) < .0005)
-            isAimed = true;
-        else
-            isAimed = false;
+        isAimed = headingController.atTarget();
         targetPose = new Pose2d(
             targetPose.getTranslation(),
             Rotation2d.fromDegrees(rotationOutput*1.75)

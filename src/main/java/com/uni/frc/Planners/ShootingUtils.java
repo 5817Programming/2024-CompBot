@@ -7,6 +7,8 @@ package com.uni.frc.Planners;
 import org.littletonrobotics.junction.Logger;
 
 import com.uni.frc.Constants;
+import com.uni.frc.CompConstants.PivotConstants;
+import com.uni.frc.subsystems.RobotState;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Twist2d;
 import com.uni.lib.util.InterpolatingDouble;
@@ -68,29 +70,35 @@ public class ShootingUtils {
     }
 
     public static ShootingParameters getShootingParameters(
-        Pose2d shooterToTarget, 
+        Pose2d currentPose, 
+        Pose2d targetPose,
         double pivotAngle, 
         double shooterVelovity, 
         double kShotTime, 
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotAngleTreeMap,
+        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> velocityTreeMap,
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> shotTimeTreeMap,
         Twist2d currentVelocity){
-        double effectiveDistance = shooterToTarget.getTranslation().norm();
+         Pose2d robotToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(currentPose.getTranslation().inverse()));
+        double effectiveDistance = robotToTarget.getTranslation().norm();
         double lookahead_time = shotTimeTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
-        Pose2d compensatedShooterToTarget = shooterToTarget.transformBy(Pose2d.projectTwist(currentVelocity.scaled(0.02)));
+        Logger.recordOutput("lookahead time", lookahead_time);
+        Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(lookahead_time+.004).rotateBy(currentPose.getRotation());
+        Pose2d compensatedShooterToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(poseAtTimeFrame.getTranslation().inverse()));
 
-        Logger.recordOutput("Compensated Position", compensatedShooterToTarget.toWPI());
+        Logger.recordOutput("Compensated Position", poseAtTimeFrame.toWPI());
         Logger.recordOutput("Time", lookahead_time);
 
         double compensatedDistance = compensatedShooterToTarget.getTranslation().norm();
 
+        
         double desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
         double compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
         double uncompensatedDesiredPivotAngleError = Math.abs(desiredPivotAngle - pivotAngle);
         double compensatedDesiredPivotAngleError = Math.abs(compensatedPivotAngle - pivotAngle);
 
-        double uncompensatedDesiredShooterSpeed = 1; //TODO 
-        double compensatedDesiredShooterSpeed = 1;
+        double uncompensatedDesiredShooterSpeed = velocityTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
+        double compensatedDesiredShooterSpeed = velocityTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
         double uncompensatedShooterSpeedError = Math.abs(uncompensatedDesiredShooterSpeed - shooterVelovity);
         double compensatedShooterSpeedError = Math.abs(uncompensatedDesiredShooterSpeed - shooterVelovity);
 
@@ -122,17 +130,10 @@ public class ShootingUtils {
         else
             return shootingParameters.uncompensatedShooterSpeedError < deadBand;    }
 
-    public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getPivotMap(NoteState noteState){
-        switch (noteState) {
-            case NEW:
-                return Constants.PivotConstants.kNewPivotShootingMap;
-        
-            case MEDIUM:
-                return Constants.PivotConstants.kNewPivotShootingMap;
-                
-            case OLD:
-                return Constants.PivotConstants.kNewPivotShootingMap;
-        }
-        return null;
+    public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getPivotMap(boolean isAutonomous){
+        return Constants.PivotConstants.kNewPivotShootingMap;
+    }
+ public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getVelocityMap(boolean isAutonomous){
+        return Constants.ShooterConstants.VELOCITY_TREE_MAP;
     }
 }

@@ -65,7 +65,7 @@ public class PathStateGenerator{
     if (alliance()&& useAllianceColor)
       return new Pose2d(new Translation2d(reflect(desiredX), desiredY), Rotation2d.fromDegrees(desiredRotation));
     else
-      return new Pose2d(new Translation2d(desiredX, desiredY), Rotation2d.fromDegrees(desiredRotation).flip().inverse());
+      return new Pose2d(new Translation2d(desiredX, desiredY), Rotation2d.fromDegrees(desiredRotation));
 
   }
 
@@ -88,6 +88,10 @@ public class PathStateGenerator{
       return new Pose2d(new Translation2d(initX, initY),
          Rotation2d.fromDegrees(initRot));
     }
+  }
+
+  public void stopTimer(){
+    timer.stop();
   }
 
   public double getrotation() {

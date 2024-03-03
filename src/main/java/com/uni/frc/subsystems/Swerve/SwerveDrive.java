@@ -306,6 +306,7 @@ public class SwerveDrive extends Subsystem {
                 headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading().inverse());
                 rotationCorrection = headingController.getRotationCorrection(getRobotHeading().inverse().flip(), timeStamp);
                 desiredRotationScalar = rotationCorrection;
+            translationVector = translationCorrection;
                 commandModules(inverseKinematics.updateDriveVectors(translationCorrection, rotationCorrection, poseMeters,
                         robotCentric));
                 break;

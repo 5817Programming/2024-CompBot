@@ -20,6 +20,7 @@ import com.uni.frc.Autos.M7;
 import com.uni.frc.Autos.M8;
 import com.uni.frc.Autos.NS5;
 import com.uni.frc.Controls.Controls;
+import com.uni.frc.subsystems.Climb;
 import com.uni.frc.subsystems.Indexer;
 import com.uni.frc.subsystems.Intake;
 // import com.uni.frc.subsystems.Intake;
@@ -99,7 +100,8 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
         Shooter.getInstance(),
         Indexer.getInstance(),
         Intake.getInstance(),
-        Pivot.getInstance()
+        Pivot.getInstance(),
+        Climb.getInstance()
         ));
 
     }
@@ -110,7 +112,6 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     subsystemManager.readSystemsPeriodicInputs();
     subsystemManager.writeSubsystemsPeriodicOutputs();
     subsystemManager.outputSystemsTelemetry();
-    CommandScheduler.getInstance().run();
     Logger.recordOutput("timestamp", Timer.getFPGATimestamp());
   }
 
@@ -124,13 +125,13 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve.fieldzeroSwerve();
     swerve.zeroModules();
     SuperStructure.getInstance().setState(SuperState.AUTO);
+    Pivot.getInstance().conformToState(Pivot.State.MAXUP);
     new M7().runAuto();
      }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    s.prepareShooterSetpoints();
   }
 
   /** This function is called once when teleop is enabled. */  

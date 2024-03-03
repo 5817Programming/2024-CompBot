@@ -166,6 +166,12 @@ public class Constants {
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.0038));
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(0.0112));
         }
+        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> VELOCITY_TREE_MAP = new InterpolatingTreeMap<>();
+        static {
+            VELOCITY_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.3));
+            VELOCITY_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(.8));
+        }
+
 
     }
 
@@ -221,20 +227,20 @@ public class Constants {
             kNewPivotShootingMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(-0.303));
             kNewPivotShootingMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(-0.316));
             kNewPivotShootingMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(-0.323));
-            kNewPivotShootingMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(-0.330));
+            kNewPivotShootingMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(-0.34));
         }
-        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kMediumPivotShootingMap = new InterpolatingTreeMap<>();
+        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kAutoPivotShootingMap = new InterpolatingTreeMap<>();
         static {
-            kMediumPivotShootingMap.put(new InterpolatingDouble(0.8), new InterpolatingDouble(-0.179));
-            kMediumPivotShootingMap.put(new InterpolatingDouble(1.3), new InterpolatingDouble(-.21));
-            kMediumPivotShootingMap.put(new InterpolatingDouble(1.8), new InterpolatingDouble(-.24));
-            kMediumPivotShootingMap.put(new InterpolatingDouble(2.3), new InterpolatingDouble(-.264));
-            kMediumPivotShootingMap.put(new InterpolatingDouble(2.8), new InterpolatingDouble(-.283));
-            kMediumPivotShootingMap.put(new InterpolatingDouble(3.3), new InterpolatingDouble(-.3));
-            kMediumPivotShootingMap.put(new InterpolatingDouble(3.8), new InterpolatingDouble(-0.313));
-            kMediumPivotShootingMap.put(new InterpolatingDouble(4.3), new InterpolatingDouble(-0.326));
-            kMediumPivotShootingMap.put(new InterpolatingDouble(4.8), new InterpolatingDouble(-0.333));
-            kMediumPivotShootingMap.put(new InterpolatingDouble(5.3), new InterpolatingDouble(-0.34));
+            kAutoPivotShootingMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(-0.209));
+            kAutoPivotShootingMap.put(new InterpolatingDouble(1.5), new InterpolatingDouble(-.24));
+            kAutoPivotShootingMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(-.27));
+            kAutoPivotShootingMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(-.294));
+            kAutoPivotShootingMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(-.305));
+            kAutoPivotShootingMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(-.312));
+            kAutoPivotShootingMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(-0.323));
+            kAutoPivotShootingMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(-0.336));
+            kAutoPivotShootingMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(-0.343));
+            kAutoPivotShootingMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(-0.350));
 
         }
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kOldPivotShootingMap = new InterpolatingTreeMap<>();
@@ -260,11 +266,11 @@ public class Constants {
         public static final int APRIL_PIPLINE = 0;
         public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 15;
 
-        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(-0.514,0.304),
+        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(0.446-.875,.233),
                 Rotation2d.fromDegrees(0));
 
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);
-        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(24);
+        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(18.25);
 
         public static final double IMAGE_CAPTURE_LATENCY = 11.0;
        
