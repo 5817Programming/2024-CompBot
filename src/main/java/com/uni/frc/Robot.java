@@ -127,13 +127,15 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve.zeroModules();
     SuperStructure.getInstance().setState(SuperState.AUTO);
     Pivot.getInstance().conformToState(Pivot.State.MAXUP);
-    auto.runAuto();
+    auto.testAuto();
      }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    auto.updateAuto(Timer.getFPGATimestamp());
+    //
+    s.prepareShooterSetpoints();
+    // auto.updateAuto(Timer.getFPGATimestamp());
   }
 
   /** This function is called once when teleop is enabled. */  

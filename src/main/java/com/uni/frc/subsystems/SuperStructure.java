@@ -394,9 +394,9 @@ public class SuperStructure extends Subsystem {
 
     public void prepareShooterSetpoints() {
         ShootingParameters shootingParameters = getShootingParams(
-                mRobotState.getPoseFromOdom(Timer.getFPGATimestamp()));
+                mRobotState.getKalmanPose(Timer.getFPGATimestamp()));
         // if (currentState != SuperState.INTAKING)
-            mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
+        mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
         mShooter.conformToState(Shooter.State.SHOOTING);
         mShooter.setSpin(shootingParameters.desiredSpin);
 
@@ -634,7 +634,7 @@ public class SuperStructure extends Subsystem {
         }
     }
 
-    
+
     public Request logCurrentRequest(String newLog) {
         return new Request() {
             @Override

@@ -20,8 +20,10 @@ public class M7 extends AutoBase {
     SuperStructure s = SuperStructure.getInstance();
     SwerveDrive mSwerve = SwerveDrive.getInstance();
     double initRotation = 0;
-    PathPlannerPath path = PathPlannerPath.fromPathFile("M7 SPEED");
+    PathPlannerPath path = PathPlannerPath.fromPathFile("M6 SPEED");
+    PathPlannerPath testPath = PathPlannerPath.fromPathFile("M7 SPEED");
     PathPlannerTrajectory trajectory = path.getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
+    PathPlannerTrajectory testTrajectory = path.getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
 
     @Override
     public void auto() {
@@ -67,35 +69,10 @@ public class M7 extends AutoBase {
     }
     @Override
     public void testAuto() {
-        // s.shootState(false);
-        s.trajectoryState(trajectory, initRotation);
-
-        // s.waitForPositionState(.5);
-        s.intakeState(1);
-        // s.shootState(false);
-
-        // s.waitForPositionState(2);
-        // s.intakeState(1);
-        // s.shootState(false);
-
-        // s.waitForPositionState(3.5);
-        // s.intakeState(1);
-        // s.shootState(false);
-
-        // s.waitForPositionState(5.73);
-        // s.intakeState(false);
-        // s.waitForPositionState(7.86);
-        // s.shootState(false);
-
-        // s.waitForPositionState(8.8);
-        // s.intakeState(false);
-        // s.waitForPositionState(11.1);
-        // s.shootState(false);
-
-        // s.waitForPositionState(12.2);
-        // s.intakeState(false);
-        // s.waitForPositionState(14.25);
-        // s.shootState(false);
+        Shooter.getInstance().setPercent(1);
+        Intake.getInstance().intakePercent(-1);
+        Indexer.getInstance().setPercent(-1);
+        s.trajectoryState(testTrajectory, initRotation);
 
     }
 }
