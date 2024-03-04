@@ -313,7 +313,7 @@ public class SwerveDrive extends Subsystem {
             case TARGETOBJECT:
                 rotationCorrection = mTargetPiecePlanner.updateAiming(timeStamp, objectVision.getLatestVisionUpdate(), headingController, getRobotHeading());
                 commandModules(
-                        inverseKinematics.updateDriveVectors(translationVector,
+                        inverseKinematics.updateDriveVectors(translationVector.scale(.5),
                         rotationCorrection+rotationScalar, drivingPose, robotCentric));
                 break;
             case AIMING:

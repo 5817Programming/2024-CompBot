@@ -5,6 +5,7 @@
 package com.uni.frc.Controls;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 public class Controller {
     XboxController Controller;
@@ -34,6 +35,13 @@ public class Controller {
 
     public Controller(int port) {
         Controller = new XboxController(port);
+    }
+
+    public void rumble(boolean rumble){
+        if(rumble)
+            this.Controller.setRumble(RumbleType.kBothRumble,.5);
+        else
+            this.Controller.setRumble(RumbleType.kBothRumble,0);
     }
 
     public void update() {

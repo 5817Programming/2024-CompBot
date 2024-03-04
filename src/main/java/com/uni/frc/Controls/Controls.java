@@ -7,6 +7,7 @@ import javax.swing.text.html.parser.DTD;
 
 import com.uni.frc.Ports;
 import com.uni.frc.subsystems.Climb;
+import com.uni.frc.subsystems.Indexer;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.SuperStructure.SuperState;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
@@ -37,7 +38,7 @@ public class Controls {
         Driver.update();
         CoDriver.update();
         s = SuperStructure.getInstance();
-
+        Driver.rumble(Indexer.getInstance().hasPiece());
         
         // if(Driver.RightBumper.isActive()){
         //     s.intakePercent(-percent);
