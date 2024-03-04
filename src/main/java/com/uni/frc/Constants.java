@@ -168,7 +168,7 @@ public class Constants {
         }
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> VELOCITY_TREE_MAP = new InterpolatingTreeMap<>();
         static {
-            VELOCITY_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.3));
+            VELOCITY_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.2));
             VELOCITY_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(.8));
         }
 

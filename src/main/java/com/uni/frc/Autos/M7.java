@@ -12,6 +12,7 @@ import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Translation2d;
+import com.uni.lib.motion.PathStateGenerator;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -29,41 +30,47 @@ public class M7 extends AutoBase {
     public void auto() {
         Shooter.getInstance().setPercent(1);
         //Shot 1
-        s.setPivotState(-.266);
+        PathStateGenerator.getInstance().setTrajectory(trajectory);
+        s.setPivotState(-.179);
         s.shootState(false);
         s.trajectoryState(trajectory, initRotation);
-        registerTrajectoryStops(Arrays.asList(1.13,2.93,4.28,7.51,10.67));
+        registerTrajectoryStops(Arrays.asList(1.13,2.93,4.2,7.51,10.67));
 
-        s.waitForPositionState(0.75);
-        s.intakeState(.5,-.288);
+        s.waitForPositionState(0.6);
+        s.intakeState(.7,-.288);
         s.stopTrajectoryState();
         s.shootState(false);
         s.resumeTrajectoryState();
 
-        s.waitForPositionState(2.2);
-        s.intakeState(.5,-.299);
+        s.waitForPositionState(2);
+        s.intakeState(.7,-.278);
         s.shootState(false);
         s.resumeTrajectoryState();
 
-        s.waitForPositionState(4.1);
-        s.intakeState(.5,-.299);
+        s.waitForPositionState(3.9);
+        s.intakeState(.7,-.284);
         s.shootState(false);
         s.resumeTrajectoryState();
 
-        s.waitForPositionState(5.3);
-        s.intakeState(.7);
+        s.waitForPositionState(5);
 
-        s.waitForPositionState(7.5);
-        s.setPivotState(-.3);
+        s.intakeState(1);
+        
+        s.waitForPositionState(6);
+        s.setPivotState(-.34);
+
+        s.waitForPositionState(7);
         s.shootState(false);
         s.resumeTrajectoryState();
 
     
-        s.waitForPositionState(8.4);
-        s.intakeState(.9);
+        s.waitForPositionState(7);
+        s.intakeState(2.7);
+        s.waitForPositionState(10);
+
+        s.setPivotState(-.34);
 
         s.waitForPositionState(10.75);
-        s.setPivotState(-.3);
         s.shootState(false);
         s.resumeTrajectoryState();
     }

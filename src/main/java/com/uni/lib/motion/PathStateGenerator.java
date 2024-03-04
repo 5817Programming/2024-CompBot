@@ -54,7 +54,6 @@ public class PathStateGenerator{
     return getDesiredPose2d(useAllianceColor,timer.get());
   }
   public Pose2d getDesiredPose2d(boolean useAllianceColor,double time) {
-    this.timer.start();
     double currentTime = this.timer.get();
     State desiredState = transformedTrajectory.sample(currentTime);
     double desiredRotation = -((State) transformedTrajectory.sample(currentTime)).targetHolonomicRotation

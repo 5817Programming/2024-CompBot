@@ -39,7 +39,7 @@ import edu.wpi.first.wpilibj.Timer;
    }
    public enum State{
     OFF(0),
-    RECIEVING(-.5),
+    RECIEVING(-.6),
     TRANSFERING(-1),
     REVERSE_TRANSFER(-.5);
 
@@ -98,7 +98,30 @@ import edu.wpi.first.wpilibj.Timer;
 
       @Override
       public boolean isFinished() {
-        return mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > 0.5;
+        return mPeriodicIO.hasPiece;
+      }
+    };
+  }
+  public Request hasNoPieceRequest(boolean timeout) {
+    if (!timeout) {
+      return new Request() {
+        @Override
+        public boolean isFinished() {
+          return !mPeriodicIO.hasPiece;
+        }
+      };
+    }
+    return new Request() {
+      double startTime;
+
+      @Override
+      public void initialize() {
+        startTime = Timer.getFPGATimestamp();
+      }
+
+      @Override
+      public boolean isFinished() {
+        return !mPeriodicIO.hasPiece;
       }
     };
   }
@@ -114,6 +137,21 @@ import edu.wpi.first.wpilibj.Timer;
       @Override
       public boolean isFinished() {
         return mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > timeout;
+      }
+    };
+  }
+ public Request hasnoPieceRequest(double timeout) {
+    return new Request() {
+      double startTime;
+
+      @Override
+      public void initialize() {
+        startTime = Timer.getFPGATimestamp();
+      }
+
+      @Override
+      public boolean isFinished() {
+        return !mPeriodicIO.hasPiece;// || Timer.getFPGATimestamp() - startTime > timeout;
       }
     };
   }
@@ -175,6 +213,7 @@ import edu.wpi.first.wpilibj.Timer;
     Logger.recordOutput("indexer beambreak ", indexerBeamBreak.get());
     Logger.recordOutput("indexer hasPiece ", mPeriodicIO.hasPiece);
     Logger.recordOutput("indexer current", indexerMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("indexer demand", mPeriodicIO.driveDemand);
    }
 
    @Override

@@ -42,7 +42,7 @@ import com.uni.lib.TalonConfigs;
     SHOOTING(1),
     TRANSFER(0.3),
     REVERSETRANSFER(-.5),
-    IDLE(0.16);
+    IDLE(0);
 
     double output = 0;
     State(double output){
@@ -163,12 +163,13 @@ import com.uni.lib.TalonConfigs;
 
    @Override
    public void readPeriodicInputs() {
-      shooterMotor1.setControl(new DutyCycleOut(mPeriodicIO.driveDemand).withEnableFOC(true));//TODO add spin back
-      shooterMotor2.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand*1).withEnableFOC(true));
+      shooterMotor1.setControl(new DutyCycleOut(mPeriodicIO.driveDemand).withEnableFOC(true));
+      shooterMotor2.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand*0.7).withEnableFOC(true));
       
       
       
       // hEnableFOC(true));
+
 
       // shooterMotor1.setControl(new MotionMagicVelocityDutyCycle(mPeriodicIO.driveDemand).withEnableFOC(true));
       // shooterMotor2.setControl(new MotionMagicVelocityDutyCycle(-mPeriodicIO.driveDemand).withEnableFOC(true));

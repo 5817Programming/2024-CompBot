@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.Timer;
 public abstract class AutoBase {
     public PathStateGenerator mPathStateGenerator;
     public RobotState mRobotState;
-    public List<Pose2d> stopPoses;
+    public List<Pose2d> stopPoses = new ArrayList<>();
     public AutoBase(){
         mPathStateGenerator = PathStateGenerator.getInstance();
         mRobotState = RobotState.getInstance();
@@ -55,16 +55,16 @@ public abstract class AutoBase {
 
     public void updateAuto(double timestamp){
         if(!stopPoses.isEmpty())
-            for(Pose2d m: stopPoses){
+            for(int i = 0; i < stopPoses.size(); i++){
                 if (DriverStation.getAlliance().get().equals(Alliance.Blue)){
-                    if(m.getTranslation().translateBy(mRobotState.getKalmanPose(timestamp).getTranslation().inverse()).norm() < .3){
+                    if(stopPoses.get(i).getTranslation().translateBy(mRobotState.getPoseFromOdom(timestamp).getTranslation().inverse()).norm() < .3){
                         mPathStateGenerator.stopTimer();
-                        stopPoses.remove(m);
+                        stopPoses.remove(i);
                     }
                 }else{
-                    if(m.getTranslation().reflect().translateBy(mRobotState.getKalmanPose(timestamp).getTranslation().inverse()).norm() < .3){
+                    if(stopPoses.get(i).getTranslation().reflect().translateBy(mRobotState.getPoseFromOdom(timestamp).getTranslation().inverse()).norm() < .3){
                         mPathStateGenerator.stopTimer();
-                        stopPoses.remove(m);
+                        stopPoses.remove(i);
                     }
                 }
             }
