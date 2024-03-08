@@ -37,6 +37,13 @@ public class Controller {
         Controller = new XboxController(port);
     }
 
+    public void rumble(boolean rumble){
+        if(rumble)
+            this.Controller.setRumble(RumbleType.kBothRumble,.5);
+        else
+            this.Controller.setRumble(RumbleType.kBothRumble,0);
+    }
+
     public void update() {
 
         LeftStickX.update(Controller.getLeftX());
