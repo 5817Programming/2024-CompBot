@@ -21,7 +21,9 @@ import com.uni.lib.swerve.ChassisSpeeds;
 import com.uni.lib.util.PID2d;
 import com.uni.lib.util.SynchronousPIDF;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class DriveMotionPlanner {
 
@@ -60,7 +62,9 @@ public class DriveMotionPlanner {
         this.useAllianceColor = useAllianceColor;
         mPathStateGenerator.setTrajectory(trajectory);
         Pose2d newpose = (mPathStateGenerator.getInitial(trajectory, initRotation, useAllianceColor));
-        RobotStateEstimator.getInstance().resetModuleOdometry(newpose);
+        // RobotStateEstimator.getInstance().resetModuleOdometry(newpose);
+        Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).getDegrees());
+        if(DriverStation.getAlliance().get().equals(Alliance.Red))
         Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).flip().getDegrees());
 
     }
@@ -105,7 +109,7 @@ public class DriveMotionPlanner {
 
     public Translation2d updateFollowedTranslation2d(double timestamp) {
         double dt = timestamp - lastTimestamp;
-        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestPoseFromOdom().getValue()
+        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestKalmanPose()
                 .getTranslation();
         OdometryPID.x().setOutputRange(-1, 1);
         OdometryPID.y().setOutputRange(-1, 1);

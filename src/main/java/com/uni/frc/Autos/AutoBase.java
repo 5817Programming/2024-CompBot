@@ -57,12 +57,12 @@ public abstract class AutoBase {
         if(!stopPoses.isEmpty())
             for(int i = 0; i < stopPoses.size(); i++){
                 if (DriverStation.getAlliance().get().equals(Alliance.Blue)){
-                    if(stopPoses.get(i).getTranslation().translateBy(mRobotState.getPoseFromOdom(timestamp).getTranslation().inverse()).norm() < .3){
+                    if(stopPoses.get(i).getTranslation().translateBy(mRobotState.getKalmanPose(timestamp).getTranslation().inverse()).norm() < .3){
                         mPathStateGenerator.stopTimer();
                         stopPoses.remove(i);
                     }
                 }else{
-                    if(stopPoses.get(i).getTranslation().reflect().translateBy(mRobotState.getPoseFromOdom(timestamp).getTranslation().inverse()).norm() < .3){
+                    if(stopPoses.get(i).getTranslation().reflect().translateBy(mRobotState.getKalmanPose(timestamp).getTranslation().inverse()).norm() < .3){
                         mPathStateGenerator.stopTimer();
                         stopPoses.remove(i);
                     }

@@ -8,13 +8,11 @@
  import com.uni.frc.subsystems.Requests.Request;
  import com.uni.lib.TalonConfigs;
 
- import edu.wpi.first.wpilibj.Timer;
 
   public class Intake extends Subsystem {
     private PeriodicIO mPeriodicIO = new PeriodicIO();
     private TalonFX intakeMotor = new TalonFX(Ports.Intake, "Minivore");
     private TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
-    private State currentState;
 
 
     public static Intake instance = null;
@@ -29,7 +27,6 @@
     public Intake() {
       configMotors();
 
-      currentState = State.OFF;
     }
 
 
@@ -37,7 +34,8 @@
     public enum State {
       INTAKING(-1),
       OUTTAKING(0.7),
-      OFF(0);
+      OFF(0), 
+      PARTIALRAMP(-0);
 
       double output = 0;
 

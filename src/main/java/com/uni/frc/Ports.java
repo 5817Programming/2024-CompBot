@@ -53,7 +53,7 @@ public class Ports {
         public static final int elevatorMotor1 = 20;
         public static final int elevatorMotor2 = 21;
         public static final int Arm = 0;
-        public static final int Lights = 0;
+        public static final int Lights = 6;
 
 
 

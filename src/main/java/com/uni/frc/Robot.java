@@ -16,14 +16,12 @@ import com.uni.frc.Autos.AutoBase;
 import com.uni.frc.Autos.M5;
 import com.uni.frc.Autos.M5Safe;
 import com.uni.frc.Autos.M6;
-import com.uni.frc.Autos.M7;
-import com.uni.frc.Autos.M8;
 import com.uni.frc.Autos.NS5;
 import com.uni.frc.Controls.Controls;
 import com.uni.frc.subsystems.Climb;
 import com.uni.frc.subsystems.Indexer;
 import com.uni.frc.subsystems.Intake;
-// import com.uni.frc.subsystems.Intake;
+import com.uni.frc.subsystems.Lights;
 import com.uni.frc.subsystems.Music;
 import com.uni.frc.subsystems.Pivot;
 import com.uni.frc.subsystems.RobotState;
@@ -35,16 +33,11 @@ import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.frc.subsystems.Vision.ObjectLimeLight;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight;
 import com.uni.frc.subsystems.gyros.Gyro;
-import com.uni.lib.geometry.Pose2d;
-import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.motion.PathGenerator;
 import com.uni.lib.motion.PathStateGenerator;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 //https://github.com/Mechanical-Advantage/AdvantageKit/releases/latest/download/AdvantageKit.json
 //https://maven.photonvision.org/repository/internal/org/photonvision/PhotonLib-json/1.0/PhotonLib-json-1.0.json
@@ -59,13 +52,12 @@ public class Robot extends LoggedRobot {
   OdometryLimeLight vision;
   Music music;
   Gyro pigeon;
-  AutoBase auto = new M7();
+  AutoBase auto = new M6();
   public SendableChooser<AutoBase> autoChooser = new SendableChooser<>();
 
 HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @Override
   public void robotInit() {
-    autos.put("M7", new M7());
     autos.put("M6", new M6());
     autos.put("M5", new M5());
     autos.put("M5 safe",new M5Safe());
@@ -81,7 +73,6 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     }
 
     SmartDashboard.putData("Autonomous routine", autoChooser);
-    new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
     swerve = SwerveDrive.getInstance();
@@ -102,7 +93,8 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
         Indexer.getInstance(),
         Intake.getInstance(),
         Pivot.getInstance(),
-        Climb.getInstance()
+        Climb.getInstance(),
+        Lights.getInstance()
         ));
 
     }
@@ -128,6 +120,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     SuperStructure.getInstance().setState(SuperState.AUTO);
     Pivot.getInstance().conformToState(Pivot.State.MAXUP);
     auto.runAuto();
+    Indexer.getInstance().setPiece(true);
     }
 
   /** This function is called periodically during autonomous. */
@@ -144,8 +137,8 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve = SwerveDrive.getInstance();
     swerve.fieldzeroSwerve();
     swerve.zeroModules();
-
-    RobotStateEstimator.getInstance().resetOdometry(new Pose2d(15.25,5.54, new Rotation2d()));
+    //TODO REMOVE THIS AT COMP PLEASE PLEASE PLEASE
+    // RobotStateEstimator.getInstance().resetOdometry(new Pose2d(16.5-1.36,5.54, new Rotation2d()));
     
 
 

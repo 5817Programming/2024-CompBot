@@ -259,6 +259,18 @@ public class FieldLayout {
         kAprilTagMap.put(3, kAprilTag3);
         kAprilTagMap.put(4, kAprilTag4);
         kAprilTagMap.put(5, kAprilTag5);
+        kAprilTagMap.put(6, kAprilTag6);
+        kAprilTagMap.put(7, kAprilTag7);
+        kAprilTagMap.put(8, kAprilTag8);
+        kAprilTagMap.put(9, kAprilTag9);
+        kAprilTagMap.put(10, kAprilTag10);
+        kAprilTagMap.put(11, kAprilTag1);
+        kAprilTagMap.put(12, kAprilTag2);
+        kAprilTagMap.put(13, kAprilTag3);
+        kAprilTagMap.put(14, kAprilTag4);
+        kAprilTagMap.put(15, kAprilTag5);
+        kAprilTagMap.put(15, kAprilTag16);
+
         }
     }
 }

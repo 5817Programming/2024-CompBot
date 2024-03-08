@@ -82,7 +82,7 @@ public class ShootingUtils {
          Pose2d robotToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(currentPose.getTranslation().inverse()));
         double effectiveDistance = robotToTarget.getTranslation().norm();
         double lookahead_time = shotTimeTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
-        Logger.recordOutput("lookahead time", lookahead_time);
+        Logger.recordOutput("effective distance", effectiveDistance);
         Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(lookahead_time+.004).rotateBy(currentPose.getRotation());
         Pose2d compensatedShooterToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(poseAtTimeFrame.getTranslation().inverse()));
 
@@ -90,7 +90,7 @@ public class ShootingUtils {
         Logger.recordOutput("Time", lookahead_time);
 
         double compensatedDistance = compensatedShooterToTarget.getTranslation().norm();
-
+        
         
         double desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
         double compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;

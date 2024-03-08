@@ -7,7 +7,9 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+
 
 import java.util.Map;
 import java.util.Optional;
@@ -18,6 +20,7 @@ import com.uni.frc.Constants;
 import com.uni.frc.subsystems.Vision.VisionPoseAcceptor;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight.VisionUpdate;
 import com.uni.lib.geometry.Pose2d;
+import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
 import com.uni.lib.geometry.Twist2d;
 import com.uni.lib.util.InterpolatingDouble;
@@ -143,6 +146,7 @@ public class RobotState {
         return filteredMeasuredVelocity.getAverage();
     }
 
+
     /**
      * Adds a Vision Update
      * @param visionUpdate
@@ -156,6 +160,9 @@ public class RobotState {
             Pose2d odomToVehicle = getPoseFromOdom(visionTimestamp);
             //Rotating Camera by Yaw Offset
             Pose2d cameraToTag = Pose2d.fromTranslation(mLatestVisionUpdate.get().getCameraToTarget().rotateBy(Constants.VisionConstants.cameraYawOffset));
+            if(DriverStation.getAlliance().get().equals(Alliance.Red)){
+             cameraToTag = cameraToTag.rotateBy(Rotation2d.identity().flip());
+            }
             //Getting Vehicle to Tag in Field Frame
             Pose2d vehicleToTag = Pose2d.fromTranslation(Constants.VisionConstants.ROBOT_TO_CAMERA.transformBy(cameraToTag).getTranslation().rotateBy(odomToVehicle.getRotation().inverse().flip()));
 
@@ -166,16 +173,6 @@ public class RobotState {
                 return;
             }
 
-            boolean disabledAndNeverEnabled = DriverStation.isDisabled() && !mHasBeenEnabled;
-            if (initialPose.isEmpty() || disabledAndNeverEnabled) {
-                var odom_to_vehicle_translation = disabledAndNeverEnabled ? Translation2d.identity() : getPoseFromOdom(visionTimestamp).getTranslation();
-                visionPoseComponent.put(new InterpolatingDouble(visionTimestamp), visionFieldToVehicle.getTranslation().translateBy(odom_to_vehicle_translation.inverse()));
-                initialPose = Optional.of(visionPoseComponent.lastEntry().getValue());
-                mKalmanFilter.setXhat(0, visionPoseComponent.lastEntry().getValue().x());
-                mKalmanFilter.setXhat(1, visionPoseComponent.lastEntry().getValue().y());
-                mDisplayVisionPose = visionFieldToVehicle;
-
-            } else if (DriverStation.isEnabled()) { 
                 var visionOdomError = visionFieldToVehicle.getTranslation().translateBy(odomToVehicle.getTranslation().inverse());
                 // Logger.recordOutput("visionOdomError", visionOdomError.toWPI());
                 mDisplayVisionPose = visionFieldToVehicle;
@@ -188,7 +185,7 @@ public class RobotState {
             } else {
                 mDisplayVisionPose = null;
             }
-        }
+        
     }
 
     public synchronized Pose2d getDisplayVisionPose() {

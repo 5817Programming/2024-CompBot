@@ -35,7 +35,7 @@ import com.uni.lib.util.Util;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /** Add your docs here. */
 public class SwerveDrive extends Subsystem {
@@ -179,6 +179,8 @@ public class SwerveDrive extends Subsystem {
         if (translationVector.norm() <= translationDeadband) {
             translationVector = new Translation2d();
         }
+        if(DriverStation.getAlliance().get().equals(Alliance.Blue))
+            translationVector = translationVector.inverse();
         rotationScalar *= 0.02;
         if (translationVector.norm() <= translationDeadband && Math.abs(rotation) <= rotationDeadband) {
             this.commandModuleDrivePowers(0);
@@ -366,6 +368,11 @@ public class SwerveDrive extends Subsystem {
     public void fieldzeroSwerve() {// starts the zero 180 off
         headingController.setTargetHeading(Rotation2d.fromDegrees(0));
         gyro.setAngle(180);
+        if(DriverStation.getAlliance().get().equals(Alliance.Blue)){
+        headingController.setTargetHeading(Rotation2d.fromDegrees(180));
+            gyro.setAngle(0);
+    }
+
     }
 
     @Override

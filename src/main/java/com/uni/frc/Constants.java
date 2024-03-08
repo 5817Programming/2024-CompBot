@@ -96,9 +96,9 @@ public class Constants {
     // Scrub Factors
     public static final boolean kSimulateReversedCarpet = false;
     public static final double[] kWheelScrubFactors = new double[] { 1.0, 1.0, 1.0, 1.0 };
-    public static final double kXScrubFactorP = isCompbot?.97:0.85;
+    public static final double kXScrubFactorP = isCompbot?.95:0.85;
     public static final double kYScrubFactorP = isCompbot?.97:.875;
-    public static final double kXScrubFactorN = isCompbot?.97:0.85;
+    public static final double kXScrubFactorN = isCompbot?.95:0.85;
     public static final double kYScrubFactorN = isCompbot?.97:.875;
 
 
@@ -168,7 +168,7 @@ public class Constants {
         }
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> VELOCITY_TREE_MAP = new InterpolatingTreeMap<>();
         static {
-            VELOCITY_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.2));
+            VELOCITY_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.));
             VELOCITY_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(.8));
         }
 
@@ -218,16 +218,11 @@ public class Constants {
 
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kNewPivotShootingMap = new InterpolatingTreeMap<>();
         static {
-            kNewPivotShootingMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(-0.179));
-            kNewPivotShootingMap.put(new InterpolatingDouble(1.5), new InterpolatingDouble(-.21));
-            kNewPivotShootingMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(-.24));
-            kNewPivotShootingMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(-.264));
-            kNewPivotShootingMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(-.275));
-            kNewPivotShootingMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(-.292));
-            kNewPivotShootingMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(-0.303));
-            kNewPivotShootingMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(-0.316));
-            kNewPivotShootingMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(-0.323));
-            kNewPivotShootingMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(-0.34));
+            kNewPivotShootingMap.put(new InterpolatingDouble(1.), new InterpolatingDouble(0.083-0.147));
+            kNewPivotShootingMap.put(new InterpolatingDouble(3.59), new InterpolatingDouble(-0.169));
+            kNewPivotShootingMap.put(new InterpolatingDouble(5.24), new InterpolatingDouble(.083-.299));
+          
+
         }
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kAutoPivotShootingMap = new InterpolatingTreeMap<>();
         static {
@@ -266,7 +261,7 @@ public class Constants {
         public static final int APRIL_PIPLINE = 0;
         public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 15;
 
-        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(0.446-.875,.233),
+        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(0.446-.875+.057,.233-0.059),
                 Rotation2d.fromDegrees(0));
 
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);
@@ -315,7 +310,7 @@ public static final class FieldConstants {
         if(DriverStation.getAlliance().get().equals(Alliance.Red)){
             return new Pose2d(16.28,5.6,new Rotation2d());
         }
-        return new Pose2d();
+        return new Pose2d(16.5-16.28,5.6,new Rotation2d());
     }
  /**
      * Check if this system has a certain mac address in any network device.

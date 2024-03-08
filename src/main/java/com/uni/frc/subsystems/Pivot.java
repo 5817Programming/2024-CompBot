@@ -8,7 +8,8 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
- import com.uni.frc.Ports;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.uni.frc.Ports;
  import com.uni.frc.CompConstants.PivotConstants;
  import com.uni.frc.subsystems.Requests.Request;
  import com.uni.lib.TalonConfigs;
@@ -80,6 +81,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
     public void configMotors() {
       pivotConfig = TalonConfigs.pivotConfigs();
       pivotMotor1.getConfigurator().apply(pivotConfig);
+      pivotMotor1.setNeutralMode(NeutralModeValue.Brake);
+      pivotMotor2.setNeutralMode(NeutralModeValue.Brake);
     }
 
     public void setMotionMagic(double position){
@@ -111,7 +114,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
       setMotionMagic(Override);
     }
 
-    public void motionMagic(){
+    public void motionMagic(){//.299 is og zero
       pivotMotor1.setControl(new MotionMagicVoltage(mPeriodicIO.rotationDemand));
       pivotMotor2.setControl(new Follower(Ports.Pivot1, false));
 

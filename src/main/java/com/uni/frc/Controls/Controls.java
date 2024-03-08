@@ -7,6 +7,7 @@ import javax.swing.text.html.parser.DTD;
 
 import com.uni.frc.Ports;
 import com.uni.frc.subsystems.Climb;
+import com.uni.frc.subsystems.Indexer;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.SuperStructure.SuperState;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
@@ -37,7 +38,7 @@ public class Controls {
         Driver.update();
         CoDriver.update();
         s = SuperStructure.getInstance();
-
+        Driver.rumble(Indexer.getInstance().hasPiece());
         
         // if(Driver.RightBumper.isActive()){
         //     s.intakePercent(-percent);
@@ -50,18 +51,15 @@ public class Controls {
             swerve.resetGryo(180);
 
         if(Driver.AButton.isActive())
-            Climb.getInstance().setPivotPercent(-.3);
-        
-        else if(Driver.BButton.isActive())
-            Climb.getInstance().setPivotPercent(.3);
-        else
-            Climb.getInstance().setPivotPercent(0);
+            Climb.getInstance().conformToState(Climb.State.UP);
+        else 
+            Climb.getInstance().conformToState(Climb.State.Down);
         // else if(Driver.BButton.isPressed()){
         //     s.onTheFlyTrajectoryState(new Pose2d(8,2, Rotation2d.fromDegrees(180)), timestamp);
 
         if(Driver.LeftTrigger.value >0.2){
             s.setState(SuperState.OUTTAKING);    
-            
+
         }
         else if(Driver.RightTrigger.getValue()>0.2){ 
             s.setState(SuperState.INTAKING);

@@ -103,12 +103,9 @@ public class CompConstants {
     }
     
     public static final class ElevatorConstants{
-        public static final double STOW = 0;
-        public static final double OVERCHAIN = 0;
-        public static final double ONCHAIN = 0;
-
-        public static final double MAX_UP = 0;
-        public static final double MAX_DOWN = 0;
+        public static final double STOW = -2;
+        public static final double OVERCHAIN = -72;
+       
     }
 
     public static final class WristConstants{
@@ -128,7 +125,7 @@ public class CompConstants {
         public static final double SHOOTING = 0;
         public static final double MAX_UP = -.07;
         public static final double MAX_DOWN = 0;
-        public static final double INTAKING = 0;
+        public static final double INTAKING = -.086;
 
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> ANGLE_TREEMAP = new InterpolatingTreeMap<>();
         static{

@@ -23,7 +23,7 @@ public class AimingPlanner {
 
     private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mShotTimeMap = Constants.ShooterConstants.SHOT_TRAVEL_TIME_TREE_MAP;
 
-    private Pose2d mFieldToSpeaker= new Pose2d(16.28,5.6,new Rotation2d());
+    private Pose2d mFieldToSpeaker;
     private Optional<VisionUpdate> mVisionUpdate;
     private AimingRequest mAimingRequest;
     private boolean isAimed = false;
@@ -33,7 +33,8 @@ public class AimingPlanner {
         Odometry,
         LimeLight,
     }
-
+    public AimingPlanner(){
+    }
     public AimingRequest getAimingRequest(){
         return mAimingRequest;
     }
@@ -53,6 +54,7 @@ public class AimingPlanner {
         }
         switch (mAimingRequest) {
             case Odometry:
+                mFieldToSpeaker = Constants.getShooterPose();
                 double estimatedTimeFrame = 0;
                 Pose2d odomToTargetPoint = visionPoseComponent.inverse().transformBy(mFieldToSpeaker);
                 double travelDistance = odomToTargetPoint.transformBy(currentOdomToRobot).getTranslation().norm();

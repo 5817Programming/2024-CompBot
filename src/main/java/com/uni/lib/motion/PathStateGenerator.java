@@ -43,6 +43,7 @@ public class PathStateGenerator{
 
   public void setTrajectory(PathPlannerTrajectory trajectory) {
     resetTimer();
+    
     this.transformedTrajectory = trajectory;
   }
 
@@ -64,7 +65,7 @@ public class PathStateGenerator{
     if (alliance()&& useAllianceColor)
       return new Pose2d(new Translation2d(reflect(desiredX), desiredY), Rotation2d.fromDegrees(desiredRotation));
     else
-      return new Pose2d(new Translation2d(desiredX, desiredY), Rotation2d.fromDegrees(desiredRotation));
+      return new Pose2d(new Translation2d(desiredX, desiredY), Rotation2d.fromDegrees(desiredRotation).flip().inverse());
 
   }
 

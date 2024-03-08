@@ -5,6 +5,7 @@
 package com.uni.frc.Controls;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 public class Controller {
     XboxController Controller;
@@ -58,6 +59,14 @@ public class Controller {
         DpadUp.update(Controller.getPOV() == 0);
         DpadRight.update(Controller.getPOV() == 90);
         DpadDown.update(Controller.getPOV() == 180);
+    }
+
+    public void rumble(boolean rumble){
+        if(rumble)
+            this.Controller.setRumble(RumbleType.kBothRumble, 1);
+        else
+            this.Controller.setRumble(RumbleType.kBothRumble, 0);
+
     }
 
     public class ButtonCheck {

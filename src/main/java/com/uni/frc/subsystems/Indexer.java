@@ -3,7 +3,6 @@ package com.uni.frc.subsystems;
 
 
  import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
  import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -39,9 +38,10 @@ import edu.wpi.first.wpilibj.Timer;
    }
    public enum State{
     OFF(0),
-    RECIEVING(-.6),
+    RECIEVING(-.4),
     TRANSFERING(-1),
-    REVERSE_TRANSFER(-.5);
+    REVERSE_TRANSFER(-.5), 
+    OUTTAKING(0.4);
 
     double output = 0;
     State(double output){
@@ -98,7 +98,7 @@ import edu.wpi.first.wpilibj.Timer;
 
       @Override
       public boolean isFinished() {
-        return mPeriodicIO.hasPiece;
+        return mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > .7;
       }
     };
   }
@@ -121,7 +121,7 @@ import edu.wpi.first.wpilibj.Timer;
 
       @Override
       public boolean isFinished() {
-        return !mPeriodicIO.hasPiece;
+        return !mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > 1.5;
       }
     };
   }
@@ -151,7 +151,7 @@ import edu.wpi.first.wpilibj.Timer;
 
       @Override
       public boolean isFinished() {
-        return !mPeriodicIO.hasPiece;// || Timer.getFPGATimestamp() - startTime > timeout;
+        return !mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > timeout;
       }
     };
   }
@@ -226,7 +226,7 @@ import edu.wpi.first.wpilibj.Timer;
      double velocity = 0;
      double statorCurrent = 0;
 
-    boolean hasPiece = false;
+    boolean hasPiece = true;
      double rotationDemand = 0.0;
      double driveDemand = 0.0;
    }

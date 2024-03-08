@@ -57,20 +57,20 @@ public class TalonConfigs {
 
         driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
+        
 
-
-        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = 3;
-        driveConfigs.MotionMagic.MotionMagicAcceleration = 3;
+        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = 1;
+        driveConfigs.MotionMagic.MotionMagicAcceleration = 1;
 
       return driveConfigs;
 
     }
     public static TalonFXConfiguration elevatorConfigs() {
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
-        driveConfigs.Slot0.kV = 50;
+        driveConfigs.Slot0.kV = 0;
         driveConfigs.Slot0.kS = 0;
         driveConfigs.Slot0.kA = 0;
-        driveConfigs.Slot0.kP = 6;
+        driveConfigs.Slot0.kP = 3;
         driveConfigs.Slot0.kI = 0;
         driveConfigs.Slot0.kD = 0;
         driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 

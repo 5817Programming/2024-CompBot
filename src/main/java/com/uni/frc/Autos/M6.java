@@ -1,25 +1,77 @@
 package com.uni.frc.Autos;
 
+import java.util.Arrays;
 
-
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter.Indenter;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
+import com.uni.frc.subsystems.Indexer;
+import com.uni.frc.subsystems.Intake;
+import com.uni.frc.subsystems.RobotState;
+import com.uni.frc.subsystems.Shooter;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
+import com.uni.lib.geometry.Pose2d;
+import com.uni.lib.geometry.Translation2d;
+import com.uni.lib.motion.PathGenerator;
+import com.uni.lib.motion.PathStateGenerator;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
-
-public class M6 extends AutoBase{
+public class M6 extends AutoBase {
     SuperStructure s = SuperStructure.getInstance();
-    SwerveDrive swerve = SwerveDrive.getInstance();
-    double initRotation = 180;
-    PathPlannerTrajectory path = PathPlannerPath.fromPathFile("M6").getTrajectory(new ChassisSpeeds(),  Rotation2d.fromDegrees(initRotation));
+    SwerveDrive mSwerve = SwerveDrive.getInstance();
+    double initRotation = 0;
+    PathPlannerPath path = PathPlannerPath.fromPathFile("M6 KALMAN");
+    PathPlannerTrajectory trajectory = path.getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
 
     @Override
     public void auto() {
-        s.trajectoryState(path,initRotation);
-        s.waitState(15, false);
+        Shooter.getInstance().setPercent(0.8);
+        //Shot 1
+        PathStateGenerator.getInstance().setTrajectory(trajectory);
+        s.setPivotState(0.083-.125);
+        s.shootState(false);
+        s.trajectoryState(trajectory, initRotation);
+        registerTrajectoryStops(Arrays.asList(1.23,2.83,4.1,7.6,10.76));
+
+        s.waitForPositionState(0.78);
+        s.intakeState(.3, true);
+        s.shootState(false);
+        s.resumeTrajectoryState();
+
+        s.waitForPositionState(2.6);
+        s.intakeState(.3,true);
+        s.shootState(false);
+        s.resumeTrajectoryState();
+
+        s.waitForPositionState(3.9);
+        s.intakeState(.3, false);
+        s.setPivotState(-0.165);
+
+        s.shootState(false);
+        s.resumeTrajectoryState();
+
+        s.waitForPositionState(5);
+
+        s.intakeState(1.5,false);
+
+        s.waitForPositionState(7);
+        s.setPivotState(0.083-0.285);
+        s.waitForPositionState(7.7);
+        s.shootState(false);
+        s.resumeTrajectoryState();
+
+    
+        s.waitForPositionState(8.3);
+        s.intakeState(1.5,false);
+        s.waitForPositionState(10);
+        s.setPivotState(0.083-0.292);
+
+        s.waitForPositionState(10.83);
+        s.shootState(false);
+        s.resumeTrajectoryState();
     }
+
 }

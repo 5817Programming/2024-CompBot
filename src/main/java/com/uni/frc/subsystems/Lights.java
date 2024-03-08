@@ -1,58 +1,67 @@
-// package com.uni.frc.subsystems;
+package com.uni.frc.subsystems;
 
-// import com.uni.frc.Ports;
-// import com.uni.frc.subsystems.Requests.Request;
+import com.uni.frc.Ports;
+import com.uni.frc.subsystems.Requests.Request;
 
-// import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
  
-// public class Lights extends Subsystem{
-//     Spark lights;
-//     Lights(){
-//         lights = new Spark(Ports.Lights);
-//     }
-//     Color currentColor = Color.GREEN;
-//     public enum Color{
-//         GREEN(),
-//         RED(),
-//         YELLOW(),
-//         RAINBOW();
-//         double output = 0;
-//         Color(double output){
-//             this.output = output;
-//         }
-//     }
-//     /*
-//      * INTAKING,
-//      * SHOOTING,
-//      * CLIMB,
-//      * AMP,
-//      * SOURCE,
-//      * OFF,
-//      * IDLE,
-//      * AUTO
-//      * 
-//      */
-//     public void update(){
-//         lights.set(currentColor.output);
-//     }
-//     public void setColor(Color color){
-//         currentColor = color;
-//     }
-//     public Request setColorRequest(Color color){
-//         return new Request() {
-//             @Override
-//             public void act() {
-//                 setColor(color);
-//             }
-//         };
-//     }
-//     @Override
-//     public void outputTelemetry() {
+public class Lights extends Subsystem{
+    Spark lights;
+    Lights(){
+        lights = new Spark(Ports.Lights);
+    }
+    public static Lights instance = null;
+    public static Lights getInstance() {
+        if (instance == null)
+          instance = new Lights();
+        return instance;
+      }
+    Color currentColor = Color.IDLE;
+    public enum Color{
+        INTAKING(-.9),
+        INTAKED(.87),
+        HASPIECE(0.77),
+        AIMING(-.11),
+        LOCKED(-.61),
+        SHOOTING(-.99),
+        IDLE(-.93);// BACKUP .65
+        double output = 0;
+        Color(double output){
+            this.output = output;
+        }
+    }
+    /*
+     * INTAKING,
+     * SHOOTING,
+     * CLIMB,
+     * AMP,
+     * SOURCE,
+     * OFF,
+     * IDLE,
+     * AUTO
+     * 
+     */
+    public void update(){
+        lights.set(currentColor.output);
+    }
+    public void setColor(Color color){
+        currentColor = color;
+    }
+    public Request setColorRequest(Color color){
+        return new Request() {
+            @Override
+            public void act() {
+                setColor(color);
+            }
+        };
+    }
+    @Override
+    public void outputTelemetry() {
         
-//     }
-//     @Override
-//     public void stop() {
+    }
+    @Override
+    public void stop() {
         
-//     }
+    }
 
-// }
+}
