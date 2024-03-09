@@ -125,8 +125,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-    //
+  public void autonomousPeriodic() { 
     // s.prepareShooterSetpoints();
     auto.updateAuto(Timer.getFPGATimestamp());
   }
@@ -135,7 +134,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @Override
   public void teleopInit() {
     swerve = SwerveDrive.getInstance();
-    swerve.fieldzeroSwerve();
+    // swerve.fieldzeroSwerve();
     swerve.zeroModules();
     //TODO REMOVE THIS AT COMP PLEASE PLEASE PLEASE
     // RobotStateEstimator.getInstance().resetOdometry(new Pose2d(16.5-1.36,5.54, new Rotation2d()));

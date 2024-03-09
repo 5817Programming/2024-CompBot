@@ -7,7 +7,6 @@ package com.uni.frc.Planners;
 import org.littletonrobotics.junction.Logger;
 
 import com.uni.frc.Constants;
-import com.uni.frc.CompConstants.PivotConstants;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Twist2d;
