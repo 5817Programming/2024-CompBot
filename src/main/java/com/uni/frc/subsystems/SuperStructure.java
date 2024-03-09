@@ -600,6 +600,14 @@ public class SuperStructure extends Subsystem {
                     }
                 });
     }
+    public void printState(String string){
+        queue(new Request() {
+            @Override
+            public void initialize() {
+                System.out.println(string);
+            }
+        });
+    }
 
     public void waitForPositionState(double time) {
         Translation2d other = mDriveMotionPlanner.sample(time).getTranslation();

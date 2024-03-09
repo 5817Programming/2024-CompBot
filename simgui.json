@@ -14,6 +14,16 @@
       "/SmartDashboard/Autonomous routine": "String Chooser"
     }
   },
+  "NetworkTables": {
+    "retained": {
+      "SmartDashboard": {
+        "Autonomous routine": {
+          "open": true
+        },
+        "open": true
+      }
+    }
+  },
   "NetworkTables Info": {
     "visible": true
   }

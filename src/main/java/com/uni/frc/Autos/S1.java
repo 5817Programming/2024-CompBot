@@ -12,11 +12,11 @@ import com.uni.lib.motion.PathStateGenerator;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
-public class S3 extends AutoBase {
+public class S1 extends AutoBase {
     SuperStructure s = SuperStructure.getInstance();
     SwerveDrive mSwerve = SwerveDrive.getInstance();
     double initRotation = 0;
-    PathPlannerPath path = PathPlannerPath.fromPathFile("S3");
+    PathPlannerPath path = PathPlannerPath.fromPathFile("S1");
     PathPlannerTrajectory trajectory = path.getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
 
     @Override
@@ -24,34 +24,18 @@ public class S3 extends AutoBase {
         Shooter.getInstance().setPercent(0.8);
         //Shot 1
         PathStateGenerator.getInstance().setTrajectory(trajectory);
-        registerTrajectoryStops(Arrays.asList(0.85,4.71,9.1));
+        registerTrajectoryStops(Arrays.asList(0.78));
 
 
         s.trajectoryState(trajectory, initRotation);
 
 
-        s.waitForPositionState(0.85);
+        s.waitForPositionState(0.78);
         s.preparePivotState();
         s.shootState(false);
         s.resumeTrajectoryState();
 
-        s.waitForPositionState(2.2);
-        s.intakeState(.3, false);
-        s.waitForPositionState(4.71);
-        s.preparePivotState();
-        s.shootState(false);
-        s.resumeTrajectoryState();
-
-        s.waitForPositionState(6.3);
-        s.intakeState(.4, false);
-        s.waitForPositionState(9.1);
-        s.preparePivotState();
-        s.shootState(false);
-        s.resumeTrajectoryState();
-
-        s.waitForPositionState(10.22);
-        s.intakeState(10, false);
-        
+      
     }
 
 }

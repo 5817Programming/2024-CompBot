@@ -2,22 +2,21 @@ package com.uni.frc.Autos;
 
 
 
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.PathPlannerTrajectory;
+import com.uni.frc.subsystems.Shooter;
 import com.uni.frc.subsystems.SuperStructure;
-import com.uni.frc.subsystems.Swerve.SwerveDrive;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Shoot extends AutoBase{
     SuperStructure s = SuperStructure.getInstance();
-    SwerveDrive swerve = SwerveDrive.getInstance();
 
-    PathPlannerTrajectory path = PathPlannerPath.fromPathFile("NS5").getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(180));
 
     @Override
     public void auto() {
+        Shooter.getInstance().setPercent(0.8);
+
+        s.setPivotState(0.083-.125);
+        s.shootState(false);
     }
 }

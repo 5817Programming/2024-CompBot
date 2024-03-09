@@ -2,18 +2,11 @@ package com.uni.frc.Autos;
 
 import java.util.Arrays;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter.Indenter;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
-import com.uni.frc.subsystems.Indexer;
-import com.uni.frc.subsystems.Intake;
-import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.Shooter;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
-import com.uni.lib.geometry.Pose2d;
-import com.uni.lib.geometry.Translation2d;
-import com.uni.lib.motion.PathGenerator;
 import com.uni.lib.motion.PathStateGenerator;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -59,7 +52,7 @@ public class M6 extends AutoBase {
 
         s.waitForPositionState(7);
         s.setPivotState(0.083-0.285);
-        s.waitForPositionState(7.7);
+        s.waitForPositionState(7.6);
         s.shootState(false);
         s.resumeTrajectoryState();
 

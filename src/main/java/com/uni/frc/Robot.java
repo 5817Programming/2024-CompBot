@@ -13,10 +13,12 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 
 import com.uni.frc.Autos.AutoBase;
-import com.uni.frc.Autos.M5;
-import com.uni.frc.Autos.M5Safe;
+
 import com.uni.frc.Autos.M6;
-import com.uni.frc.Autos.NS5;
+import com.uni.frc.Autos.NS1;
+import com.uni.frc.Autos.S1;
+import com.uni.frc.Autos.S3;
+import com.uni.frc.Autos.Shoot;
 import com.uni.frc.Controls.Controls;
 import com.uni.frc.subsystems.Climb;
 import com.uni.frc.subsystems.Indexer;
@@ -59,12 +61,12 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @Override
   public void robotInit() {
     autos.put("M6", new M6());
-    autos.put("M5", new M5());
-    autos.put("M5 safe",new M5Safe());
-    autos.put("NS5", new NS5());
-    // autos.put("NS3", new NS3());
-    // autos.put("S5", new S5());
-    // autos.put("S3", new S3());
+    autos.put("NS1", new NS1());
+    autos.put("S1", new S1());
+    autos.put("S3", new S3());
+    autos.put("Shoot", new Shoot());
+
+
     RobotState.getInstance().resetKalmanFilters(Timer.getFPGATimestamp());
     for(HashMap.Entry<String, AutoBase> entry : autos.entrySet()) {
       String N = entry.getKey();
@@ -113,14 +115,14 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
 
   @Override
   public void autonomousInit() {
-
-    swerve = SwerveDrive.getInstance();
-    swerve.fieldzeroSwerve();
-    swerve.zeroModules();
-    SuperStructure.getInstance().setState(SuperState.AUTO);
-    Pivot.getInstance().conformToState(Pivot.State.MAXUP);
+    auto = autoChooser.getSelected();
+    // swerve = SwerveDrive.getInstance();
+    // swerve.fieldzeroSwerve();
+    // swerve.zeroModules();
+    // SuperStructure.getInstance().setState(SuperState.AUTO);
+    // Pivot.getInstance().conformToState(Pivot.State.MAXUP);
     auto.runAuto();
-    Indexer.getInstance().setPiece(true);
+    // Indexer.getInstance().setPiece(true);
     }
 
   /** This function is called periodically during autonomous. */

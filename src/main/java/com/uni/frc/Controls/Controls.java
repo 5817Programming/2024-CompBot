@@ -3,8 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package com.uni.frc.Controls;
-import javax.swing.text.html.parser.DTD;
-
 import com.uni.frc.Ports;
 import com.uni.frc.subsystems.Climb;
 import com.uni.frc.subsystems.Indexer;

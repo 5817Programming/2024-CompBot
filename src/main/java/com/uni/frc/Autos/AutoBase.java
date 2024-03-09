@@ -7,7 +7,6 @@ package com.uni.frc.Autos;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.uni.frc.Planners.DriveMotionPlanner;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
@@ -16,7 +15,6 @@ import com.uni.lib.motion.PathStateGenerator;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
 
 /** 
  * This is an abstract class
