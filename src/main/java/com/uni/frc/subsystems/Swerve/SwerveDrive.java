@@ -181,7 +181,7 @@ public class SwerveDrive extends Subsystem {
         }
         if(DriverStation.getAlliance().get().equals(Alliance.Blue))
             translationVector = translationVector.inverse();
-        rotationScalar *= 0.02;
+        rotationScalar *= 0.025;
         if (translationVector.norm() <= translationDeadband && Math.abs(rotation) <= rotationDeadband) {
             this.commandModuleDrivePowers(0);
         } else {
@@ -316,7 +316,7 @@ public class SwerveDrive extends Subsystem {
                 rotationCorrection = mTargetPiecePlanner.updateAiming(timeStamp, objectVision.getLatestVisionUpdate(), headingController, getRobotHeading());
                 commandModules(
                         inverseKinematics.updateDriveVectors(translationVector.scale(.5),
-                        rotationCorrection+rotationScalar, drivingPose, robotCentric));
+                        rotationCorrection*.7+rotationScalar, drivingPose, robotCentric));
                 break;
             case AIMING:
             Pose2d demandedAngle;

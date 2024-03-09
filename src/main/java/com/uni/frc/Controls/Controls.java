@@ -50,7 +50,7 @@ public class Controls {
         if (Driver.StartButton.isPressed())
             swerve.resetGryo(180);
 
-        if(Driver.AButton.isActive())
+        if(Driver.AButton.isActive()||CoDriver.AButton.isActive())
             Climb.getInstance().conformToState(Climb.State.UP);
         else 
             Climb.getInstance().conformToState(Climb.State.Down);
