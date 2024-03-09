@@ -115,6 +115,58 @@ public class ShootingUtils {
             uncompensatedShooterSpeedError, 
             desiredSpin);
     }
+    public static ShootingParameters getShootingParameters(
+        double pivotOffset,
+        Pose2d currentPose, 
+        Pose2d targetPose,
+        double pivotAngle, 
+        double shooterVelovity, 
+        double kShotTime, 
+        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotAngleTreeMap,
+        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> velocityTreeMap,
+        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> shotTimeTreeMap,
+        Twist2d currentVelocity,
+        boolean manual){
+         Pose2d robotToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(currentPose.getTranslation().inverse()));
+        double effectiveDistance = robotToTarget.getTranslation().norm();
+        double lookahead_time = shotTimeTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
+        Logger.recordOutput("effective distance", effectiveDistance);
+        Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(lookahead_time+.004).rotateBy(currentPose.getRotation());
+        Pose2d compensatedShooterToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(poseAtTimeFrame.getTranslation().inverse()));
+
+        Logger.recordOutput("Compensated Position", poseAtTimeFrame.toWPI());
+        Logger.recordOutput("Time", lookahead_time);
+
+        double compensatedDistance = compensatedShooterToTarget.getTranslation().norm();
+        
+        double desiredPivotAngle;
+        if(manual)
+            desiredPivotAngle = 0.083-.125;
+        else{
+            desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value+.02+pivotOffset;
+        }
+        double compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
+        double uncompensatedDesiredPivotAngleError = Math.abs(desiredPivotAngle - pivotAngle);
+        double compensatedDesiredPivotAngleError = Math.abs(compensatedPivotAngle - pivotAngle);
+        double uncompensatedDesiredShooterSpeed = velocityTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
+        double compensatedDesiredShooterSpeed = velocityTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
+        double uncompensatedShooterSpeedError = Math.abs(uncompensatedDesiredShooterSpeed - shooterVelovity);
+        double compensatedShooterSpeedError = Math.abs(uncompensatedDesiredShooterSpeed - shooterVelovity);
+
+        double desiredSpin = 0; //TODO
+        return new ShootingParameters(
+            effectiveDistance, 
+            compensatedDistance, 
+            compensatedPivotAngle,
+            desiredPivotAngle,
+            compensatedDesiredPivotAngleError,
+            uncompensatedDesiredPivotAngleError,
+            compensatedDesiredShooterSpeed, 
+            uncompensatedDesiredShooterSpeed, 
+            compensatedShooterSpeedError,
+            uncompensatedShooterSpeedError, 
+            desiredSpin);
+    }
 
     public static boolean pivotAtSetpoint(ShootingParameters shootingParameters, double deadBand, boolean shootOnMove){
         if(shootOnMove)

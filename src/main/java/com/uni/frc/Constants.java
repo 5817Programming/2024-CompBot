@@ -219,7 +219,7 @@ public class Constants {
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kNewPivotShootingMap = new InterpolatingTreeMap<>();
         static {
             kNewPivotShootingMap.put(new InterpolatingDouble(1.), new InterpolatingDouble(0.083-0.147));
-            kNewPivotShootingMap.put(new InterpolatingDouble(3.59), new InterpolatingDouble(-0.169));
+            // kNewPivotShootingMap.put(new InterpolatingDouble(3.59), new InterpolatingDouble(-0.169));
             kNewPivotShootingMap.put(new InterpolatingDouble(5.24), new InterpolatingDouble(.083-.299));
           
 

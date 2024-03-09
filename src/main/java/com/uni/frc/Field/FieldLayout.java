@@ -81,7 +81,7 @@ public class FieldLayout {
                 3,
                 1.4511020000000001,
                 new Pose2d(
-                        new Translation2d(16.579342,4.982717999999999-.14605),
+                        new Translation2d(16.579342,4.982717999999999),
                         Rotation2d.fromDegrees(0)
                 ),
                 true,
@@ -95,7 +95,7 @@ public class FieldLayout {
                 4,
                 1.4511020000000001,
                 new Pose2d(
-                        new Translation2d(16.579342,5.547867999999999-.14605),
+                        new Translation2d(16.579342,5.547867999999999),
                         Rotation2d.fromDegrees(0)
                 ),
                 true,

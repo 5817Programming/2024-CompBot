@@ -116,13 +116,13 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @Override
   public void autonomousInit() {
     auto = autoChooser.getSelected();
-    // swerve = SwerveDrive.getInstance();
-    // swerve.fieldzeroSwerve();
+    swerve = SwerveDrive.getInstance();
+    swerve.fieldzeroSwerve();
     // swerve.zeroModules();
-    // SuperStructure.getInstance().setState(SuperState.AUTO);
-    // Pivot.getInstance().conformToState(Pivot.State.MAXUP);
+    SuperStructure.getInstance().setState(SuperState.AUTO);
+    Pivot.getInstance().conformToState(Pivot.State.MAXUP);
     auto.runAuto();
-    // Indexer.getInstance().setPiece(true);
+    Indexer.getInstance().setPiece(true);
     }
 
   /** This function is called periodically during autonomous. */

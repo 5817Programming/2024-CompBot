@@ -30,12 +30,14 @@ public class M6 extends AutoBase {
         registerTrajectoryStops(Arrays.asList(1.23,2.83,4.1,7.6,10.76));
 
         s.waitForPositionState(0.78);
-        s.intakeState(.3, true);
+        s.intakeState(.3, false);
+        s.preparePivotState();
         s.shootState(false);
         s.resumeTrajectoryState();
 
         s.waitForPositionState(2.6);
-        s.intakeState(.3,true);
+        s.intakeState(.3,false);
+        s.preparePivotState();
         s.shootState(false);
         s.resumeTrajectoryState();
 

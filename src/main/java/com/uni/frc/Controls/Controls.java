@@ -37,14 +37,19 @@ public class Controls {
         CoDriver.update();
         s = SuperStructure.getInstance();
         Driver.rumble(Indexer.getInstance().hasPiece());
-        
+
+        if(CoDriver.DpadUp.isPressed())
+            s.offsetPivot(0.005);
+        if(CoDriver.DpadDown.isPressed())
+            s.offsetPivot(-0.005);
+
         // if(Driver.RightBumper.isActive()){
         //     s.intakePercent(-percent);
         // }
         // else{
         //     s.intakePercent(0);
         // }
-
+        s.setManual(CoDriver.BButton.isActive());
         if (Driver.StartButton.isPressed())
             swerve.resetGryo(180);
 
