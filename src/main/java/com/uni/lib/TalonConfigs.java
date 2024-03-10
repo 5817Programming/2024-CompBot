@@ -4,7 +4,6 @@
 
 package com.uni.lib;
 
-import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.uni.frc.Constants;
@@ -36,7 +35,8 @@ public class TalonConfigs {
         driveConfigs.Slot0.kI = 0;
         driveConfigs.Slot0.kD = 0;
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
-
+        driveConfigs.CurrentLimits.SupplyCurrentLimit = 45;
+        driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = .2;
         driveConfigs.MotionMagic.MotionMagicCruiseVelocity = 80;
         driveConfigs.MotionMagic.MotionMagicAcceleration = 240;
 
@@ -57,7 +57,7 @@ public class TalonConfigs {
 
         driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
-        
+        driveConfigs.CurrentLimits.SupplyCurrentLimit = 45;
 
         driveConfigs.MotionMagic.MotionMagicCruiseVelocity = 1;
         driveConfigs.MotionMagic.MotionMagicAcceleration = 1;
@@ -75,7 +75,7 @@ public class TalonConfigs {
         driveConfigs.Slot0.kD = 0;
         driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
-
+        driveConfigs.CurrentLimits.SupplyCurrentLimit = 45;
 
         driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
         driveConfigs.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));
@@ -92,6 +92,7 @@ public class TalonConfigs {
         driveConfigs.Slot0.kI = 0;
         driveConfigs.Slot0.kD = 0;
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
+        driveConfigs.CurrentLimits.SupplyCurrentLimit = 45;
         driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 
 
         driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
@@ -110,7 +111,7 @@ public class TalonConfigs {
         driveConfigs.Slot0.kD = 0;
         driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
-
+        driveConfigs.CurrentLimits.SupplyCurrentLimit = 45;
 
         driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
         driveConfigs.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));
@@ -126,7 +127,7 @@ public class TalonConfigs {
         driveConfigs.Slot0.kI = 0;
         driveConfigs.Slot0.kD = 0;
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
-
+        driveConfigs.CurrentLimits.SupplyCurrentLimit = 45;
 
         driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
         driveConfigs.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));
@@ -143,7 +144,7 @@ public class TalonConfigs {
         driveConfigs.Slot0.kD = 0;
         driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = .02;
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
-
+        driveConfigs.CurrentLimits.SupplyCurrentLimit = 45;
 
         driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
         driveConfigs.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));
@@ -160,7 +161,7 @@ public class TalonConfigs {
         driveConfigs.Slot0.kD = 0;
         driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = .02;
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
-
+        driveConfigs.CurrentLimits.SupplyCurrentLimit = 45;
 
         driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
         driveConfigs.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));

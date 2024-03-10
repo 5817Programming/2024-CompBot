@@ -7,6 +7,7 @@ import com.uni.frc.Ports;
 import com.uni.frc.subsystems.Climb;
 import com.uni.frc.subsystems.Indexer;
 import com.uni.frc.subsystems.SuperStructure;
+import com.uni.frc.subsystems.SuperStructure.Mode;
 import com.uni.frc.subsystems.SuperStructure.SuperState;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 
@@ -39,9 +40,9 @@ public class Controls {
         Driver.rumble(Indexer.getInstance().hasPiece());
 
         if(CoDriver.DpadUp.isPressed())
-            s.offsetPivot(0.005);
+            s.offsetPivot(0.002);
         if(CoDriver.DpadDown.isPressed())
-            s.offsetPivot(-0.005);
+            s.offsetPivot(-0.002);
 
         // if(Driver.RightBumper.isActive()){
         //     s.intakePercent(-percent);
@@ -51,7 +52,7 @@ public class Controls {
         // }
         s.setManual(CoDriver.BButton.isActive());
         if (Driver.StartButton.isPressed())
-            swerve.resetGryo(180);
+            swerve.fieldzeroSwerve();
 
         if(Driver.AButton.isActive()||CoDriver.AButton.isActive())
             Climb.getInstance().conformToState(Climb.State.UP);
@@ -59,7 +60,10 @@ public class Controls {
             Climb.getInstance().conformToState(Climb.State.Down);
         // else if(Driver.BButton.isPressed()){
         //     s.onTheFlyTrajectoryState(new Pose2d(8,2, Rotation2d.fromDegrees(180)), timestamp);
-
+        if(Driver.LeftBumper.isActive())
+            s.setMode(Mode.FIRING);
+        else
+            s.setMode(Mode.SHOOTING);
         if(Driver.LeftTrigger.value >0.2){
             s.setState(SuperState.OUTTAKING);    
 

@@ -91,7 +91,7 @@ public class ShootingUtils {
         double compensatedDistance = compensatedShooterToTarget.getTranslation().norm();
         
         
-        double desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value+.02;
+        double desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value+.01+.006;
         double compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
         double uncompensatedDesiredPivotAngleError = Math.abs(desiredPivotAngle - pivotAngle);
         double compensatedDesiredPivotAngleError = Math.abs(compensatedPivotAngle - pivotAngle);
@@ -143,7 +143,8 @@ public class ShootingUtils {
         if(manual)
             desiredPivotAngle = 0.083-.125;
         else{
-            desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value+.02+pivotOffset;
+            desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value+.01+pivotOffset;
+            Logger.recordOutput("Desired Pivot Angle", desiredPivotAngle);
         }
         double compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
         double uncompensatedDesiredPivotAngleError = Math.abs(desiredPivotAngle - pivotAngle);

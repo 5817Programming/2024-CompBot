@@ -26,6 +26,7 @@ public class NS1 extends AutoBase {
         PathStateGenerator.getInstance().setTrajectory(trajectory);
         registerTrajectoryStops(Arrays.asList(0.78));
 
+        s.waitState(8, false);
 
         s.trajectoryState(trajectory, initRotation);
 

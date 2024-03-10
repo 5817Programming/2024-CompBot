@@ -60,11 +60,11 @@ public class Robot extends LoggedRobot {
 HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @Override
   public void robotInit() {
-    autos.put("M6", new M6());
-    autos.put("NS1", new NS1());
-    autos.put("S1", new S1());
-    autos.put("S3", new S3());
-    autos.put("Shoot", new Shoot());
+    autos.put("Middle 6", new M6());
+    autos.put("Amp 1", new NS1());
+    autos.put("Source 1", new S1());
+    autos.put("Source 3", new S3());
+    autos.put("1", new Shoot());
 
 
     RobotState.getInstance().resetKalmanFilters(Timer.getFPGATimestamp());

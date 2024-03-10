@@ -122,7 +122,7 @@ public class SuperStructure extends Subsystem {
 
     public enum Mode {
         SHOOTING,
-        AMP
+        AMP, FIRING
     }
 
     public void setState(SuperState state) {
@@ -205,14 +205,16 @@ public class SuperStructure extends Subsystem {
         switch (currentState) {
             case SCORE:
                 switch (currentMode) {
-                    
-                    case SHOOTING:
-                        if (stateChanged) {
+                    case FIRING:
+                        if (modeChanged) {
                             shootState(true);
                         }
-
-                        prepareShooterSetpoints(timestamp);
+                        break;
+                    case SHOOTING:
+                        prepareShooterSetpoints(timestamp,manual);
                         mDrive.setState(SwerveDrive.State.AIMING);
+                        if(stateChanged)
+                              indicationState();
                         break;
 
                     case AMP:
@@ -294,6 +296,13 @@ public class SuperStructure extends Subsystem {
         if (DriverStation.getAlliance().get().equals(Alliance.Red))
             return currentPose.getTranslation().x() > 10.74;
         return currentPose.getTranslation().x() < 5.87;
+    }
+
+    public void indicationState(){
+        request(new RequestList(Arrays.asList(
+            mShooter.atTargetRequest(),
+            mLights.setColorRequest(Color.SHOOTING)
+        ),false));
     }
 
     public void update() {
@@ -520,7 +529,7 @@ public class SuperStructure extends Subsystem {
     }
 
     public void setPivotState(double position) {
-        queue(mPivot.stateRequest(.006+position));
+        queue(mPivot.stateRequest(position));
     }
 
     public void trajectoryState(PathPlannerTrajectory trajectory, double initRotation) {
@@ -615,13 +624,15 @@ public class SuperStructure extends Subsystem {
                     setStateRequest(SuperState.INTAKING),
                     mPivot.stateRequest(Pivot.State.INTAKING),
                     mIntake.stateRequest(Intake.State.INTAKING),
-                    mIndexer.stateRequest(Indexer.State.RECIEVING),
+                    mIndexer.setPercentRequest(-.5),
                     mIndexer.hasPieceRequest(timeout),
                     waitRequest(0.1),
                     mLights.setColorRequest(Color.INTAKED),
                     setStateRequest(SuperState.AUTO),
                     mIndexer.stateRequest(Indexer.State.OFF),
-                    mIntake.stateRequest(Intake.State.INTAKING)), false);
+                    mIntake.stateRequest(Intake.State.INTAKING),
+                    mIndexer.setHasPieceRequest(true))
+                    , false);
         }
         queue(request);
 
@@ -808,6 +819,7 @@ public class SuperStructure extends Subsystem {
     }
 
     public void offsetPivot(double offset){
+        System.out.println();
         pivotOffset+=offset;
     }
     

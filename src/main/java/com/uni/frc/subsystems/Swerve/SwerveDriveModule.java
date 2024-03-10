@@ -289,10 +289,10 @@ public class SwerveDriveModule extends Subsystem {
   }
 
   public void runPercentOutput(double percent, TalonFX motor){
-    motor.setControl(new DutyCycleOut(percent, true, false, false, false));
+    motor.setControl(new DutyCycleOut(percent, false, false, false, false));
   }
     public void runMotionMagic(double position, TalonFX motor){
-    motor.setControl(new MotionMagicVoltage(position).withEnableFOC(true));
+    motor.setControl(new MotionMagicVoltage(position).withEnableFOC(false ));
   }
 
   public void runVelocity(double velocity, TalonFX motor){

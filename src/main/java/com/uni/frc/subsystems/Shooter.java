@@ -136,7 +136,7 @@ import com.uni.lib.TalonConfigs;
       @Override
       public boolean isFinished() {
           
-          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble())>(80*powerDemand) ;
+          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble())>(80*.6) ;
       }
     };
    }
