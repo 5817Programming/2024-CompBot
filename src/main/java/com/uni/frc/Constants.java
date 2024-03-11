@@ -151,9 +151,6 @@ public class Constants {
 
 
 
-
-
-
     public static final class ShooterConstants {
         public static final double HANDOFF = 0;
         public static final double IDLE = 0;
@@ -168,7 +165,7 @@ public class Constants {
         }
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> VELOCITY_TREE_MAP = new InterpolatingTreeMap<>();
         static {
-            VELOCITY_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.));
+            VELOCITY_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.6));
             VELOCITY_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(.8));
         }
 
@@ -218,8 +215,8 @@ public class Constants {
 
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kNewPivotShootingMap = new InterpolatingTreeMap<>();
         static {
-            kNewPivotShootingMap.put(new InterpolatingDouble(1.), new InterpolatingDouble(0.083-0.147));
-            kNewPivotShootingMap.put(new InterpolatingDouble(3.59), new InterpolatingDouble(-0.169));
+            kNewPivotShootingMap.put(new InterpolatingDouble(1.), new InterpolatingDouble(0.083-0.1478));
+            // kNewPivotShootingMap.put(new InterpolatingDouble(3.59), new InterpolatingDouble(-0.169));
             kNewPivotShootingMap.put(new InterpolatingDouble(5.24), new InterpolatingDouble(.083-.299));
           
 
@@ -261,7 +258,7 @@ public class Constants {
         public static final int APRIL_PIPLINE = 0;
         public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 15;
 
-        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(0.446-.875+.057-.145,.233-0.059),
+        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(0.446-.875+.057-.145,.233-0.059+0.146),
                 Rotation2d.fromDegrees(0));
 
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);

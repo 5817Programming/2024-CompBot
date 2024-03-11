@@ -121,7 +121,23 @@ import edu.wpi.first.wpilibj.Timer;
 
       @Override
       public boolean isFinished() {
-        return !mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > 1.5;
+        return !mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > .5;
+      }
+    };
+  }
+ public Request hasNoPieceRequest(double timeout) {
+
+    return new Request() {
+      double startTime;
+
+      @Override
+      public void initialize() {
+        startTime = Timer.getFPGATimestamp();
+      }
+
+      @Override
+      public boolean isFinished() {
+        return !mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > timeout;
       }
     };
   }

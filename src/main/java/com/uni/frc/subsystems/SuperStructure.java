@@ -301,7 +301,7 @@ public class SuperStructure extends Subsystem {
     public void indicationState(){
         request(new RequestList(Arrays.asList(
             mShooter.atTargetRequest(),
-            mLights.setColorRequest(Color.SHOOTING)
+            mLights.setColorRequest(Color.LOCKED)
         ),false));
     }
 
@@ -588,6 +588,7 @@ public class SuperStructure extends Subsystem {
     public void intakeState() {
         RequestList request = new RequestList(Arrays.asList(
                 logCurrentRequest("Intaking"),
+                mIndexer.setHasPieceRequest(false),
                 mLights.setColorRequest(Color.INTAKING),
                 mPivot.stateRequest(Pivot.State.INTAKING),
                 mPivot.atTargetRequest(),
@@ -695,16 +696,14 @@ public class SuperStructure extends Subsystem {
     public void shootState(boolean Override) {
         if (Override) {
             RequestList queue = new RequestList(Arrays.asList(
-                    mLights.setColorRequest(Color.AIMING),
                     mShooter.atTargetRequest(),
                     mPivot.atTargetRequest(),
                     mDrive.isAimedRequest(),
-                    waitRequest(.3),
                     mLights.setColorRequest(Color.LOCKED),
                     mIntake.stateRequest(Intake.State.INTAKING),
                     mIndexer.stateRequest(Indexer.State.TRANSFERING),
                     mLights.setColorRequest(Color.SHOOTING),
-                    mIndexer.hasNoPieceRequest(false),
+                    mIndexer.hasNoPieceRequest(0.4),
                     mShooter.stateRequest(Shooter.State.IDLE),
                     mIndexer.setHasPieceRequest(false)), false);
             request(queue);

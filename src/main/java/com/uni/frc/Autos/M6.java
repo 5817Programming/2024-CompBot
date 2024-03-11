@@ -24,7 +24,7 @@ public class M6 extends AutoBase {
         Shooter.getInstance().setPercent(0.8);
         //Shot 1
         PathStateGenerator.getInstance().setTrajectory(trajectory);
-        s.setPivotState(0.083-.125);
+        s.setPivotState(0.083-.145);
         s.shootState(false);
         s.trajectoryState(trajectory, initRotation);
         registerTrajectoryStops(Arrays.asList(1.23,2.83,4.1,7.6,10.76));
@@ -43,7 +43,7 @@ public class M6 extends AutoBase {
 
         s.waitForPositionState(3.9);
         s.intakeState(.7, false);
-        s.setPivotState(-0.165);
+        s.preparePivotState();
 
         s.shootState(false);
         s.resumeTrajectoryState();

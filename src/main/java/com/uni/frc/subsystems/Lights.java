@@ -18,13 +18,13 @@ public class Lights extends Subsystem{
       }
     Color currentColor = Color.IDLE;
     public enum Color{
-        INTAKING(-.9),
+        INTAKING(.87),
         INTAKED(.87),
         HASPIECE(0.77),
         AIMING(-.11),
-        LOCKED(-.61),
+        LOCKED(.57),
         SHOOTING(-.99),
-        IDLE(-.93);// BACKUP .65
+        IDLE(.93);// BACKUP .65
         double output = 0;
         Color(double output){
             this.output = output;
