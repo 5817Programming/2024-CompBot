@@ -22,8 +22,6 @@ import com.uni.frc.Ports;
 
     private CANcoder encoder = new CANcoder(Ports.PivotEncoder,"Minivore");
     private TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
-    private State currentState;
-    private boolean stateChanged;
 
 
     public static Pivot instance = null;
@@ -37,8 +35,6 @@ import com.uni.frc.Ports;
     /** Creates a new pivot. */
     public Pivot() {
       configMotors();
-      currentState = State.MAXDOWN;
-      stateChanged = false;
       resetToAbsolute();
     }
 
@@ -52,7 +48,7 @@ import com.uni.frc.Ports;
       TRANSFER(PivotConstants.SPEAKER),
       TRAP(PivotConstants.SPEAKER),
       MAXUP(PivotConstants.MAX_UP),
-      MAXDOWN(-.350),
+      MAXDOWN(PivotConstants.MAX_DOWN),
       INTAKING(PivotConstants.INTAKING);
 
       double output = 0;
@@ -86,19 +82,14 @@ import com.uni.frc.Ports;
     }
 
     public void setMotionMagic(double position){
+      double degToRot = position/360;
       mPeriodicIO.rotationControlMode = ControlMode.MotionMagic;
-      mPeriodicIO.rotationDemand = position;
+      mPeriodicIO.rotationDemand = degToRot;
     }
 
     public void setPivotPercent(double percentage) {
       mPeriodicIO.rotationControlMode = ControlMode.Percent;
       mPeriodicIO.rotationDemand = percentage;
-    }
-
-    public void setState(State state) {
-      if (state != currentState)
-        stateChanged = true;
-      currentState = state;
     }
 
     public boolean atTarget(){
@@ -107,7 +98,6 @@ import com.uni.frc.Ports;
     }
 
     public void conformToState(State state) {
-      setState(state);
       setMotionMagic(state.output);
     }
     public void conformToState(double Override) {

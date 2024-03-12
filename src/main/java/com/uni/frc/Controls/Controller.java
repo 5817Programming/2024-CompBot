@@ -4,6 +4,7 @@
 
 package com.uni.frc.Controls;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
@@ -33,8 +34,24 @@ public class Controller {
     public ButtonCheck DpadDown = new ButtonCheck();
     public ButtonCheck BackButtonDown = new ButtonCheck();
 
+
+    private boolean lastRumble = false;
+    private Timer rumbleTimer;
+    private double rumbleStart = Double.NEGATIVE_INFINITY;
     public Controller(int port) {
         Controller = new XboxController(port);
+        rumbleTimer.start();
+
+    }
+
+    public void rumble(boolean rumble){
+        if((rumble != lastRumble) && (rumble == true)){
+            rumbleStart = rumbleTimer.get();
+        }
+        if(rumbleTimer.get() - rumbleStart < .5)
+            this.Controller.setRumble(RumbleType.kBothRumble, .5);
+        else
+            this.Controller.setRumble(RumbleType.kBothRumble, 0);
     }
 
     public void update() {
@@ -59,14 +76,6 @@ public class Controller {
         DpadUp.update(Controller.getPOV() == 0);
         DpadRight.update(Controller.getPOV() == 90);
         DpadDown.update(Controller.getPOV() == 180);
-    }
-
-    public void rumble(boolean rumble){
-        if(rumble)
-            this.Controller.setRumble(RumbleType.kBothRumble, 1);
-        else
-            this.Controller.setRumble(RumbleType.kBothRumble, 0);
-
     }
 
     public class ButtonCheck {

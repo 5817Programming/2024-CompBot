@@ -4,6 +4,7 @@
 
 package com.uni.lib;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.uni.frc.Constants;
@@ -43,6 +44,7 @@ public class TalonConfigs {
       return driveConfigs;
     }
 
+
     public static TalonFXConfiguration pivotConfigs() {
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
         driveConfigs.Slot0.kV = -10;
@@ -54,6 +56,7 @@ public class TalonConfigs {
         driveConfigs.Slot0.kG = -0.15;
         driveConfigs.Feedback.FeedbackRemoteSensorID = Ports.PivotEncoder;
         driveConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        
 
         driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;

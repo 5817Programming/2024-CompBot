@@ -213,34 +213,31 @@ public class Constants {
         public static final double MAX_DOWN = 0;
         public static final double kDeadband = 0;
 
-        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kNewPivotShootingMap = new InterpolatingTreeMap<>();
+        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> PivotAngleMap = new InterpolatingTreeMap<>();
         static {
-            kNewPivotShootingMap.put(new InterpolatingDouble(1.), new InterpolatingDouble(0.083-0.1478));
-            // kNewPivotShootingMap.put(new InterpolatingDouble(3.59), new InterpolatingDouble(-0.169));
-            kNewPivotShootingMap.put(new InterpolatingDouble(5.24), new InterpolatingDouble(.083-.299));
-          
-
+            PivotAngleMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(57.96));
+            PivotAngleMap.put(new InterpolatingDouble(1.5), new InterpolatingDouble(46.8));
+            PivotAngleMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(.36));
+            PivotAngleMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(27.36));
+            PivotAngleMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(23.4));
+            PivotAngleMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(17.28));
+            PivotAngleMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(13.32));
+            PivotAngleMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(8.64));
+            PivotAngleMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(6.12));
+            PivotAngleMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(0.0));
         }
-        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kAutoPivotShootingMap = new InterpolatingTreeMap<>();
+        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> PivotAngleMapRot = new InterpolatingTreeMap<>();
         static {
-            kAutoPivotShootingMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(-0.209));
-            kAutoPivotShootingMap.put(new InterpolatingDouble(1.5), new InterpolatingDouble(-.24));
-            kAutoPivotShootingMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(-.27));
-            kAutoPivotShootingMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(-.294));
-            kAutoPivotShootingMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(-.305));
-            kAutoPivotShootingMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(-.312));
-            kAutoPivotShootingMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(-0.323));
-            kAutoPivotShootingMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(-0.336));
-            kAutoPivotShootingMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(-0.343));
-            kAutoPivotShootingMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(-0.350));
-
-        }
-        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kOldPivotShootingMap = new InterpolatingTreeMap<>();
-        static {
-            kOldPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            kOldPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            kOldPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
-            kOldPivotShootingMap.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+            PivotAngleMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(.161));
+            PivotAngleMap.put(new InterpolatingDouble(1.5), new InterpolatingDouble(.13));
+            PivotAngleMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(.1));
+            PivotAngleMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(.076));
+            PivotAngleMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(.065));
+            PivotAngleMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(.048));
+            PivotAngleMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(.037));
+            PivotAngleMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(.024));
+            PivotAngleMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(.017));
+            PivotAngleMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(0.0));
         }
     }
 

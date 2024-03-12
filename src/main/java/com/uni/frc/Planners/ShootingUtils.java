@@ -183,7 +183,7 @@ public class ShootingUtils {
             return shootingParameters.uncompensatedShooterSpeedError < deadBand;    }
 
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getPivotMap(boolean isAutonomous){
-        return Constants.PivotConstants.kNewPivotShootingMap;
+        return Constants.PivotConstants.PivotAngleMap;
     }
  public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getVelocityMap(boolean isAutonomous){
         return Constants.ShooterConstants.VELOCITY_TREE_MAP;

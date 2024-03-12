@@ -209,6 +209,7 @@ public class SuperStructure extends Subsystem {
                         if (modeChanged) {
                             shootState(true);
                         }
+                        prepareShooterSetpoints(timestamp, manual);
                         break;
                     case SHOOTING:
                         prepareShooterSetpoints(timestamp,manual);
