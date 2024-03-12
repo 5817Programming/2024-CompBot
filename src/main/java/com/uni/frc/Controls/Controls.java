@@ -39,6 +39,9 @@ public class Controls {
         s = SuperStructure.getInstance();
         Driver.rumble(Indexer.getInstance().hasPiece());
 
+
+        s.setPieceAim(Driver.BButton.isActive());
+        
         if(CoDriver.DpadUp.isPressed())
             s.offsetPivot(0.002);
         if(CoDriver.DpadDown.isPressed())

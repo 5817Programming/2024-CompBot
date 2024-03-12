@@ -19,6 +19,7 @@ import com.uni.frc.Planners.DriveMotionPlanner;
 import com.uni.frc.Planners.ShootingUtils;
 import com.uni.frc.Planners.ShootingUtils.ShootingParameters;
 import com.uni.frc.subsystems.Lights.Color;
+import com.uni.frc.subsystems.Pivot.State;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.frc.subsystems.Requests.RequestList;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
@@ -91,8 +92,11 @@ public class SuperStructure extends Subsystem {
     private Mode currentMode = Mode.SHOOTING;
     private boolean modeChanged = false;
     private boolean manual = false;
+    private boolean pieceAim = true;
     private boolean allRequestsComplete;
     private double pivotOffset = 0;
+
+    private boolean continuousShoot = false;
 
     private boolean requestsCompleted() {
         return activeRequestsComplete;
@@ -111,9 +115,7 @@ public class SuperStructure extends Subsystem {
 
     public enum SuperState {
         INTAKING,
-        CLIMB,
         SCORE,
-        SOURCE,
         OFF,
         IDLE,
         AUTO,
@@ -239,18 +241,16 @@ public class SuperStructure extends Subsystem {
             case INTAKING:
                 if (stateChanged && !DriverStation.isAutonomous()) {
                     intakeState();
-                    mDrive.setState(SwerveDrive.State.TARGETOBJECT);
+                    if(pieceAim)
+                        mDrive.setState(SwerveDrive.State.TARGETOBJECT);
+                    else
+                        mDrive.setState(SwerveDrive.State.MANUAL);
                 }
                 break;
             case OUTTAKING:
                 mIndexer.conformToState(Indexer.State.OUTTAKING);
                 mIndexer.setHasPieceRequest(false).act();
                 mIntake.conformToState(Intake.State.OUTTAKING);
-                break;
-            case CLIMB:
-                break;
-            case SOURCE:
-                mDrive.setState(SwerveDrive.State.ALIGNMENT);
                 break;
             case IDLE:
                 if (stateChanged)
@@ -269,7 +269,10 @@ public class SuperStructure extends Subsystem {
                 } else {
                     mIntake.conformToState(Intake.State.PARTIALRAMP);
                     mShooter.conformToState(Shooter.State.IDLE);
-                    mPivot.conformToState(Pivot.State.INTAKING);
+                    if(!mIndexer.hasPiece())
+                        mPivot.conformToState(Pivot.State.INTAKING);
+                    else
+                        mPivot.conformToState(State.MAXDOWN);
                 }
                 if (modeChanged && currentMode == Mode.AMP) {
                     transferState(activeRequestsComplete);
@@ -285,6 +288,8 @@ public class SuperStructure extends Subsystem {
                 mHand.stop();
                 break;
             case AUTO:
+                if(continuousShoot)
+                    prepareShooterSetpoints(timestamp);
                 break;
 
         }
@@ -304,6 +309,13 @@ public class SuperStructure extends Subsystem {
             mShooter.atTargetRequest(),
             mLights.setColorRequest(Color.LOCKED)
         ),false));
+    }
+
+    public void setPieceAim(boolean disable){
+        if(disable)
+            pieceAim = false;
+        else
+            pieceAim = true;
     }
 
     public void update() {
@@ -416,10 +428,17 @@ public class SuperStructure extends Subsystem {
                         allowShootWhileMove);// TODO deadband
     }
 
+    public void toggleContinuousShootState(){
+        request(new Request() {
+            @Override
+            public void act() {
+                continuousShoot = !continuousShoot;
+            }
+        });
+    }
     public void prepareShooterSetpoints() {
         ShootingParameters shootingParameters = getShootingParams(
-                mRobotState.getPoseFromOdom(Timer.getFPGATimestamp()));
-        // if (currentState != SuperState.INTAKING)
+                mRobotState.getKalmanPose(Timer.getFPGATimestamp()));
         mPivot.conformToState(shootingParameters.uncompensatedDesiredPivotAngle);
         mShooter.conformToState(Shooter.State.SHOOTING);
         mShooter.setSpin(shootingParameters.desiredSpin);
@@ -610,7 +629,6 @@ public class SuperStructure extends Subsystem {
                     logCurrentRequest("Intaking"),
                     mLights.setColorRequest(Color.INTAKING),
                     setStateRequest(SuperState.INTAKING),
-                    preparePivotRequest(),
                     mIntake.stateRequest(Intake.State.INTAKING),
                     mIndexer.stateRequest(Indexer.State.RECIEVING),
                     mIndexer.hasPieceRequest(timeout),

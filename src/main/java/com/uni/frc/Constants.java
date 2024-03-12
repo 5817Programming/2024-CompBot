@@ -226,19 +226,6 @@ public class Constants {
             PivotAngleMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(6.12));
             PivotAngleMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(0.0));
         }
-        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> PivotAngleMapRot = new InterpolatingTreeMap<>();
-        static {
-            PivotAngleMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(.161));
-            PivotAngleMap.put(new InterpolatingDouble(1.5), new InterpolatingDouble(.13));
-            PivotAngleMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(.1));
-            PivotAngleMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(.076));
-            PivotAngleMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(.065));
-            PivotAngleMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(.048));
-            PivotAngleMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(.037));
-            PivotAngleMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(.024));
-            PivotAngleMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(.017));
-            PivotAngleMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(0.0));
-        }
     }
 
     public static final class ArmConstants {
