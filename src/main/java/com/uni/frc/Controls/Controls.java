@@ -76,20 +76,18 @@ public class Controls {
             s.setMode(Mode.AMP);
         else if(Driver.RightBumper.isActive())
             s.setMode(Mode.SHOOTING);
-        else if(!Driver.YButton.isActive())
-            s.setMode(Mode.AUTO);
         if(Driver.LeftTrigger.value >0.2){
             s.setState(SuperState.OUTTAKING);    
 
         }
-        else if(Driver.RightTrigger.getValue()>0.2){ 
+        else if(Driver.RightTrigger.getValue()>0.2)
             s.setState(SuperState.INTAKING);
-        }else if(Driver.RightBumper.isActive()){
+        else if(Driver.RightBumper.isActive())
             s.setState(SuperState.SCORE);
-        } 
-        else{
+        else if(!Driver.YButton.isActive())
+            s.setState(SuperState.AUTOCYCLE);
+        else
             s.setState(SuperState.IDLE);
-        }
         swerve.sendInput(-Driver.LeftStickY.getValue(), Driver.LeftStickX.getValue(), Driver.RightStickX.getValue());
     }}
 
