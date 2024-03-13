@@ -69,7 +69,7 @@ public class AimingPlanner {
             case LimeLight:
                 
         }
-        headingController.setTargetHeading(targetPose.getRotation().inverse().rotateBy(Rotation2d.fromDegrees(-1)));
+        headingController.setTargetHeading(targetPose.getRotation().inverse().rotateBy(Rotation2d.fromDegrees(1)));
         double rotationOutput = headingController.updateRotationCorrection(currentOdomToRobot.getRotation().inverse(), timeStamp);
         Logger.recordOutput("aimingoutput", rotationOutput);
         isAimed = headingController.atTarget();

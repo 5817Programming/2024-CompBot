@@ -426,6 +426,15 @@ public class SwerveDrive extends Subsystem {
             }
         };
     }
+
+    public Request isAlignedRequest(){
+        return new Request() {
+            @Override
+            public boolean isFinished(){
+                return mAutoAlignMotionPlanner.getAutoAlignmentCompleted();
+            }
+        };
+    }
     public synchronized ChassisSpeeds getSetPoint(){
         var desiredThrottleSpeed = translationVector.x() * Constants.SwerveMaxspeedMPS;
         var desiredStrafeSpeed = translationVector.y() * Constants.SwerveMaxspeedMPS;

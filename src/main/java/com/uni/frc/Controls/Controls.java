@@ -13,12 +13,14 @@ import com.uni.frc.subsystems.Swerve.SwerveDrive;
 
 
 public class Controls {
-    SuperStructure s;
-    Controller Driver;
-    Controller CoDriver;
-    SwerveDrive swerve;
+    protected SuperStructure s;
+    protected Controller Driver;
+    protected Controller CoDriver;
+    protected SwerveDrive swerve;
 
     private static Controls instance = null;
+
+    private boolean amp = false;
 
     public static Controls getInstance() {
         if (instance == null)
@@ -41,11 +43,11 @@ public class Controls {
 
 
         s.setPieceAim(Driver.BButton.isActive());
-        
+
         if(CoDriver.DpadUp.isPressed())
-            s.offsetPivot(0.002);
+            s.offsetPivot(5);
         if(CoDriver.DpadDown.isPressed())
-            s.offsetPivot(-0.002);
+            s.offsetPivot(-5);
 
         // if(Driver.RightBumper.isActive()){
         //     s.intakePercent(-percent);
@@ -54,6 +56,11 @@ public class Controls {
         //     s.intakePercent(0);
         // }
         s.setManual(CoDriver.BButton.isActive());
+        if(Driver.XButton.isPressed())
+            amp = true;
+        if(Driver.BButton.isPressed())
+            amp = false;
+
         if (Driver.StartButton.isPressed())
             swerve.fieldzeroSwerve();
 
@@ -65,6 +72,8 @@ public class Controls {
         //     s.onTheFlyTrajectoryState(new Pose2d(8,2, Rotation2d.fromDegrees(180)), timestamp);
         if(Driver.LeftBumper.isActive())
             s.setMode(Mode.FIRING);
+        else if(amp)
+            s.setMode(Mode.AMP);
         else
             s.setMode(Mode.SHOOTING);
         if(Driver.LeftTrigger.value >0.2){
