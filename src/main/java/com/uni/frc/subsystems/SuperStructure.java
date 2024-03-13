@@ -420,11 +420,11 @@ public class SuperStructure extends Subsystem {
                         allowShootWhileMove);// TODO deadband
     }
 
-    public void toggleContinuousShootState(){
+    public void setContinuousShootState(boolean newContinuousShoot){
         request(new Request() {
             @Override
             public void act() {
-                continuousShoot = !continuousShoot;
+                continuousShoot = newContinuousShoot;
             }
         });
     }
@@ -436,7 +436,6 @@ public class SuperStructure extends Subsystem {
         mShooter.setSpin(shootingParameters.desiredSpin);
 
     }
-
     public void preparePivotState() {
         queue(new Request() {
             @Override
@@ -444,6 +443,7 @@ public class SuperStructure extends Subsystem {
                 ShootingParameters params = getShootingParams(mRobotState.getLatestKalmanPose());
                 mPivot.conformToState(params.uncompensatedDesiredPivotAngle);
             }
+            
         });
     }
 
