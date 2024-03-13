@@ -17,7 +17,7 @@ import com.uni.lib.TalonConfigs;
    private TalonFX shooterMotor2 = new TalonFX(Ports.shooter2, "Minivore");
    public State currentState = State.IDLE;
    private TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
-   private double spinOffset = 0;
+   private double spinMultiplier = .7;
    private double powerDemand = 1;
    public static Shooter instance = null;
 
@@ -37,7 +37,8 @@ import com.uni.lib.TalonConfigs;
     SHOOTING(1),
     TRANSFER(0.3),
     REVERSETRANSFER(-.5),
-    IDLE(0);
+    IDLE(0),
+    AMP(0.5);
 
     double output = 0;
     State(double output){
@@ -120,8 +121,8 @@ import com.uni.lib.TalonConfigs;
 
 
    }
-   public void setSpin(double spinOffset){
-    this.spinOffset = spinOffset;
+   public void setSpin(double spinMultiplier){
+    this.spinMultiplier = spinMultiplier;
    }
 
 
@@ -159,7 +160,7 @@ import com.uni.lib.TalonConfigs;
    @Override
    public void readPeriodicInputs() {
       shooterMotor1.setControl(new DutyCycleOut(mPeriodicIO.driveDemand).withEnableFOC(true));
-      shooterMotor2.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand*0.7).withEnableFOC(true));
+      shooterMotor2.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand*(spinMultiplier)).withEnableFOC(true));
       
       
       

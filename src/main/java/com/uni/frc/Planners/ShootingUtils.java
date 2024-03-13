@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.Logger;
 import com.uni.frc.Constants;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.lib.geometry.Pose2d;
+import com.uni.lib.geometry.Translation2d;
 import com.uni.lib.geometry.Twist2d;
 import com.uni.lib.util.InterpolatingDouble;
 import com.uni.lib.util.InterpolatingTreeMap;
@@ -85,11 +86,11 @@ public class ShootingUtils {
         Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(lookahead_time+.004).rotateBy(currentPose.getRotation());
         Pose2d compensatedShooterToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(poseAtTimeFrame.getTranslation().inverse()));
 
-        Logger.recordOutput("Compensated Position", poseAtTimeFrame.toWPI());
         Logger.recordOutput("Time", lookahead_time);
 
         double compensatedDistance = compensatedShooterToTarget.getTranslation().norm();
-        
+                Logger.recordOutput("Compensated Distance", compensatedDistance);
+
         
         double desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value-.0025;
         double compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
@@ -130,14 +131,13 @@ public class ShootingUtils {
          Pose2d robotToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(currentPose.getTranslation().inverse()));
         double effectiveDistance = robotToTarget.getTranslation().norm();
         double lookahead_time = shotTimeTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
-        Logger.recordOutput("effective distance", effectiveDistance);
-        Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(lookahead_time+.004).rotateBy(currentPose.getRotation());
-        Pose2d compensatedShooterToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(poseAtTimeFrame.getTranslation().inverse()));
+        Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPose(lookahead_time);
+        Translation2d futureOdomToTargetPoint = poseAtTimeFrame.getTranslation().translateBy(targetPose.getTranslation().inverse());
 
-        Logger.recordOutput("Compensated Position", poseAtTimeFrame.toWPI());
+        Logger.recordOutput("Compensated Distance", poseAtTimeFrame.toWPI());
         Logger.recordOutput("Time", lookahead_time);
 
-        double compensatedDistance = compensatedShooterToTarget.getTranslation().norm();
+        double compensatedDistance = futureOdomToTargetPoint.norm();
         
         double desiredPivotAngle;
         if(manual)

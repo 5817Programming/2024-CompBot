@@ -221,7 +221,8 @@ public class SuperStructure extends Subsystem {
                         break;
 
                     case AMP:
-                        if (stateChanged) {
+                        mShooter.setSpin(1);
+                        if (modeChanged||stateChanged) {
                             scoreAmpState();
                         }
                         Optional<Pose2d> targetSnap = AutoAlignPointSelector
@@ -274,9 +275,7 @@ public class SuperStructure extends Subsystem {
                     else
                         mPivot.conformToState(State.MAXDOWN);
                 }
-                if (modeChanged && currentMode == Mode.AMP) {
-                    transferState(activeRequestsComplete);
-                }
+                
                 break;
             case OFF:
                 mPivot.stop();
@@ -403,9 +402,9 @@ public class SuperStructure extends Subsystem {
         }
         mShooter.setSpin(shootingParameters.desiredSpin);
         mIndexer.setPiece(false);
-        return ShootingUtils.pivotAtSetpoint(shootingParameters, Constants.PivotConstants.kDeadband,
+        return ShootingUtils.pivotAtSetpoint(shootingParameters, .01,
                 allowShootWhileMove)
-                && ShootingUtils.shooterAtSetpoint(shootingParameters, Constants.ShooterConstants.kDeadband,
+                && ShootingUtils.shooterAtSetpoint(shootingParameters, .01,
                         allowShootWhileMove);// TODO deadband
     }
   public boolean prepareShooterSetpoints(double timestamp, boolean manual) {
@@ -414,17 +413,17 @@ public class SuperStructure extends Subsystem {
         mShooter.conformToState(Shooter.State.SHOOTING);
         boolean allowShootWhileMove = true; // TODO
         if (allowShootWhileMove) {
-            mPivot.conformToState(shootingParameters.uncompensatedDesiredPivotAngle);
+            mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
             mShooter.setPowerDemand(shootingParameters.uncompensatedDesiredShooterSpeed);
         } else {
             mShooter.setPowerDemand(shootingParameters.uncompensatedDesiredShooterSpeed);
             mPivot.conformToState(shootingParameters.uncompensatedDesiredPivotAngle);
         }
-        mShooter.setSpin(shootingParameters.desiredSpin);
+        mShooter.setSpin(.7);
         mIndexer.setPiece(false);
-        return ShootingUtils.pivotAtSetpoint(shootingParameters, Constants.PivotConstants.kDeadband,
+        return ShootingUtils.pivotAtSetpoint(shootingParameters, .01,
                 allowShootWhileMove)
-                && ShootingUtils.shooterAtSetpoint(shootingParameters, Constants.ShooterConstants.kDeadband,
+                && ShootingUtils.shooterAtSetpoint(shootingParameters, .01,
                         allowShootWhileMove);// TODO deadband
     }
 
@@ -513,8 +512,8 @@ public class SuperStructure extends Subsystem {
                 shooterVelovity,
                 kShotTime,
                 pivotMap,
-                shotTimeMap,
                 velocityMap,
+                shotTimeMap,
                 mRobotState.getPredictedVelocity(),
                 manual);// TODO change to measured when it works
         return shootingParameters;
@@ -752,89 +751,32 @@ public class SuperStructure extends Subsystem {
         return currentRequestLog;
     }
 
-    public void transferState(boolean Override) {
-        RequestList request = new RequestList(Arrays.asList(
 
-                mPivot.stateRequest(Pivot.State.TRANSFER),
-                mWrist.stateRequest(Wrist.State.TRANSFER),
-                mArm.stateRequest(Arm.State.TRANSFER),
-
-                mPivot.atTargetRequest(),
-                mWrist.atTargetRequest(),
-                mArm.atTargetRequest(),
-
-                mIndexer.stateRequest(Indexer.State.TRANSFERING),
-                mShooter.stateRequest(Shooter.State.TRANSFER),
-                mHand.stateRequest(Hand.State.TRANSFERING),
-
-                mHand.hasPieceRequest(true),
-
-                mHand.stateRequest(Hand.State.OFF),
-                mWrist.stateRequest(Wrist.State.SHOOTING),
-                mShooter.stateRequest(Shooter.State.IDLE),
-                mIndexer.stateRequest(Indexer.State.OFF),
-                mPivot.stateRequest(Pivot.State.MAXDOWN)),
-                false);
-        if (Override)
-            request(request);
-        else
-            queue(request);
-    }
 
     public void scoreAmpState() {
         RequestList request = new RequestList(Arrays.asList(
                 mPivot.stateRequest(Pivot.State.AMP),
-                mArm.stateRequest(Arm.State.AMP),
-                mWrist.stateRequest(Wrist.State.AMP),
+                // mArm.stateRequest(Arm.State.AMP),
+                mShooter.stateRequest(Shooter.State.AMP),
 
                 mPivot.atTargetRequest(),
-                mArm.atTargetRequest(),
-                mWrist.atTargetRequest(),
+                // mShooter.atTargetRequest(),
+                waitRequest(0.5),
+                mIndexer.stateRequest(Indexer.State.TRANSFERING),
 
-                mHand.stateRequest(Hand.State.SHOOTING),
-                waitRequest(.2),
-                mHand.stateRequest(Hand.State.OFF),
-
-                mPivot.stateRequest(Pivot.State.MAXDOWN),
-                mArm.stateRequest(Arm.State.MAXDOWN),
-                mWrist.stateRequest(Wrist.State.AMP)
-
-        ), false);
-        if (!mHand.hasPiece() && mIndexer.hasPiece()) {
-            transferState(true);
-            queue(request);
-        } else {
-            request(request);
-        }
-
-    }
-
-    public void reverseTransferState() {
-        RequestList request = new RequestList(Arrays.asList(
-
-                mPivot.stateRequest(Pivot.State.TRANSFER),
-                mWrist.stateRequest(Wrist.State.TRANSFER),
-                mArm.stateRequest(Arm.State.TRANSFER),
-
-                mPivot.atTargetRequest(),
-                mWrist.atTargetRequest(),
-                mArm.atTargetRequest(),
-
-                mIndexer.stateRequest(Indexer.State.REVERSE_TRANSFER),
-                mShooter.stateRequest(Shooter.State.REVERSETRANSFER),
-                mHand.stateRequest(Hand.State.REVERSETRANSFER),
-
-                mIndexer.hasPieceRequest(true),
-
-                mHand.stateRequest(Hand.State.OFF),
-                mWrist.stateRequest(Wrist.State.SHOOTING),
+                waitRequest(2),
                 mShooter.stateRequest(Shooter.State.IDLE),
                 mIndexer.stateRequest(Indexer.State.OFF),
-                mPivot.stateRequest(Pivot.State.MAXDOWN),
-                mArm.stateRequest(Arm.State.MAXDOWN)),
-                false);
+
+                mPivot.stateRequest(Pivot.State.MAXDOWN)
+                // mArm.stateRequest(Arm.State.MAXDOWN)
+
+        ), false);
         request(request);
+
     }
+
+ 
 
     public void offsetPivot(double offset){
         System.out.println();

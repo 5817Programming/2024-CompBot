@@ -10,7 +10,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.uni.frc.Ports;
- import com.uni.frc.CompConstants.PivotConstants;
+ import com.uni.frc.Constants.PivotConstants;
  import com.uni.frc.subsystems.Requests.Request;
  import com.uni.lib.TalonConfigs;
 

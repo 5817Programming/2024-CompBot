@@ -257,6 +257,8 @@ public class FieldLayout {
  
         kAprilTagMap.put(3, kAprilTag3);
         kAprilTagMap.put(4, kAprilTag4);
+        kAprilTagMap.put(5, kAprilTag5);
+
         
         kAprilTagMap.put(7, kAprilTag7);
         kAprilTagMap.put(8, kAprilTag8);

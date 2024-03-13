@@ -119,7 +119,9 @@ public class RobotState {
         return getLatestPoseFromOdom().getValue()
                 .transformBy(Pose2d.projectTwist(PredictedVelocity.scaled(lookahead_time)));
     }
-
+    public synchronized Pose2d getPredictedPose(double lookahead_time) {
+        return getLatestKalmanPose().transformBy(Pose2d.exp(PredictedVelocity.scaled(lookahead_time)));
+    }
     public synchronized void addPoseObservation(double timestamp, Pose2d observation) {
         poseFromOdom.put(new InterpolatingDouble(timestamp), observation);
     }

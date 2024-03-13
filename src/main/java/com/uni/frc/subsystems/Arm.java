@@ -42,11 +42,8 @@ public class Arm extends Subsystem {
 
   public enum State {
     AMP(Constants.ArmConstants.AMP),
-    TRANSFER(Constants.ArmConstants.SPEAKER),
-    TRAP(Constants.ArmConstants.SPEAKER),
-    MAXUP(Constants.ArmConstants.MAX_UP),
-    MAXDOWN(Constants.ArmConstants.MAX_DOWN),
-    SHOOTING(Constants.ArmConstants.MAX_DOWN);
+    
+    MAXDOWN(Constants.ArmConstants.MAX_DOWN);
 
     double output = 0;
 
@@ -92,7 +89,6 @@ public class Arm extends Subsystem {
     setMotionMagic(state.output);
   }
   public void conformToState(double Override) {
-    setState(State.SHOOTING);
     setMotionMagic(Override);
   }
 

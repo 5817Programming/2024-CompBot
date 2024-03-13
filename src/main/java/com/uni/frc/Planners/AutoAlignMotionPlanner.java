@@ -73,7 +73,7 @@ public class AutoAlignMotionPlanner {
                         0.0),
                 timestamp + .01);
                 headingController.setTargetHeading(mFieldToTargetPoint.getRotation().inverse().flip());
-        double thetaOutput = headingController.getRotationCorrection(currentHeading, timestamp);
+        double thetaOutput = headingController.getRotationCorrection(currentHeading.inverse(), timestamp);
 
         Translation2d output = new Translation2d(xOutput,yOutput).rotateBy(currentHeading);
         ChassisSpeeds setPoint;

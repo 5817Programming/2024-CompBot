@@ -63,7 +63,9 @@ public class Controls {
             Climb.getInstance().conformToState(Climb.State.Down);
         // else if(Driver.BButton.isPressed()){
         //     s.onTheFlyTrajectoryState(new Pose2d(8,2, Rotation2d.fromDegrees(180)), timestamp);
-        if(Driver.LeftBumper.isActive())
+        if(Driver.XButton.isActive())
+            s.setMode(Mode.AMP);
+        else if(Driver.LeftBumper.isActive())
             s.setMode(Mode.FIRING);
         else
             s.setMode(Mode.SHOOTING);
@@ -71,7 +73,7 @@ public class Controls {
             s.setState(SuperState.OUTTAKING);    
 
         }
-        else if(Driver.RightTrigger.getValue()>0.2){ 
+        else if(Driver.RightTrigger.getValue()>0){ 
             s.setState(SuperState.INTAKING);
         }else if(Driver.RightBumper.isActive()){
             s.setState(SuperState.SCORE);

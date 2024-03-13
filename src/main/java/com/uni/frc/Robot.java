@@ -35,6 +35,8 @@ import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.frc.subsystems.Vision.ObjectLimeLight;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight;
 import com.uni.frc.subsystems.gyros.Gyro;
+import com.uni.lib.geometry.Pose2d;
+import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.motion.PathGenerator;
 import com.uni.lib.motion.PathStateGenerator;
 import edu.wpi.first.wpilibj.Timer;
@@ -139,7 +141,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     // swerve.fieldzeroSwerve();
     swerve.zeroModules();
     //TODO REMOVE THIS AT COMP PLEASE PLEASE PLEASE
-    // RobotStateEstimator.getInstance().resetOdometry(new Pose2d(16.5-1.36,5.54, new Rotation2d()));
+    RobotStateEstimator.getInstance().resetOdometry(new Pose2d(16.5-1.36,5.54, new Rotation2d()));
     
 
 

@@ -160,8 +160,8 @@ public class Constants {
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SHOT_TRAVEL_TIME_TREE_MAP = new InterpolatingTreeMap<>();
         public static final double kDeadband = 0;;
         static {
-            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.0038));
-            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(0.0112));
+            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.003));
+            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(0.014));
         }
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> VELOCITY_TREE_MAP = new InterpolatingTreeMap<>();
         static {
@@ -190,7 +190,7 @@ public class Constants {
         public static final double TRAP = 0;
         public static final double TRANSFER = 0;
         public static final double SHOOTING = 0;
-        public static final double MAX_UP = 0;
+        public static final double MAX_UP = -80;
         public static final double MAX_DOWN = 0;
     }
 
@@ -205,20 +205,20 @@ public class Constants {
 
     public static final class PivotConstants {
         public static final double SPEAKER = 0;
-        public static final double AMP = 0;
+        public static final double AMP = 45;
         public static final double TRAP = 0;
         public static final double TRANSFER = 0;
         public static final double SHOOTING = 0;
-        public static final double MAX_UP = 0;
+        public static final double MAX_UP = -.07;
         public static final double MAX_DOWN = 0;
-        public static final double kDeadband = 0;
+        public static final double INTAKING = 25;
 
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> PivotAngleMap = new InterpolatingTreeMap<>();
         static {
             PivotAngleMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(57.96));
             PivotAngleMap.put(new InterpolatingDouble(1.5), new InterpolatingDouble(46.8));
-            PivotAngleMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(.36));
-            PivotAngleMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(27.36));
+            PivotAngleMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(36.0));
+            PivotAngleMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(29.36));
             PivotAngleMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(23.4));
             PivotAngleMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(17.28));
             PivotAngleMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(13.32));
@@ -242,7 +242,7 @@ public class Constants {
         public static final int APRIL_PIPLINE = 0;
         public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 15;
 
-        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(0.446-.875+.057-.145,.233-0.059+0.146),
+        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(0.446-.875+.057-.145,.233-0.059+0.146-.13),
                 Rotation2d.fromDegrees(0));
 
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);

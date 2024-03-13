@@ -9,7 +9,7 @@ import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.uni.frc.Ports;
-import com.uni.frc.CompConstants.ElevatorConstants;
+import com.uni.frc.Constants.ElevatorConstants;
  import com.uni.frc.subsystems.Requests.Request;
  import com.uni.lib.TalonConfigs;
 
@@ -48,8 +48,8 @@ import com.uni.frc.CompConstants.ElevatorConstants;
     }
 
     public enum State {
-      Down(ElevatorConstants.STOW),
-      UP(ElevatorConstants.OVERCHAIN);
+      Down(ElevatorConstants.MAX_DOWN),
+      UP(ElevatorConstants.MAX_UP);
 
       double output = 0;
 

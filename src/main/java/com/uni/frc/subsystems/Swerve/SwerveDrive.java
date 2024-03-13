@@ -331,7 +331,7 @@ public class SwerveDrive extends Subsystem {
    
             Logger.recordOutput("angleDemand", demandedAngle.getRotation().getDegrees());
                 commandModules(
-                        inverseKinematics.updateDriveVectors(translationVector.scale(.5),
+                        inverseKinematics.updateDriveVectors(translationVector.scale(.3),
                         demandedAngle.getRotation().getDegrees()+rotationScalar, drivingPose, robotCentric));
                 break;
 
