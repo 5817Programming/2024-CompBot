@@ -74,8 +74,10 @@ public class Controls {
             s.setMode(Mode.FIRING);
         else if(amp)
             s.setMode(Mode.AMP);
-        else
+        else if(Driver.RightBumper.isActive())
             s.setMode(Mode.SHOOTING);
+        else if(!Driver.YButton.isActive())
+            s.setMode(Mode.AUTO);
         if(Driver.LeftTrigger.value >0.2){
             s.setState(SuperState.OUTTAKING);    
 

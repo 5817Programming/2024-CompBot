@@ -115,12 +115,14 @@ public class SuperStructure extends Subsystem {
         OFF,
         IDLE,
         AUTO,
+        AUTOCYCLE,
         OUTTAKING
     }
 
     public enum Mode {
         SHOOTING,
-        AMP, FIRING
+        AUTO,
+        AMP, FIRING,
     }
 
     public void setState(SuperState state) {
@@ -203,6 +205,14 @@ public class SuperStructure extends Subsystem {
         switch (currentState) {
             case SCORE:
                 switch (currentMode) {
+                    case AUTO:
+                    if(modeChanged || stateChanged)
+                        autoShootState();
+                    if(mIndexer.hasPiece() && inZone(timestamp)){
+                        mDrive.setState(SwerveDrive.State.AUTOAIM);
+                        prepareShooterSetpoints(timestamp);
+                    }
+                    break;
                     case FIRING:
                         if (modeChanged) {
                             shootState(true);
@@ -271,6 +281,26 @@ public class SuperStructure extends Subsystem {
                         mPivot.conformToState(State.MAXDOWN);
                 }
                 break;
+            case AUTOCYCLE:
+                if(inZone(timestamp)&& mIndexer.hasPiece()){
+                    setState(SuperState.SCORE);
+                    setMode(Mode.AUTO);
+                    break;
+                }
+                if (stateChanged)
+                    clearQueues();
+                if(mIndexer.hasPiece())
+                    mLights.setColor(Color.HASPIECE);
+                else
+                    mLights.setColor(Color.IDLE);
+                mDrive.setState(SwerveDrive.State.MANUAL);
+                mIntake.conformToState(Intake.State.OFF);
+                mIndexer.conformToState(Indexer.State.OFF);
+                    if(!mIndexer.hasPiece())
+                        mPivot.conformToState(Pivot.State.INTAKING);
+                    else
+                        mPivot.conformToState(State.MAXDOWN);
+            break;
             case OFF:
                 mPivot.stop();
                 mDrive.stop();
@@ -288,6 +318,7 @@ public class SuperStructure extends Subsystem {
         stateChanged = false;
         modeChanged = false;
     }
+    
 
     public boolean inZone(double timestamp) {
         Pose2d currentPose = mRobotState.getKalmanPose(timestamp);
@@ -364,21 +395,6 @@ public class SuperStructure extends Subsystem {
 
         }
         processState(timeStamp);
-    }
-
-    public void ampState() {
-        request(new RequestList(Arrays.asList(
-                mPivot.stateRequest(Pivot.State.AMP),
-
-                mPivot.atTargetRequest(),
-                mIndexer.stateRequest(Indexer.State.TRANSFERING),
-                mShooter.stateRequest(Shooter.State.IDLE),
-
-                waitRequest(10000),
-
-                mPivot.stateRequest(Pivot.State.MAXDOWN),
-                mIndexer.stateRequest(Indexer.State.OFF),
-                mIntake.stateRequest(Intake.State.OFF)), false));
     }
 
     public boolean prepareShooterSetpoints(double timestamp) {
@@ -707,6 +723,23 @@ public class SuperStructure extends Subsystem {
 
     }
 
+    public void autoShootState(){
+         RequestList queue = new RequestList(Arrays.asList(
+                    mShooter.atTargetRequest(),
+                    mPivot.atTargetRequest(),
+                    mDrive.isAimedRequest(),
+                    mDrive.atSpeedRequest(.5),
+                    clearShotRequest(),
+                    mLights.setColorRequest(Color.LOCKED),
+                    mIntake.stateRequest(Intake.State.INTAKING),
+                    mIndexer.stateRequest(Indexer.State.TRANSFERING),
+                    mLights.setColorRequest(Color.SHOOTING),
+                    mIndexer.hasNoPieceRequest(0.4),
+                    mShooter.stateRequest(Shooter.State.IDLE),
+                    mIndexer.setHasPieceRequest(false),
+                    setStateRequest(SuperState.AUTOCYCLE)), false);
+            request(queue);
+    }
     public void shootState(boolean Override) {
         if (Override) {
             RequestList queue = new RequestList(Arrays.asList(
@@ -813,6 +846,12 @@ public class SuperStructure extends Subsystem {
             public void act() {
                 setState(state);
             }
+        };
+    }
+
+    public Request clearShotRequest(){
+        return new Request() {
+            
         };
     }
 

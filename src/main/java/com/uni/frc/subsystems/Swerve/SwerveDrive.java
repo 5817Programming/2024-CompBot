@@ -135,6 +135,7 @@ public class SwerveDrive extends Subsystem {
         OFF,
         TARGETOBJECT,
         AIMING,
+        AUTOAIM,
         ALIGNMENT,
         SNAP,
     }
@@ -318,8 +319,22 @@ public class SwerveDrive extends Subsystem {
                         inverseKinematics.updateDriveVectors(translationVector.scale(.5),
                         rotationCorrection*.7+rotationScalar, drivingPose, robotCentric));
                 break;
+            case AUTOAIM:
+             Pose2d demandedAngle;
+                    demandedAngle = mAimingPlanner.updateAiming(
+                        timeStamp,
+                        RobotState.getInstance().getLatestPoseFromOdom().getValue(),
+                        Pose2d.fromTranslation(RobotState.getInstance().getLatestVisionPoseComponent()),
+                        AimingRequest.Odometry,
+                        odometryVision.getLatestVisionUpdate(),
+                        headingController,
+                        robotState.getSmoothedVelocity());
+            Logger.recordOutput("angleDemand", demandedAngle.getRotation().getDegrees());
+                commandModules(
+                        inverseKinematics.updateDriveVectors(translationVector,
+                        demandedAngle.getRotation().getDegrees()+rotationScalar, drivingPose, robotCentric));
+                
             case AIMING:
-            Pose2d demandedAngle;
                     demandedAngle = mAimingPlanner.updateAiming(
                         timeStamp,
                         RobotState.getInstance().getLatestPoseFromOdom().getValue(),
@@ -423,6 +438,15 @@ public class SwerveDrive extends Subsystem {
             @Override
             public boolean isFinished(){
                 return mAimingPlanner.isAimed();
+            }
+        };
+    }
+
+    public Request atSpeedRequest(double speed){
+        return new Request() {
+            @Override
+            public boolean isFinished() {
+                return translationVector.norm() < speed;
             }
         };
     }
