@@ -37,8 +37,8 @@ import com.uni.lib.TalonConfigs;
     SHOOTING(1),
     TRANSFER(0.3),
     REVERSETRANSFER(-.5),
-    IDLE(0),
-    AMP(0.5);
+    AMP(.55),
+    IDLE(0);
 
     double output = 0;
     State(double output){

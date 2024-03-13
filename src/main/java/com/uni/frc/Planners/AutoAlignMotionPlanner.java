@@ -88,7 +88,7 @@ public class AutoAlignMotionPlanner {
                 yOutputWithinDeadband? 0:output.y(),
                  thetaOutput,
                 currentFieldToOdom.getRotation().rotateBy(currentHeading));
-        mAutoAlignComplete = yOutputWithinDeadband && xOutputWithinDeadband;
+        mAutoAlignComplete = yOutputWithinDeadband && xOutputWithinDeadband && headingController.atTarget();
 
         if (mStartTime.isPresent() && mAutoAlignComplete) {
             Music.getInstance().play("output.chrp");

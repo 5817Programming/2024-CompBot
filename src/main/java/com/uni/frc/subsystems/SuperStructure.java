@@ -46,8 +46,6 @@ public class SuperStructure extends Subsystem {
     protected Indexer mIndexer;
     protected Pivot mPivot;
     protected Shooter mShooter;
-    protected Wrist mWrist;
-    protected Hand mHand;
     protected Arm mArm;
     protected SwerveDrive mDrive;
     protected Lights mLights;
@@ -59,7 +57,6 @@ public class SuperStructure extends Subsystem {
         mPathStateGenerator = PathStateGenerator.getInstance();
         vision = OdometryLimeLight.getInstance();
         mDriveMotionPlanner = DriveMotionPlanner.getInstance();
-        mHand = Hand.getInstance();
         mArm = Arm.getInstance();
         mRobotState = RobotState.getInstance();
         mIntake = Intake.getInstance();
@@ -67,7 +64,6 @@ public class SuperStructure extends Subsystem {
         mLights = Lights.getInstance();
         mPivot = Pivot.getInstance();
         mShooter = Shooter.getInstance();
-        mWrist = Wrist.getInstance();
         mDrive = SwerveDrive.getInstance();
         queuedRequests = new ArrayList<>();
 
@@ -275,7 +271,6 @@ public class SuperStructure extends Subsystem {
                     else
                         mPivot.conformToState(State.MAXDOWN);
                 }
-                
                 break;
             case OFF:
                 mPivot.stop();
@@ -284,7 +279,6 @@ public class SuperStructure extends Subsystem {
                 mShooter.stop();
                 mIntake.stop();
                 mArm.stop();
-                mHand.stop();
                 break;
             case AUTO:
                 if(continuousShoot)
@@ -692,6 +686,9 @@ public class SuperStructure extends Subsystem {
         });
     }
 
+
+
+
     public void waitForPositionState(double time) {
         Translation2d other = mDriveMotionPlanner.sample(time).getTranslation();
         queue(new Request() {
@@ -752,25 +749,21 @@ public class SuperStructure extends Subsystem {
     }
 
 
-
     public void scoreAmpState() {
         RequestList request = new RequestList(Arrays.asList(
                 mPivot.stateRequest(Pivot.State.AMP),
-                // mArm.stateRequest(Arm.State.AMP),
+                mArm.stateRequest(Arm.State.AMP),
                 mShooter.stateRequest(Shooter.State.AMP),
 
                 mPivot.atTargetRequest(),
-                // mShooter.atTargetRequest(),
-                waitRequest(0.5),
+                mArm.atTargetRequest(),
+                mShooter.atTargetRequest(.5),
+
                 mIndexer.stateRequest(Indexer.State.TRANSFERING),
-
-                waitRequest(2),
+                mIndexer.hasnoPieceRequest(1),
+                
                 mShooter.stateRequest(Shooter.State.IDLE),
-                mIndexer.stateRequest(Indexer.State.OFF),
-
-                mPivot.stateRequest(Pivot.State.MAXDOWN)
-                // mArm.stateRequest(Arm.State.MAXDOWN)
-
+                mArm.stateRequest(Arm.State.MAXDOWN)
         ), false);
         request(request);
 
@@ -806,6 +799,15 @@ public class SuperStructure extends Subsystem {
             @Override
             public void act() {
                 timer.start();
+            }
+        };
+    }
+
+    public Request eitherRequest(Request request1, Request request2){
+        return new Request() {
+            @Override
+            public boolean isFinished() {
+                return request1.isFinished() || request2.isFinished();
             }
         };
     }
