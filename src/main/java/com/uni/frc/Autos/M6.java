@@ -2,11 +2,14 @@ package com.uni.frc.Autos;
 
 import java.util.Arrays;
 
+import com.pathplanner.lib.path.EventMarker;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.subsystems.Shooter;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
+import com.uni.lib.geometry.Pose2d;
+import com.uni.lib.geometry.Translation2d;
 import com.uni.lib.motion.PathStateGenerator;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,17 +20,18 @@ public class M6 extends AutoBase {
     SwerveDrive mSwerve = SwerveDrive.getInstance();
     double initRotation = 0;
     PathPlannerPath path = PathPlannerPath.fromPathFile("M6 KALMAN");
+    
     PathPlannerTrajectory trajectory = path.getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
 
     @Override
     public void auto() {
+        registerTrajectoryEvents("M6 KALMAN");
         Shooter.getInstance().setPercent(0.8);
         //Shot 1
         PathStateGenerator.getInstance().setTrajectory(trajectory);
         s.setPivotState(0.083-.145);
         s.shootState(false);
         s.trajectoryState(trajectory, initRotation);
-        registerTrajectoryStops(Arrays.asList(1.23,2.83,4.1,7.6,10.76));
 
         s.waitForPositionState(0.78);
         s.intakeState(.7, true);
