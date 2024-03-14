@@ -21,13 +21,11 @@ public class SwerveOdometry {
     private ChassisSpeeds m_velocity;
     private double m_previousTimestamp = -1;
 
-    private Rotation2d m_previousAngle;
 
     public SwerveOdometry(SwerveKinematics kinematics,Pose2d initalPose, double... previousDistances){
         m_kinematics = kinematics;
         m_poseMeters = initalPose;
         m_velocity = new ChassisSpeeds();
-        m_previousAngle = initalPose.getRotation();
     }
 
     public SwerveOdometry(SwerveKinematics kinematics, Pose2d initalPose){
@@ -86,7 +84,6 @@ public class SwerveOdometry {
       
             modules.forEach((m) -> m.resetPose(m_poseMeters));
             m_previousTimestamp = timestamp;
-            m_previousAngle = heading;
 
             return m_poseMeters;
     }

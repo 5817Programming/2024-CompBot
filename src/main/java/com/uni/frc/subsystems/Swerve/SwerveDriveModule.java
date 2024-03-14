@@ -240,21 +240,20 @@ public class SwerveDriveModule extends Subsystem {
         OK, ABSOLUTE_ENCODER_ERROR, DRIVE_MOTOR_ERROR, ROTATION_MOTOR_ERROR;
     }
 
-    private boolean rotationMotorError = false;
-    private boolean driveMotorError = false;
+   
 
     public ModuleStatus getModuleStatus() {
         if (!isMagEncoderConnected())
             return ModuleStatus.ABSOLUTE_ENCODER_ERROR;
-        else if (driveMotorError)
+        else if (driveMotor.isAlive())
             return ModuleStatus.DRIVE_MOTOR_ERROR;
-        else if (rotationMotorError)
+        else if (rotationMotor.isAlive())
             return ModuleStatus.ROTATION_MOTOR_ERROR;
         return ModuleStatus.OK;
     }
 
     @Override
-    public void writePeriodicOutputs() {// updates data
+    public void writePeriodicOutputs() {
         mPeriodicIO.rotationPosition = rotationMotor.getPosition().getValue();
         mPeriodicIO.drivePosition = driveMotor.getPosition().getValue();
         mPeriodicIO.velocity = driveMotor.getVelocity().getValue();

@@ -25,7 +25,6 @@ public class SwerveKinematics {
     private final int kNumberOfModules = Constants.kModulePositions.size();
     private List<Translation2d> moduleRotationVectors;
     private List<Rotation2d> moduleRotations = new ArrayList<>(kNumberOfModules);
-    private Translation2d m_prevCoR = new Translation2d();
 
 
 

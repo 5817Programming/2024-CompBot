@@ -4,10 +4,6 @@ package com.uni.frc.Autos;
 
 import com.uni.frc.subsystems.Shooter;
 import com.uni.frc.subsystems.SuperStructure;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-
 public class Shoot extends AutoBase{
     SuperStructure s = SuperStructure.getInstance();
 

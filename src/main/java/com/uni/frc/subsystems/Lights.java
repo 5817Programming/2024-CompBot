@@ -24,6 +24,7 @@ public class Lights extends Subsystem{
         AIMING(-.11),
         LOCKED(.57),
         SHOOTING(-.99),
+        ERROR(0.61),
         IDLE(.93);// BACKUP .65
         double output = 0;
         Color(double output){

@@ -121,20 +121,18 @@ public abstract class AutoBase {
     }
 
     public void updateAuto(double timestamp){
-        if(!stopPoses.isEmpty())
-            for(int i = 0; i < stopPoses.size(); i++){
+        if(!stopPoses.isEmpty()){
                 if (DriverStation.getAlliance().get().equals(Alliance.Blue)){
-                    if(stopPoses.get(i).getTranslation().translateBy(mRobotState.getKalmanPose(timestamp).getTranslation().inverse()).norm() < .3){
+                    if(stopPoses.get(0).getTranslation().translateBy(mRobotState.getKalmanPose(timestamp).getTranslation().inverse()).norm() < 0.5){
                         mPathStateGenerator.stopTimer();
-                        stopPoses.remove(i);
+                        stopPoses.remove(0);
                     }
                 }else{
-                    if(stopPoses.get(i).getTranslation().reflect().translateBy(mRobotState.getKalmanPose(timestamp).getTranslation().inverse()).norm() < .3){
+                    if(stopPoses.get(0).getTranslation().reflect().translateBy(mRobotState.getKalmanPose(timestamp).getTranslation().inverse()).norm() < 0.5){
                         mPathStateGenerator.stopTimer();
-                        stopPoses.remove(i);
+                        stopPoses.remove(0);
                     }
-                }
             }
-    }
+    }}
 
 }

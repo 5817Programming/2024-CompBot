@@ -1,7 +1,6 @@
 package com.uni.frc.subsystems;
 
 
- import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -18,7 +17,6 @@ import com.uni.lib.TalonConfigs;
    public State currentState = State.IDLE;
    private TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
    private double spinMultiplier = .7;
-   private double powerDemand = 1;
    public static Shooter instance = null;
 
    public static Shooter getInstance() {
@@ -45,9 +43,7 @@ import com.uni.lib.TalonConfigs;
         this.output = output;
     }
    }
-   public void setPowerDemand(double demand){
-    this.powerDemand = demand;
-   }
+
    public void setRamp(double rampTime) {
      shooterMotor1.getConfigurator().refresh(shooterConfig);
      shooterMotor2.getConfigurator().refresh(shooterConfig);
@@ -137,7 +133,7 @@ import com.uni.lib.TalonConfigs;
       @Override
       public boolean isFinished() {
           
-          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble())>(80*.85) ;
+          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble())>(80*0.85) ;
       }
     };
    }
@@ -161,19 +157,10 @@ import com.uni.lib.TalonConfigs;
    public void readPeriodicInputs() {
       shooterMotor1.setControl(new DutyCycleOut(mPeriodicIO.driveDemand).withEnableFOC(true));
       shooterMotor2.setControl(new DutyCycleOut(-mPeriodicIO.driveDemand*(spinMultiplier)).withEnableFOC(true));
-      
-      
-      
-      // hEnableFOC(true));
-
-
-      // shooterMotor1.setControl(new MotionMagicVelocityDutyCycle(mPeriodicIO.driveDemand).withEnableFOC(true));
-      // shooterMotor2.setControl(new MotionMagicVelocityDutyCycle(-mPeriodicIO.driveDemand).withEnableFOC(true));
-   }
+    }
 
    @Override
    public void outputTelemetry() {
-      Logger.recordOutput("zVelocity",shooterMotor1.getVelocity().getValueAsDouble());
    }
 
    @Override

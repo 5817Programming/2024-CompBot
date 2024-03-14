@@ -20,12 +20,12 @@
         "y": 6.6553938822163365
       },
       "prevControl": {
-        "x": 3.3300192314681647,
-        "y": 7.109837076815296
+        "x": 4.086200613674203,
+        "y": 7.430955198024534
       },
       "nextControl": {
-        "x": 1.7922654016712456,
-        "y": 6.456818327178663
+        "x": 1.7922654016712465,
+        "y": 6.456818327178662
       },
       "isLocked": true,
       "linkedName": null
@@ -68,12 +68,12 @@
         "y": 7.02188032947323
       },
       "prevControl": {
-        "x": 8.553988053693807,
-        "y": 7.56070952803628
+        "x": 9.293153049194935,
+        "y": 7.839782026337732
       },
       "nextControl": {
-        "x": 4.868514173945643,
-        "y": 6.169255104049728
+        "x": 4.868514173945645,
+        "y": 6.169255104049722
       },
       "isLocked": true,
       "linkedName": null
@@ -85,11 +85,11 @@
       },
       "prevControl": {
         "x": 6.157902811413852,
-        "y": 6.61022906214691
+        "y": 6.610229062146912
       },
       "nextControl": {
-        "x": 8.460761044256495,
-        "y": 5.633258902759113
+        "x": 9.448632801232694,
+        "y": 5.214161793738901
       },
       "isLocked": true,
       "linkedName": null
@@ -164,7 +164,88 @@
       }
     }
   ],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.44999999999999996,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    },
+    {
+      "name": "Shoot",
+      "waypointRelativePos": 0.75,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    },
+    {
+      "name": "Intake",
+      "waypointRelativePos": 1.9,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    },
+    {
+      "name": "Shoot",
+      "waypointRelativePos": 2.3000000000000003,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    },
+    {
+      "name": "Intake",
+      "waypointRelativePos": 3.35,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    },
+    {
+      "name": "Shoot",
+      "waypointRelativePos": 4.5,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    },
+    {
+      "name": "Intake",
+      "waypointRelativePos": 5.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    },
+    {
+      "name": "Shoot",
+      "waypointRelativePos": 6.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.5,
     "maxAcceleration": 3.0,

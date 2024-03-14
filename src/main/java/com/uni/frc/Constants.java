@@ -158,7 +158,8 @@ public class Constants {
 
         public static final double kShotTime = 1.2;
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SHOT_TRAVEL_TIME_TREE_MAP = new InterpolatingTreeMap<>();
-        public static final double kDeadband = 0;;
+        public static final double kDeadband = 0;
+        public static final double SPIN = 0.7;
         static {
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.003));
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(0.014));
@@ -166,7 +167,7 @@ public class Constants {
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> VELOCITY_TREE_MAP = new InterpolatingTreeMap<>();
         static {
             VELOCITY_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.6));
-            VELOCITY_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(.8));
+            VELOCITY_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(.85));
         }
 
 

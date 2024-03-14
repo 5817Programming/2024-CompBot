@@ -37,11 +37,11 @@ public class DriveMotionPlanner {
     PathPlannerTrajectory trajectoryDesired;
     PathStateGenerator mPathStateGenerator;
     PathGenerator mPathGenerator;
-    PID2d OdometryPID = new PID2d(new SynchronousPIDF(.6, 0, 0), new SynchronousPIDF(.6, 0, 0));
+    PID2d OdometryPID = new PID2d(new SynchronousPIDF(.3, 0, 0), new SynchronousPIDF(.3, 0, 0));
     double lastTimestamp = 0;
     public static DriveMotionPlanner instance = null;
 
-    public static DriveMotionPlanner getInstance() {// if doesnt have an instance of swerve will make a new one
+    public static DriveMotionPlanner getInstance() {
         if (instance == null)
             instance = new DriveMotionPlanner();
         return instance;
@@ -61,11 +61,11 @@ public class DriveMotionPlanner {
         trajectoryFinished = false;
         this.useAllianceColor = useAllianceColor;
         mPathStateGenerator.setTrajectory(trajectory);
-        Pose2d newpose = (mPathStateGenerator.getInitial(trajectory, initRotation, useAllianceColor));
+        // Pose2d newpose = (mPathStateGenerator.getInitial(trajectory, initRotation, useAllianceColor));
         // RobotStateEstimator.getInstance().resetOdometry(newpose);
         Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).getDegrees());
         if(DriverStation.getAlliance().get().equals(Alliance.Red))
-        Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).flip().getDegrees());
+        Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).flip().inverse().getDegrees());
 
     }
 
@@ -134,37 +134,7 @@ public class DriveMotionPlanner {
                 new ChassisSpeeds());
         setTrajectoryOnTheFly(trajectory, useAllianceColor);
     }
-    // public Request generateTrajectoryRequest(int node) {
-    // return new Request() {
 
-    // @Override
-    // public void act() {
-    // PathPlannerTrajectory trajectory = PathGenerator.generatePath(new
-    // PathConstraints(4, 4),
-    // new Node(Constants.scoresY.get(node), DriverStation.getAlliance() ==
-    // Alliance.Blue ? 2 : 14.71),
-    // Constants.FieldConstants.obstacles);
-    // setTrajectory(trajectory);TODO
-    // }
-
-    // };
-
-    // }
-
-    // public Request generateTrajectoryRequest(Node node) {
-    // return new Request() {
-
-    // @Override
-    // public void act() {
-    // PathPlannerTrajectory trajectory = PathGenerator.generatePath(new
-    // PathConstraints(4, 4), node,
-    // Constants.FieldConstants.obstacles);
-    // setTrajectory(trajectory);
-    // }
-
-    // };
-
-    // }
     public Pose2d sample(double timestamp){
         Pose2d pose = Pose2d.identity();
         if(mPathStateGenerator.sample(timestamp) != null)

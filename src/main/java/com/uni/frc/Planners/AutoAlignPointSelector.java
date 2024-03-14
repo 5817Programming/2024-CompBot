@@ -11,20 +11,12 @@ import com.uni.frc.Field.AprilTag;
 import com.uni.frc.Field.FieldLayout;
 import com.uni.lib.geometry.Pose2d;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /** Add your docs here. */
 public class AutoAlignPointSelector {
 
     private static Map<Integer,AprilTag> getTagSet(){
-        if(DriverStation.getAlliance().get() ==  Alliance.Red){
-            return FieldLayout.Red.kAprilTagMap;
-        } else{
-            System.out.println("No Blue Map");
-            return FieldLayout.Red.kAprilTagMap;
-            // return FieldLayout.Blue.kAprilTagMap;TODO make blue map
-        }
+        return FieldLayout.Red.kAprilTagMap;
     }
 
     private static Optional<AprilTag> getNearestTag(Map<Integer, AprilTag> TagMap, Pose2d point){

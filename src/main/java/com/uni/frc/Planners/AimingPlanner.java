@@ -58,7 +58,7 @@ public class AimingPlanner {
                 double estimatedTimeFrame = 0;
                 Pose2d odomToTargetPoint = visionPoseComponent.inverse().transformBy(mFieldToSpeaker);
                 double travelDistance = odomToTargetPoint.transformBy(currentOdomToRobot).getTranslation().norm();
-                estimatedTimeFrame = mShotTimeMap.getInterpolated(new InterpolatingDouble(travelDistance)).value; //TODO
+                estimatedTimeFrame = mShotTimeMap.getInterpolated(new InterpolatingDouble(travelDistance)).value;
                 Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(estimatedTimeFrame);
 
                 Logger.recordOutput("poseAttmie", poseAtTimeFrame.toWPI());

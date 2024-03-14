@@ -96,7 +96,7 @@ import com.uni.frc.Constants.ElevatorConstants;
 
     public void motionMagic(){
       elevatorMotor1.setControl(new MotionMagicDutyCycle(mPeriodicIO.rotationDemand));
-      elevatorMotor2.setControl(new Follower(Ports.elevatorMotor1, true));//TODO MAYBE OPPOSE
+      elevatorMotor2.setControl(new Follower(Ports.elevatorMotor1, true));
     }   
 
     public void setPercent(){

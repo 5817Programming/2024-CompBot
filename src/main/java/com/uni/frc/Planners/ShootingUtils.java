@@ -29,42 +29,31 @@ public class ShootingUtils {
         public double effectiveDistance;
         public double compensatedDistance;
 
-        public double uncompensatedPivotAngleError;
         public double uncompensatedDesiredPivotAngle;
         public double compensatedDesiredPivotAngle;
-        public double compensatedPivotAngleError;
 
         public double uncompensatedDesiredShooterSpeed;
         public double compensatedDesiredShooterSpeed;
-        public double uncompensatedShooterSpeedError;
-        public double compensatedShooterSpeedError;
 
-        public double desiredSpin;
+
 
         public ShootingParameters(
            double effectiveDistance,
            double compensatedDistance,
            double compensatedDesiredPivotAngle,
            double uncompensatedDesiredPivotAngle,
-           double compensatedDesiredPivotAngleError,
-           double uncompensatedDesiredPivotAngleError,
+
            double compensatedDesiredShooterSpeed,
-           double uncompensatedDesiredShooterSpeed,
-           double compensatedDesiredShooterSpeedError,
-           double uncompensatedDesiredShooterSpeedError,
-           double desiredSpin
+           double uncompensatedDesiredShooterSpeed
+
         ){
          this.effectiveDistance = effectiveDistance;
          this.compensatedDistance = compensatedDistance;
          this.compensatedDesiredPivotAngle = compensatedDesiredPivotAngle;
          this.uncompensatedDesiredPivotAngle = uncompensatedDesiredPivotAngle;
-         this.compensatedPivotAngleError = compensatedDesiredPivotAngleError;
-         this.uncompensatedPivotAngleError = uncompensatedDesiredPivotAngleError;
          this.compensatedDesiredShooterSpeed = compensatedDesiredShooterSpeed;
          this.uncompensatedDesiredShooterSpeed = uncompensatedDesiredShooterSpeed;
-         this.compensatedShooterSpeedError = compensatedDesiredShooterSpeedError;
-         this.uncompensatedShooterSpeedError = uncompensatedDesiredShooterSpeedError;
-         this.desiredSpin = desiredSpin;
+
 
         }
     }
@@ -72,8 +61,6 @@ public class ShootingUtils {
     public static ShootingParameters getShootingParameters(
         Pose2d currentPose, 
         Pose2d targetPose,
-        double pivotAngle, 
-        double shooterVelovity, 
         double kShotTime, 
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotAngleTreeMap,
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> velocityTreeMap,
@@ -92,36 +79,27 @@ public class ShootingUtils {
                 Logger.recordOutput("Compensated Distance", compensatedDistance);
 
         
-        double desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value-.0025;
+        double desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
         double compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
-        double uncompensatedDesiredPivotAngleError = Math.abs(desiredPivotAngle - pivotAngle);
-        double compensatedDesiredPivotAngleError = Math.abs(compensatedPivotAngle - pivotAngle);
+
 
         double uncompensatedDesiredShooterSpeed = velocityTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
         double compensatedDesiredShooterSpeed = velocityTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
-        double uncompensatedShooterSpeedError = Math.abs(uncompensatedDesiredShooterSpeed - shooterVelovity);
-        double compensatedShooterSpeedError = Math.abs(uncompensatedDesiredShooterSpeed - shooterVelovity);
 
-        double desiredSpin = 0; //TODO
+
         return new ShootingParameters(
             effectiveDistance, 
             compensatedDistance, 
             compensatedPivotAngle,
             desiredPivotAngle,
-            compensatedDesiredPivotAngleError,
-            uncompensatedDesiredPivotAngleError,
             compensatedDesiredShooterSpeed, 
-            uncompensatedDesiredShooterSpeed, 
-            compensatedShooterSpeedError,
-            uncompensatedShooterSpeedError, 
-            desiredSpin);
+            uncompensatedDesiredShooterSpeed
+);
     }
     public static ShootingParameters getShootingParameters(
         double pivotOffset,
         Pose2d currentPose, 
         Pose2d targetPose,
-        double pivotAngle, 
-        double shooterVelovity, 
         double kShotTime, 
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotAngleTreeMap,
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> velocityTreeMap,
@@ -147,45 +125,26 @@ public class ShootingUtils {
             Logger.recordOutput("Desired Pivot Angle", desiredPivotAngle);
         }
         double compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
-        double uncompensatedDesiredPivotAngleError = Math.abs(desiredPivotAngle - pivotAngle);
-        double compensatedDesiredPivotAngleError = Math.abs(compensatedPivotAngle - pivotAngle);
         double uncompensatedDesiredShooterSpeed = velocityTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
         double compensatedDesiredShooterSpeed = velocityTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
-        double uncompensatedShooterSpeedError = Math.abs(uncompensatedDesiredShooterSpeed - shooterVelovity);
-        double compensatedShooterSpeedError = Math.abs(uncompensatedDesiredShooterSpeed - shooterVelovity);
-
-        double desiredSpin = 0; //TODO
+       
         return new ShootingParameters(
             effectiveDistance, 
             compensatedDistance, 
             compensatedPivotAngle,
             desiredPivotAngle,
-            compensatedDesiredPivotAngleError,
-            uncompensatedDesiredPivotAngleError,
             compensatedDesiredShooterSpeed, 
-            uncompensatedDesiredShooterSpeed, 
-            compensatedShooterSpeedError,
-            uncompensatedShooterSpeedError, 
-            desiredSpin);
+            uncompensatedDesiredShooterSpeed
+
+            );
     }
 
-    public static boolean pivotAtSetpoint(ShootingParameters shootingParameters, double deadBand, boolean shootOnMove){
-        if(shootOnMove)
-            return shootingParameters.compensatedPivotAngleError < deadBand;
-        else
-            return shootingParameters.uncompensatedPivotAngleError < deadBand;
-    }   
 
-    public static boolean shooterAtSetpoint(ShootingParameters shootingParameters, double deadBand, boolean shootOnMove){
-        if(shootOnMove)
-            return shootingParameters.compensatedShooterSpeedError < deadBand;
-        else
-            return shootingParameters.uncompensatedShooterSpeedError < deadBand;    }
 
-    public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getPivotMap(boolean isAutonomous){
+    public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getPivotMap(){
         return Constants.PivotConstants.PivotAngleMap;
     }
- public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getVelocityMap(boolean isAutonomous){
+ public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getVelocityMap(){
         return Constants.ShooterConstants.VELOCITY_TREE_MAP;
     }
 }

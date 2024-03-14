@@ -21,6 +21,7 @@ import com.uni.frc.Planners.AimingPlanner.AimingRequest;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.Subsystem;
 import com.uni.frc.subsystems.Requests.Request;
+import com.uni.frc.subsystems.Swerve.SwerveDriveModule.ModuleStatus;
 import com.uni.frc.subsystems.Vision.ObjectLimeLight;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight;
 import com.uni.frc.subsystems.gyros.Pigeon;
@@ -86,13 +87,14 @@ public class SwerveDrive extends Subsystem {
     AimingPlanner mAimingPlanner;
     TargetPiecePlanner mTargetPiecePlanner;
     RobotState robotState;
-    public HeadingController headingController = new HeadingController();
+    HeadingController headingController = new HeadingController();
 
 
     double currentSpeed = 0;
     double bestDistance;
     boolean stateHasChanged = false;
     double lastTimeStamp = 0;
+
 
     public SwerveDrive() {
 
@@ -263,7 +265,14 @@ public class SwerveDrive extends Subsystem {
     public List<SwerveDriveModule> getModules(){
         return modules;
     }
-
+    
+    public boolean isStatusOK(){
+        for(SwerveDriveModule m:modules){
+            if(m.getModuleStatus().equals(ModuleStatus.OK))
+                return false;
+        }
+        return true;
+    }
 
     @Override
     public void update() {
