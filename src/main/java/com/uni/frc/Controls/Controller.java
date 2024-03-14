@@ -36,7 +36,7 @@ public class Controller {
 
 
     private boolean lastRumble = false;
-    private Timer rumbleTimer;
+    private Timer rumbleTimer = new Timer();
     private double rumbleStart = Double.NEGATIVE_INFINITY;
     public Controller(int port) {
         Controller = new XboxController(port);
@@ -52,6 +52,7 @@ public class Controller {
             this.Controller.setRumble(RumbleType.kBothRumble, .5);
         else
             this.Controller.setRumble(RumbleType.kBothRumble, 0);
+        lastRumble = rumble;
     }
 
     public void update() {

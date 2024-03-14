@@ -13,6 +13,7 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathSegment;
@@ -86,24 +87,30 @@ public abstract class AutoBase {
     for (EventMarker m : eventMarkers) {
         int pointIndex = (int) Math.round(m.getWaypointRelativePos() / PathSegment.RESOLUTION);
         m.markerPos = new Translation2d(allPoints.get(pointIndex).position);
-        if(m.getName() == "Shoot"){
+        Logger.recordOutput("Marker Pose " + eventMarkers.indexOf(m), Pose2d.fromTranslation(m.markerPos).toWPI());
+
+        if(m.getName().equals("Shoot")){
             s.waitForPositionState(m.markerPos);
+            s.printState("Intaking + Shooting");
             s.shootState(false);
             s.resumeTrajectoryState();
             stopPoses.add(Pose2d.fromTranslation(new Translation2d(m.markerPos)));
         }
-        else if(m.getName() == "Shoot Intake"){
+        else if(m.getName().equals("Shoot Intake")){
             s.waitForPositionState(m.markerPos);
+            s.printState("Intaking + Shooting");
             s.intakeState(.7, false);
         }
-        else if(m.getName() == "Intake"){
+        else if(m.getName().equals("Intake")){
             s.waitForPositionState(m.markerPos);
             s.setContinuousShootState(false);
+            s.printState("Intaking");
             s.intakeState(.7, false);
             s.setContinuousShootState(true);
+
         }
         else{
-            System.out.println("Invalid event name");
+            System.out.println("Invalid event name: "+ m.getName());
         }
     }
     } catch (Exception e) {
