@@ -25,51 +25,11 @@ public class M6 extends AutoBase {
 
     @Override
     public void auto() {
-        registerTrajectoryEvents("M6 KALMAN");
         Shooter.getInstance().setPercent(0.8);
         //Shot 1
-        PathStateGenerator.getInstance().setTrajectory(trajectory);
         s.setPivotState(0.083-.145);
         s.shootState(false);
         s.trajectoryState(trajectory, initRotation);
+        registerTrajectoryEvents("M6 KALMAN");
 
-        s.waitForPositionState(0.78);
-        s.intakeState(.7, true);
-        s.shootState(false);
-        s.resumeTrajectoryState();
-
-        s.waitForPositionState(2.6); 
-        s.intakeState(.7,true);
-        s.preparePivotState();
-        s.shootState(false);
-        s.resumeTrajectoryState();
-
-        s.waitForPositionState(3.9);
-        s.intakeState(.7, true);
-        s.preparePivotState();
-
-        s.shootState(false);
-        s.resumeTrajectoryState();
-
-        s.waitForPositionState(5);
-
-        s.intakeState(1.7,false);
-
-        s.waitForPositionState(7);
-        s.setPivotState(0.083-0.285);
-        s.waitForPositionState(7.6);
-        s.shootState(false);
-        s.resumeTrajectoryState();
-
-    
-        s.waitForPositionState(8.7);
-        s.intakeState(1.5,false);
-        s.waitForPositionState(10);
-        s.setPivotState(0.083-0.292);
-
-        s.waitForPositionState(10.83);
-        s.shootState(false);
-        s.resumeTrajectoryState();
-    }
-
-}
+    }}

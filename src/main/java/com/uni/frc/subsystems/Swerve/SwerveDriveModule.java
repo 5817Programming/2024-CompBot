@@ -213,13 +213,11 @@ public class SwerveDriveModule extends Subsystem {
 	
 		deltaPosition = new Translation2d(deltaPosition.x() * xScrubFactor,
 			deltaPosition.y() * yScrubFactor);
-        Logger.recordOutput("delta t" + moduleID, deltaPosition.y());
         mPeriodicIO.distanceTraveled += deltaPosition.norm();
 		Translation2d updatedPosition = position.translateBy(deltaPosition);
 		Pose2d staticWheelPose = new Pose2d(updatedPosition, robotHeading);
 		Pose2d robotPose = staticWheelPose.transformBy(Pose2d.fromTranslation(mstartingPosition).inverse());
 		position = updatedPosition;
-        Logger.recordOutput("Pos " + moduleID,robotPose.toWPI());
 		estimatedRobotPose =  robotPose;
 		previousEncDistance = currentEncDistance;
 	}
@@ -302,17 +300,16 @@ public class SwerveDriveModule extends Subsystem {
     public void outputTelemetry() {
         Logger.recordOutput(this.name+" Angle Demand", rotationsToDegrees(mPeriodicIO.rotationDemand));
         Logger.recordOutput(this.name + " Angle", rotationsToDegrees(mPeriodicIO.rotationPosition));
-        Logger.recordOutput(this.name + " Mag Encoder Raw Value", getModuleAbsolutePosition() / 360.0);
+        // Logger.recordOutput(this.name + " Mag Encoder Raw Value", getModuleAbsolutePosition() / 360.0);
         Logger.recordOutput(this.name + " Absolute Position", getModuleAbsolutePosition());
         Logger.recordOutput(this.name + " Drive Motor Demand", mPeriodicIO.driveDemand);
         Logger.recordOutput(this.name + " Status", getModuleStatus().toString());
-        Logger.recordOutput(this.name + " Drive Position", mPeriodicIO.drivePosition);
-        Logger.recordOutput(this.name + "drive velocity", driveMotor.getVelocity().getValueAsDouble());
-        Logger.recordOutput(this.name + " A", Constants.kWheelCircumference);
-        Logger.recordOutput(this.name + "Drive Control Mode", mPeriodicIO.driveControlMode);
-        Logger.recordOutput(this.name + "Rotation Control Mode", mPeriodicIO.rotationControlMode);
-        Logger.recordOutput(this.name + "modulePose2d", Pose2d.fromTranslation(position).toWPI());
-        Logger.recordOutput(this.name + "drive motor voltage consumption", driveMotor.getSupplyCurrent().getValueAsDouble());
+        // Logger.recordOutput(this.name + " Drive Position", mPeriodicIO.drivePosition);
+        // Logger.recordOutput(this.name + "drive velocity", driveMotor.getVelocity().getValueAsDouble());
+        // Logger.recordOutput(this.name + "Drive Control Mode", mPeriodicIO.driveControlMode);
+        // Logger.recordOutput(this.name + "Rotation Control Mode", mPeriodicIO.rotationControlMode);
+        // Logger.recordOutput(this.name + "modulePose2d", Pose2d.fromTranslation(position).toWPI());
+        // Logger.recordOutput(this.name + "drive motor voltage consumption", driveMotor.getSupplyCurrent().getValueAsDouble());
 
 
     }
