@@ -31,10 +31,7 @@ public class Ports {
     public static final int[] SWERVE_ENCODERS = new int[] {FRONT_RIGHT_ENCODER, FRONT_LEFT_ENCODER,
             REAR_LEFT_ENCODER, REAR_RIGHT_ENCODER };
 
-        public static final int intakeBeam = isCompbot?0:0;
     public static final int indexerBeam = isCompbot?0:0;
-    public static final int shooterBeam = isCompbot?0:0;
-    public static final int[] Beams = new int[] {intakeBeam,indexerBeam,shooterBeam};//in order of journey of game piece
     
     public static final int PivotEncoder = 12;
    
@@ -44,15 +41,11 @@ public class Ports {
         public static final int Pivot1 = 13;
         public static final int Pivot2 = 14;
 
-        public static final int Wrist = 0;
-        public static final int Hand = 0;
         public static final int Indexer = 19; 
         public static final int IndexerBeamBreakPort = 0;
-        public static final int IntakeBeamBreakPort = 0;
-        public static final int handBeamBreak = 0;
         public static final int elevatorMotor1 = 20;
         public static final int elevatorMotor2 = 21;
-        public static final int Arm = 0;
+        public static final int Arm = 24;
         public static final int Lights = 9;
 
 

@@ -24,11 +24,13 @@ public class AutoAlignPointSelector {
         Optional<AprilTag> closestTag = Optional.empty();
         for(int i:TagMap.keySet()){
             AprilTag currentTag = TagMap.get(i);
+            if(currentTag.isScoring()){
             double distance = currentTag.getFieldToTag().transformBy((currentTag.getTagToCenterAlign())).distance(point);
             if(distance < closestDistance){
                 closestDistance = distance;
                 closestTag = Optional.of(TagMap.get(i));
             }
+        }
         }
         return closestTag;
     }

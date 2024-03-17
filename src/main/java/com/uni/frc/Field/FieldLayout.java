@@ -38,7 +38,7 @@ public class FieldLayout {
                         new Translation2d(15.079471999999997,0.24587199999999998),
                         Rotation2d.fromDegrees(0)
                 ),
-                true,
+                false,
                 kTag1ToCenterAlign,
                 kTag1ToCenterAlign,
                 kTag1ToCenterAlign
@@ -52,7 +52,7 @@ public class FieldLayout {
                         new Translation2d(16.185134,0.883666),
                         Rotation2d.fromDegrees(0)
                 ),
-                true,
+                false,
                 kTag2ToCenterAlign,
                 kTag2ToCenterAlign,
                 kTag2ToCenterAlign
@@ -66,7 +66,7 @@ public class FieldLayout {
                         new Translation2d(16.579342,4.982717999999999),
                         Rotation2d.fromDegrees(0)
                 ),
-                true,
+                false,
                 kTag3ToCenterAlign,
                 kTag3ToCenterAlign,
                 kTag3ToCenterAlign
@@ -80,7 +80,7 @@ public class FieldLayout {
                         new Translation2d(16.579342,5.547867999999999),
                         Rotation2d.fromDegrees(0)
                 ),
-                true,
+                false,
                 kTag4ToCenterAlign,
                 kTag4ToCenterAlign,
                 kTag4ToCenterAlign
@@ -118,7 +118,7 @@ public class FieldLayout {
                             new Translation2d(-0.038099999999999995,5.547867999999999),
                             Rotation2d.fromDegrees(0)
                     ),
-                    true,
+                    false,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign
@@ -130,7 +130,7 @@ public class FieldLayout {
                             new Translation2d(-0.038099999999999995,4.982717999999999),
                             Rotation2d.fromDegrees(0)
                     ),
-                    true,
+                    false,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign
@@ -143,7 +143,7 @@ public class FieldLayout {
                             new Translation2d(0.356108,0.883666),
                             Rotation2d.fromDegrees(0)
                     ),
-                    true,
+                    false,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign
@@ -155,7 +155,7 @@ public class FieldLayout {
                             new Translation2d(1.4615159999999998,0.24587199999999998),
                             Rotation2d.fromDegrees(0)
                     ),
-                    true,
+                    false,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign
@@ -167,7 +167,7 @@ public class FieldLayout {
                             new Translation2d(11.904726,3.7132259999999997),
                             Rotation2d.fromDegrees(0)
                     ),
-                    true,
+                    false,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign
@@ -179,7 +179,7 @@ public class FieldLayout {
                             new Translation2d( 11.904726,4.49834),
                             Rotation2d.fromDegrees(0)
                     ),
-                    true,
+                    false,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign
@@ -191,7 +191,7 @@ public class FieldLayout {
                             new Translation2d(11.220196,4.105148),
                             Rotation2d.fromDegrees(0)
                     ),
-                    true,
+                    false,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign
@@ -203,7 +203,7 @@ public class FieldLayout {
                             new Translation2d(5.320792,4.105148),
                             Rotation2d.fromDegrees(0)
                     ),
-                    true,
+                    false,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign
@@ -216,7 +216,7 @@ public class FieldLayout {
                             new Translation2d(4.641342,4.49834),
                             Rotation2d.fromDegrees(0)
                     ),
-                    true,
+                    false,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign
@@ -229,7 +229,7 @@ public class FieldLayout {
                             new Translation2d(4.641342,3.7132259999999997),
                             Rotation2d.fromDegrees(0)
                     ),
-                    true,
+                    false,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign,
                     kTag5ToCenterAlign

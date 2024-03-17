@@ -92,6 +92,7 @@ public class SwerveDrive extends Subsystem {
 
     double currentSpeed = 0;
     double bestDistance;
+    boolean lob = false;
     boolean stateHasChanged = false;
     double lastTimeStamp = 0;
 
@@ -197,6 +198,10 @@ public class SwerveDrive extends Subsystem {
     public void setAlignment(Pose2d pose){
         mAutoAlignMotionPlanner.setTargetPoint(pose);
         robotState.setDisplaySetpointPose(pose);
+    }
+
+    public void setLob(boolean lob){
+        this.lob = lob;
     }
 
     public void commandModules(List<Translation2d> moduleVectors) {
@@ -329,18 +334,26 @@ public class SwerveDrive extends Subsystem {
                 break;
             case AIMING:
             Pose2d demandedAngle;
+                    if(!lob)
                     demandedAngle = mAimingPlanner.updateAiming(
                         timeStamp,
                         RobotState.getInstance().getLatestPoseFromOdom().getValue(),
                         Pose2d.fromTranslation(RobotState.getInstance().getLatestVisionPoseComponent()),
-                        AimingRequest.Odometry,
+                        AimingRequest.SPEAKER,
                         odometryVision.getLatestVisionUpdate(),
                         headingController,
                         robotState.getSmoothedVelocity());
-   
-            Logger.recordOutput("angleDemand", demandedAngle.getRotation().getDegrees());
+                    else
+                       demandedAngle = mAimingPlanner.updateAiming(
+                        timeStamp,
+                        RobotState.getInstance().getLatestPoseFromOdom().getValue(),
+                        Pose2d.fromTranslation(RobotState.getInstance().getLatestVisionPoseComponent()),
+                        AimingRequest.LOB,
+                        odometryVision.getLatestVisionUpdate(),
+                        headingController,
+                        robotState.getSmoothedVelocity());
                 commandModules(
-                        inverseKinematics.updateDriveVectors(translationVector.scale(.3),
+                        inverseKinematics.updateDriveVectors(translationVector.scale(.5),
                         demandedAngle.getRotation().getDegrees()+rotationScalar, drivingPose, robotCentric));
                 break;
 

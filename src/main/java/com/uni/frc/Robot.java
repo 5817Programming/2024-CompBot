@@ -13,13 +13,14 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 
 import com.uni.frc.Autos.AutoBase;
-
+import com.uni.frc.Autos.M6;
 import com.uni.frc.Autos.S4;
 import com.uni.frc.Autos.NS1;
 import com.uni.frc.Autos.S1;
 import com.uni.frc.Autos.S3;
 import com.uni.frc.Autos.Shoot;
 import com.uni.frc.Controls.Controls;
+import com.uni.frc.subsystems.Arm;
 import com.uni.frc.subsystems.Climb;
 import com.uni.frc.subsystems.Indexer;
 import com.uni.frc.subsystems.Intake;
@@ -53,13 +54,13 @@ public class Robot extends LoggedRobot {
   OdometryLimeLight vision;
   Music music;
   Gyro pigeon;
-  AutoBase auto = new S4();
+  AutoBase auto = new M6();
   public SendableChooser<AutoBase> autoChooser = new SendableChooser<>();
 
 HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @Override
   public void robotInit() {
-    autos.put("Middle 6", new S4());
+    autos.put("Middle 6", new M6());
     autos.put("Amp 1", new NS1());
     autos.put("Source 1", new S1());
     autos.put("Source 4", new S4());
@@ -96,7 +97,8 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
         Intake.getInstance(),
         Pivot.getInstance(),
         Climb.getInstance(),
-        Lights.getInstance()
+        Lights.getInstance(),
+        Arm.getInstance()
         ));
 
     }

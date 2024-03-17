@@ -91,7 +91,7 @@ public abstract class AutoBase {
 
         if(m.getName().equals("Shoot")){
             s.waitForPositionState(m.markerPos);
-            s.printState("Intaking + Shooting");
+            s.printState("Shooting");
             s.shootState(false);
             s.resumeTrajectoryState();
             stopPoses.add(Pose2d.fromTranslation(m.markerPos));
@@ -99,7 +99,7 @@ public abstract class AutoBase {
         else if(m.getName().equals("Intake Shoot")){
             s.waitForPositionState(m.markerPos);
             s.printState("Intaking + Shooting");
-            s.intakeState(.7, true);
+            s.intakeState(.9, true);
           }
         else if(m.getName().equals("Intake")){
             s.waitForPositionState(m.markerPos);

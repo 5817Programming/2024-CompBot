@@ -61,8 +61,8 @@ public class TalonConfigs {
         driveConfigs.CurrentLimits.StatorCurrentLimit = 80;
         driveConfigs.CurrentLimits.SupplyCurrentLimit = 45;
 
-        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = 1;
-        driveConfigs.MotionMagic.MotionMagicAcceleration = 1;
+        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = 1.5;
+        driveConfigs.MotionMagic.MotionMagicAcceleration = 0.75;
 
       return driveConfigs;
 
@@ -87,7 +87,7 @@ public class TalonConfigs {
 
     public static TalonFXConfiguration armConfigs() {
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
-        driveConfigs.Slot0.kV = .12;
+        driveConfigs.Slot0.kV = 1;
         driveConfigs.Slot0.kS = .25;
         driveConfigs.Slot0.kA = .01;
         driveConfigs.Slot0.kP = .11;
@@ -97,8 +97,8 @@ public class TalonConfigs {
         driveConfigs.CurrentLimits.SupplyCurrentLimit = 45;
         driveConfigs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =.5; 
 
-        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = ((int) (Constants.kSwerveDriveMaxSpeed * 0.9));
-        driveConfigs.MotionMagic.MotionMagicAcceleration = ((int) (Constants.kSwerveDriveMaxSpeed));
+        driveConfigs.MotionMagic.MotionMagicCruiseVelocity = 2;
+        driveConfigs.MotionMagic.MotionMagicAcceleration = 2;
 
       return driveConfigs;
     }

@@ -4,6 +4,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.subsystems.Shooter;
 import com.uni.frc.subsystems.SuperStructure;
+import com.uni.frc.subsystems.SuperStructure.SuperState;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -18,11 +19,16 @@ public class M6 extends AutoBase {
 
     @Override
     public void auto() {
-        s.waitState(3, false);
-        System.out.print("StartingAuto");
         Shooter.getInstance().setPercent(0.8);
-        // s.setPivotState(55);
-        // s.shootState(false);
+        s.setState(SuperState.AUTO);
+        Shooter.getInstance().setPercent(0.8);
+        s.setContinuousShootState(false);
+        s.setPivotState(60);
+        s.waitState(0.5, false);
+
+        s.shootState(false);
+        s.setContinuousShootState(true);
+
         s.trajectoryState(trajectory, initRotation);
         registerTrajectoryEvents("M6 KALMAN");
 

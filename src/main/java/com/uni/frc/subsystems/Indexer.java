@@ -38,7 +38,7 @@ import edu.wpi.first.wpilibj.Timer;
    }
    public enum State{
     OFF(0),
-    RECIEVING(-.4),
+    RECIEVING(-.25),
     TRANSFERING(-1),
     REVERSE_TRANSFER(-.5), 
     OUTTAKING(0.4);
@@ -121,7 +121,7 @@ import edu.wpi.first.wpilibj.Timer;
 
       @Override
       public boolean isFinished() {
-        return !mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > .5;
+        return !mPeriodicIO.hasPiece || Timer.getFPGATimestamp() - startTime > .9;
       }
     };
   }

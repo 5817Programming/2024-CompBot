@@ -48,11 +48,11 @@ public class AutoAlignMotionPlanner {
                 var odomToTargetPoint = currentFieldToOdom.inverse().transformBy(mFieldToTargetPoint);
         mXController.setGoalAndConstraints(
                 new MotionProfileGoal(odomToTargetPoint.getTranslation().x(), 0,
-                        IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 0.08, 0.3),
+                        IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, .5, 111),
                 Constants.kPositionMotionProfileConstraints);
         mYController.setGoalAndConstraints(
                 new MotionProfileGoal(odomToTargetPoint.getTranslation().y(), 0,
-                        IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 0.08, 0.3),
+                        IMotionProfileGoal.CompletionBehavior.VIOLATE_MAX_ACCEL, 1.5, 111),
                 Constants.kPositionMotionProfileConstraints);
         mThetaController.setGoalAndConstraints(
                 new MotionProfileGoal(odomToTargetPoint.getRotation().getRadians(), 0,
@@ -80,15 +80,15 @@ public class AutoAlignMotionPlanner {
                 Logger.recordOutput("auto align outputs", output.toWPI());
         Pose2d distance = currentOdomToVehicle.transformBy(odomToTargetPoint.inverse());
         Logger.recordOutput("distance to setpoint", distance.toWPI());
-        boolean yOutputWithinDeadband = Math.abs(output.y()) < .1;
-        boolean xOutputWithinDeadband = Math.abs(output.x()) < .1;
+        boolean yOutputWithinDeadband = Math.abs(output.y()) < .2;
+        boolean xOutputWithinDeadband = Math.abs(output.x()) < .2;
         
         setPoint = ChassisSpeeds.fromFieldRelativeSpeeds(
                 xOutputWithinDeadband? 0:output.x(),
                 yOutputWithinDeadband? 0:output.y(),
                  thetaOutput,
                 currentFieldToOdom.getRotation().rotateBy(currentHeading));
-        mAutoAlignComplete = yOutputWithinDeadband && xOutputWithinDeadband && headingController.atTarget();
+        mAutoAlignComplete = yOutputWithinDeadband && xOutputWithinDeadband;
 
         if (mStartTime.isPresent() && mAutoAlignComplete) {
             Music.getInstance().play("output.chrp");

@@ -159,17 +159,21 @@ public class Constants {
         public static final double kShotTime = 1.2;
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SHOT_TRAVEL_TIME_TREE_MAP = new InterpolatingTreeMap<>();
         public static final double kDeadband = 0;
-        public static final double SPIN = 0.7;
+        public static final double SPIN = 0.6;
         static {
-            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.003));
-            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(0.014));
+            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.0003));
+            SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(0.0045));
         }
-        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> VELOCITY_TREE_MAP = new InterpolatingTreeMap<>();
+        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SPEAKER_VELOCITY_TREE_MAP = new InterpolatingTreeMap<>();
         static {
-            VELOCITY_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.6));
-            VELOCITY_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(.85));
+            SPEAKER_VELOCITY_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.6));
+            SPEAKER_VELOCITY_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(.85));
         }
-
+        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> LOB_VELOCITY_TREE_MAP = new InterpolatingTreeMap<>();
+        static {
+            LOB_VELOCITY_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.6));
+            LOB_VELOCITY_TREE_MAP.put(new InterpolatingDouble(16.0), new InterpolatingDouble(.85));
+        }
 
     }
 
@@ -210,44 +214,59 @@ public class Constants {
         public static final double TRAP = 0;
         public static final double TRANSFER = 0;
         public static final double SHOOTING = 0;
-        public static final double MAX_UP = -.07;
-        public static final double MAX_DOWN = 0;
-        public static final double INTAKING = 25;
+        public static final double MAX_UP = 55;
+        public static final double MAX_DOWN = 3;
+        public static final double INTAKING = 39;
 
-        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> PivotAngleMap = new InterpolatingTreeMap<>();
+        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SpeakerAngleMap = new InterpolatingTreeMap<>();
         static {
-            PivotAngleMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(57.96));
-            PivotAngleMap.put(new InterpolatingDouble(1.5), new InterpolatingDouble(46.8));
-            PivotAngleMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(36.0));
-            PivotAngleMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(29.36));
-            PivotAngleMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(23.4));
-            PivotAngleMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(17.28));
-            PivotAngleMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(13.32));
-            PivotAngleMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(8.64));
-            PivotAngleMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(6.12));
-            PivotAngleMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(0.0));
+            SpeakerAngleMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(59.46));
+            SpeakerAngleMap.put(new InterpolatingDouble(1.5), new InterpolatingDouble(48.3));
+            SpeakerAngleMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(37.5));
+            SpeakerAngleMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(30.86));
+            SpeakerAngleMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(24.4));
+            SpeakerAngleMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(18.28));
+            SpeakerAngleMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(12.32));
+            SpeakerAngleMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(08.74));
+            SpeakerAngleMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(6.12));
+            SpeakerAngleMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(0.0));
+        }
+        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> LobAngleMap = new InterpolatingTreeMap<>();
+        static {
+
+            LobAngleMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(57.96));
+            LobAngleMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(46.8));
+            LobAngleMap.put(new InterpolatingDouble(6.0), new InterpolatingDouble(36.0));
+            LobAngleMap.put(new InterpolatingDouble(6.5), new InterpolatingDouble(29.36));
+            LobAngleMap.put(new InterpolatingDouble(7.0), new InterpolatingDouble(23.4));
+            LobAngleMap.put(new InterpolatingDouble(7.5), new InterpolatingDouble(17.28));
+            LobAngleMap.put(new InterpolatingDouble(8.0), new InterpolatingDouble(13.32));
+            LobAngleMap.put(new InterpolatingDouble(8.5), new InterpolatingDouble(8.64));
+            LobAngleMap.put(new InterpolatingDouble(9.0), new InterpolatingDouble(6.12));
+            LobAngleMap.put(new InterpolatingDouble(9.5), new InterpolatingDouble(0.0));
         }
     }
 
     public static final class ArmConstants {
         public static final double SPEAKER = 0;
-        public static final double AMP = 0;
+        public static final double AMP = 80;
         public static final double TRAP = 0;
         public static final double TRANSFER = 0;
         public static final double SHOOTING = 0;
         public static final double MAX_UP = 0;
         public static final double MAX_DOWN = 0;
+        public static final double PARTIAL = AMP/2;
     }
 
     public static final class VisionConstants {
         public static final int APRIL_PIPLINE = 0;
-        public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 15;
+        public static final int LIMELIGHT_LENS_HEIGHT_INCHES = 16;
 
-        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(0.446-.875+.057-.145,.233-0.059+0.146-.13),
+        public static final Pose2d ROBOT_TO_CAMERA = new Pose2d(new Translation2d(-.162-.23,.233-0.059+0.146-.13),
                 Rotation2d.fromDegrees(0));
 
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);
-        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(18.25);
+        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(16.5);
 
         public static final double IMAGE_CAPTURE_LATENCY = 11.0;
        
@@ -285,6 +304,13 @@ public static final class FieldConstants {
                 new Obstacle(boxX, boxY),
                 new Obstacle(reflect(boxX),boxY)
                 );
+
+        public static Pose2d getAmpPose() {
+            if(DriverStation.getAlliance().get().equals(Alliance.Red)){
+            return new Pose2d(16.5-1.79,8.19,new Rotation2d());
+            }
+            return new Pose2d(1.79,8.19,new Rotation2d());
+        }
             }
 
   
@@ -293,6 +319,12 @@ public static final class FieldConstants {
             return new Pose2d(16.28,5.6,new Rotation2d());
         }
         return new Pose2d(16.5-16.28,5.6,new Rotation2d());
+    }
+    public static Pose2d getLobPose(){
+        if(DriverStation.getAlliance().get().equals(Alliance.Red)){
+            return new Pose2d(15.77,7.43,new Rotation2d());
+        }
+        return new Pose2d(16.5-15.77,7.43,new Rotation2d());
     }
  /**
      * Check if this system has a certain mac address in any network device.

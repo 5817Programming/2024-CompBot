@@ -109,7 +109,7 @@ public class ShootingUtils {
          Pose2d robotToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(currentPose.getTranslation().inverse()));
         double effectiveDistance = robotToTarget.getTranslation().norm();
         double lookahead_time = shotTimeTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
-        Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPose(lookahead_time);
+        Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPose(lookahead_time*1.25);
         Translation2d futureOdomToTargetPoint = poseAtTimeFrame.getTranslation().translateBy(targetPose.getTranslation().inverse());
 
         Logger.recordOutput("Compensated Distance", poseAtTimeFrame.toWPI());
@@ -119,7 +119,7 @@ public class ShootingUtils {
         
         double desiredPivotAngle;
         if(manual)
-            desiredPivotAngle = 0.083-.125;
+            desiredPivotAngle = 55;
         else{
             desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value-.0025+pivotOffset;
             Logger.recordOutput("Desired Pivot Angle", desiredPivotAngle);
@@ -141,10 +141,14 @@ public class ShootingUtils {
 
 
 
-    public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getPivotMap(){
-        return Constants.PivotConstants.PivotAngleMap;
+    public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getPivotMap(boolean lob){
+        if(lob)
+            return Constants.PivotConstants.LobAngleMap;
+        return Constants.PivotConstants.SpeakerAngleMap;
     }
- public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getVelocityMap(){
-        return Constants.ShooterConstants.VELOCITY_TREE_MAP;
+ public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getVelocityMap(boolean lob){
+        if(lob)
+            return Constants.ShooterConstants.LOB_VELOCITY_TREE_MAP;
+        return Constants.ShooterConstants.SPEAKER_VELOCITY_TREE_MAP;
     }
 }

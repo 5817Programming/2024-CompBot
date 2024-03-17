@@ -4,6 +4,8 @@
 
 package com.uni.frc.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -16,7 +18,7 @@ import com.uni.lib.TalonConfigs;
 public class Arm extends Subsystem {
   
   private PeriodicIO mPeriodicIO = new PeriodicIO();
-  private TalonFX armMotor = new TalonFX(Ports.Arm);
+  private TalonFX armMotor = new TalonFX(Ports.Arm,"Minivore");
   private TalonFXConfiguration pivotConfig = TalonConfigs.armConfigs();
   private State currentState;
   private boolean stateChanged;
@@ -42,8 +44,8 @@ public class Arm extends Subsystem {
 
   public enum State {
     AMP(Constants.ArmConstants.AMP),
-    
-    MAXDOWN(Constants.ArmConstants.MAX_DOWN);
+    MAXDOWN(Constants.ArmConstants.MAX_DOWN), 
+    PARTIAL(Constants.ArmConstants.PARTIAL);
 
     double output = 0;
 
@@ -74,18 +76,13 @@ public class Arm extends Subsystem {
     mPeriodicIO.rotationDemand = percentage;
   }
 
-  public void setState(State state) {
-    if (state != currentState)
-      stateChanged = true;
-    currentState = state;
-  }
+
 
   public boolean atTarget(){
-    return Math.abs(currentState.output) - Math.abs(mPeriodicIO.rotationPosition) <1;
+    return Math.abs(mPeriodicIO.rotationDemand - mPeriodicIO.rotationPosition) < 1;
   }
 
   public void conformToState(State state) {
-    setState(state);
     setMotionMagic(state.output);
   }
   public void conformToState(double Override) {
@@ -137,7 +134,7 @@ public class Arm extends Subsystem {
     return new Request() {
       @Override
         public boolean isFinished() {
-            return !stateChanged && atTarget();
+            return  atTarget();
         }
     };
   }
@@ -167,7 +164,6 @@ public class Arm extends Subsystem {
 
   @Override
   public void outputTelemetry() {
-
   }
 
   @Override

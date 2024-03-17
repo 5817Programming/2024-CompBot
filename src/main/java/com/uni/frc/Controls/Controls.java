@@ -70,14 +70,14 @@ public class Controls {
             Climb.getInstance().conformToState(Climb.State.Down);
         // else if(Driver.BButton.isPressed()){
         //     s.onTheFlyTrajectoryState(new Pose2d(8,2, Rotation2d.fromDegrees(180)), timestamp);
-        if(Driver.XButton.isActive())
-            s.setMode(Mode.AMP);
-        else if(Driver.LeftBumper.isActive())
+
+        if(Driver.LeftBumper.isActive())
             s.setMode(Mode.FIRING);
         else if(amp)
             s.setMode(Mode.AMP);
         else
             s.setMode(Mode.SHOOTING);
+        
         if(Driver.LeftTrigger.value >0.2){
             s.setState(SuperState.OUTTAKING);    
 
