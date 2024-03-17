@@ -582,7 +582,7 @@ public class SuperStructure extends Subsystem {
                     mLights.setColorRequest(Color.INTAKING),
                     mPivot.stateRequest(Pivot.State.INTAKING),
                     mIntake.stateRequest(Intake.State.INTAKING),
-                    mIndexer.setPercentRequest(-.5),
+                    mIndexer.stateRequest(-.4),
                     mIndexer.hasPieceRequest(timeout),
                     waitRequest(0.1),
                     mLights.setColorRequest(Color.INTAKED),
@@ -594,7 +594,23 @@ public class SuperStructure extends Subsystem {
         queue(request);
 
     }
+    public void intakeShootState(double timeout) {
+        RequestList request;
+            request = new RequestList(Arrays.asList(
+                    logCurrentRequest("Intaking"),
+                    mIndexer.setHasPieceRequest(true),
+                    mLights.setColorRequest(Color.INTAKING),
+                    mIntake.stateRequest(Intake.State.INTAKING),
+                    mIndexer.stateRequest(-.7),
+                    waitRequest(timeout),
+                    mLights.setColorRequest(Color.SHOOTING),
+                    mIndexer.stateRequest(Indexer.State.OFF),
+                    mIntake.stateRequest(Intake.State.OFF),
+                    mIndexer.setHasPieceRequest(false))
+                    , false);
+        queue(request);
 
+    }
     public void waitForEventState(double timestamp) {
         queue(mDriveMotionPlanner.waitForTrajectoryRequest(timestamp));
     }

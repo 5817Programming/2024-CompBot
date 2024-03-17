@@ -171,7 +171,7 @@ import edu.wpi.first.wpilibj.Timer;
       }
     };
   }
-   public Request setPercentRequest(double percentage) {
+   public Request stateRequest(double percentage) {
      return new Request() {
 
        @Override
@@ -234,7 +234,7 @@ import edu.wpi.first.wpilibj.Timer;
 
    @Override
    public void stop() {
-     setPercentRequest(0);
+     stateRequest(0);
    }
 
    public static class PeriodicIO {

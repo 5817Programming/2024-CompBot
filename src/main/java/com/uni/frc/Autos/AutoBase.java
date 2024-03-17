@@ -99,13 +99,17 @@ public abstract class AutoBase {
         else if(m.getName().equals("Intake Shoot")){
             s.waitForPositionState(m.markerPos);
             s.printState("Intaking + Shooting");
-            s.intakeState(.9, true);
+            s.intakeShootState(.6);
+            s.resumeTrajectoryState();
           }
+        else if(m.getName().equals("Stop")){
+        stopPoses.add(Pose2d.fromTranslation(m.markerPos));
+        }
         else if(m.getName().equals("Intake")){
             s.waitForPositionState(m.markerPos);
             s.setContinuousShootState(false);
             s.printState("Intaking");
-            s.intakeState(.7, false);
+            s.intakeState(1.5, false);
             s.setContinuousShootState(true);
 
         }

@@ -116,7 +116,7 @@ public class OdometryLimeLight extends Subsystem {
 
     if (mPeriodicIO.seesTarget) {
       if (mTagMap.keySet().contains(tagId) && cameraToTarget != null && mPeriodicIO.ta > .05) {
-        mPeriodicIO.visionUpdate = Optional
+        mPeriodicIO.visionUpdate = Optional 
             .of(new VisionUpdate(timestamp - mPeriodicIO.latency, cameraToTarget, txy, tagId));
         RobotState.getInstance().addVisionUpdate(
             mPeriodicIO.visionUpdate.get());
