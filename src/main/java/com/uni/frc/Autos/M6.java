@@ -19,12 +19,12 @@ public class M6 extends AutoBase {
 
     @Override
     public void auto() {
-        Shooter.getInstance().setPercent(0.8);
+        Shooter.getInstance().setPercent(.8);
         s.setState(SuperState.AUTO);
         Shooter.getInstance().setPercent(0.8);
         s.setContinuousShootState(false);
         s.setPivotState(60);
-        s.waitState(0.5, false);
+        s.waitState(0.2, false);
 
         s.shootState(false);
         s.setContinuousShootState(true);

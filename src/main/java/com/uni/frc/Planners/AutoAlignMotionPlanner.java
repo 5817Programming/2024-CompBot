@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class AutoAlignMotionPlanner {
     
-    private ProfileFollower mXController = new ProfileFollower(2.5, 0, 0, 1, 0, 0);
+    private ProfileFollower mXController = new ProfileFollower(3, 0, 0, 1, 0, 0);
     private ProfileFollower mYController = new ProfileFollower(2.5, 0, 0, 1, 0, 0);
     private ProfileFollower mThetaController = new ProfileFollower(1.5, 0.0, 0.0, 1.0, 0.0, 0.0);
 
@@ -80,7 +80,7 @@ public class AutoAlignMotionPlanner {
                 Logger.recordOutput("auto align outputs", output.toWPI());
         Pose2d distance = currentOdomToVehicle.transformBy(odomToTargetPoint.inverse());
         Logger.recordOutput("distance to setpoint", distance.toWPI());
-        boolean yOutputWithinDeadband = Math.abs(output.y()) < .2;
+        boolean yOutputWithinDeadband = Math.abs(output.y()) < .3;
         boolean xOutputWithinDeadband = Math.abs(output.x()) < .2;
         
         setPoint = ChassisSpeeds.fromFieldRelativeSpeeds(

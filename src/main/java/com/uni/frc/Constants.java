@@ -159,7 +159,7 @@ public class Constants {
         public static final double kShotTime = 1.2;
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SHOT_TRAVEL_TIME_TREE_MAP = new InterpolatingTreeMap<>();
         public static final double kDeadband = 0;
-        public static final double SPIN = 0.6;
+        public static final double SPIN = 0.5;
         static {
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.0003));
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(0.0045));
@@ -215,20 +215,20 @@ public class Constants {
         public static final double TRANSFER = 0;
         public static final double SHOOTING = 0;
         public static final double MAX_UP = 55;
-        public static final double MAX_DOWN = 3;
-        public static final double INTAKING = 39;
+        public static final double MAX_DOWN = 0;
+        public static final double INTAKING = 10;
 
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SpeakerAngleMap = new InterpolatingTreeMap<>();
         static {
-            SpeakerAngleMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(59.46));
-            SpeakerAngleMap.put(new InterpolatingDouble(1.5), new InterpolatingDouble(48.3));
-            SpeakerAngleMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(37.5));
-            SpeakerAngleMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(30.86));
-            SpeakerAngleMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(24.4));
-            SpeakerAngleMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(18.28));
-            SpeakerAngleMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(12.32));
-            SpeakerAngleMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(08.74));
-            SpeakerAngleMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(6.12));
+            SpeakerAngleMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(57.96));
+            SpeakerAngleMap.put(new InterpolatingDouble(1.5), new InterpolatingDouble(46.8));
+            SpeakerAngleMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(36.0));
+            SpeakerAngleMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(29.36));
+            SpeakerAngleMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(23.4));
+            SpeakerAngleMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(17.28));
+            SpeakerAngleMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(13.32));
+            SpeakerAngleMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(8.64));
+            SpeakerAngleMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(8.12));
             SpeakerAngleMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(0.0));
         }
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> LobAngleMap = new InterpolatingTreeMap<>();
@@ -314,17 +314,18 @@ public static final class FieldConstants {
             }
 
   
-    public static Pose2d getShooterPose(){
+    public static Pose2d getSpeakerPose(){
         if(DriverStation.getAlliance().get().equals(Alliance.Red)){
-            return new Pose2d(16.28,5.6,new Rotation2d());
+            return new Pose2d(16.28,5.65,new Rotation2d());
         }
-        return new Pose2d(16.5-16.28,5.6,new Rotation2d());
+        return new Pose2d(16.5-16.28,5.65,new Rotation2d());
     }
     public static Pose2d getLobPose(){
-        if(DriverStation.getAlliance().get().equals(Alliance.Red)){
-            return new Pose2d(15.77,7.43,new Rotation2d());
-        }
-        return new Pose2d(16.5-15.77,7.43,new Rotation2d());
+        return getSpeakerPose();
+        // if(DriverStation.getAlliance().get().equals(Alliance.Red)){
+        //     return new Pose2d(15.77,7.43,new Rotation2d());
+        // }
+        // return new Pose2d(16.5-15.77,7.43,new Rotation2d());
     }
  /**
      * Check if this system has a certain mac address in any network device.

@@ -64,6 +64,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     autos.put("Amp 1", new NS1());
     autos.put("Source 1", new S1());
     autos.put("Source 4", new S4());
+    autos.put("Amp 1", new NS1());
 
     autos.put("1", new Shoot());
 
@@ -138,9 +139,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve = SwerveDrive.getInstance();
     // swerve.fieldzeroSwerve();
     swerve.zeroModules();
-    //TODO REMOVE THIS AT COMP PLEASE PLEASE PLEASE
-    RobotStateEstimator.getInstance().resetOdometry(new Pose2d(16.5-1.36,5.54, new Rotation2d()));
-    
+    // RobotState.getInstance().reset(Timer.getFPGATimestamp(), new Pose2d(16.38));
 
 
 

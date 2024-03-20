@@ -48,32 +48,32 @@
     },
     {
       "anchor": {
-        "x": 2.293654753580292,
-        "y": 6.8
+        "x": 2.2243786937716323,
+        "y": 6.911245275482004
       },
       "prevControl": {
-        "x": 1.0306860737967791,
-        "y": 6.074962424568723
+        "x": 0.9614100139881194,
+        "y": 6.186207700050727
       },
       "nextControl": {
-        "x": 2.9471315574511965,
-        "y": 7.1751440911110755
+        "x": 2.877855497642537,
+        "y": 7.28638936659308
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.586148505630344,
-        "y": 7.54
+        "x": 7.358112494002765,
+        "y": 7.4608705342766815
       },
       "prevControl": {
-        "x": 5.192987542606112,
-        "y": 7.462654011473733
+        "x": 4.964951530978532,
+        "y": 7.383524545750414
       },
       "nextControl": {
-        "x": 10.568790004908875,
-        "y": 7.636397759593085
+        "x": 10.340753993281297,
+        "y": 7.557268293869766
       },
       "isLocked": false,
       "linkedName": null
@@ -96,16 +96,16 @@
     },
     {
       "anchor": {
-        "x": 7.586148505630344,
-        "y": 5.88
+        "x": 7.498442347312044,
+        "y": 5.940630456759489
       },
       "prevControl": {
-        "x": 6.971160754582889,
-        "y": 6.0170140116593425
+        "x": 6.950046254246019,
+        "y": 6.092595639175375
       },
       "nextControl": {
-        "x": 9.544919374739033,
-        "y": 5.443602601448677
+        "x": 9.439671984757075,
+        "y": 5.402699352407253
       },
       "isLocked": false,
       "linkedName": null
@@ -116,8 +116,8 @@
         "y": 6.19
       },
       "prevControl": {
-        "x": 7.938356738225452,
-        "y": 5.887933166596684
+        "x": 7.358112494002765,
+        "y": 5.917242147874609
       },
       "nextControl": null,
       "isLocked": false,
@@ -126,7 +126,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.35,
+      "waypointRelativePos": 1.4500000000000002,
       "rotationDegrees": -27.7301001866119,
       "rotateFast": true
     },
@@ -147,7 +147,7 @@
     },
     {
       "waypointRelativePos": 5.4,
-      "rotationDegrees": 11.494984276000658,
+      "rotationDegrees": 7.4388594330627225,
       "rotateFast": false
     },
     {
@@ -159,11 +159,22 @@
   "constraintZones": [
     {
       "name": "New Constraints Zone",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 3.3,
+      "minWaypointRelativePos": 3.05,
+      "maxWaypointRelativePos": 3.45,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 600.0
+      }
+    },
+    {
+      "name": "New Constraints Zone",
+      "minWaypointRelativePos": 0.85,
+      "maxWaypointRelativePos": 3.5,
       "constraints": {
         "maxVelocity": 6.0,
-        "maxAcceleration": 4.0,
+        "maxAcceleration": 6.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 600.0
       }
@@ -204,7 +215,7 @@
     {
       "name": "New Constraints Zone",
       "minWaypointRelativePos": 6.050000000000001,
-      "maxWaypointRelativePos": 6.6499999999999995,
+      "maxWaypointRelativePos": 6.3,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 2.0,
@@ -256,7 +267,7 @@
     },
     {
       "name": "Intake Shoot",
-      "waypointRelativePos": 3.0,
+      "waypointRelativePos": 2.95,
       "command": {
         "type": "parallel",
         "data": {
@@ -266,7 +277,7 @@
     },
     {
       "name": "Stop",
-      "waypointRelativePos": 3.15,
+      "waypointRelativePos": 3.1999999999999997,
       "command": {
         "type": "parallel",
         "data": {
@@ -316,14 +327,14 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 6.0,
+    "maxVelocity": 8.0,
     "maxAcceleration": 9.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 600.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 10.38885781546968,
+    "rotation": 5.829870953418298,
     "rotateFast": true
   },
   "reversed": false,

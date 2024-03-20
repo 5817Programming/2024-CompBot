@@ -251,7 +251,7 @@ public class RobotState {
         Logger.recordOutput("Robot Velocity", getMeasuredVelocity().toString());
         Logger.recordOutput("PoseFromOdometry",  new Pose2d(getLatestPoseFromOdom().getValue().getTranslation(), getLatestPoseFromOdom().getValue().getRotation().inverse()).toWPI());
         Logger.recordOutput("Vision Pose Component", getAbsoluteVisionPoseComponent(Timer.getFPGATimestamp()).toWPI());
-        Logger.recordOutput("Filtered Pose", getKalmanPose(Timer.getFPGATimestamp()).toWPI());
+        Logger.recordOutput("Filtered Pose", new Pose2d(getKalmanPose(Timer.getFPGATimestamp()).getTranslation(), getKalmanPose(Timer.getFPGATimestamp()).getRotation()).toWPI());
         Logger.recordOutput("SetPoint Pose", mSetpointPose.toWPI());
         Logger.recordOutput("Vision Pose", getDisplayVisionPose().toWPI());
    }

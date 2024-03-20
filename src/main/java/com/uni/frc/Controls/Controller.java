@@ -48,8 +48,8 @@ public class Controller {
         if((rumble != lastRumble) && (rumble == true)){
             rumbleStart = rumbleTimer.get();
         }
-        if(rumbleTimer.get() - rumbleStart < .5)
-            this.Controller.setRumble(RumbleType.kBothRumble, .5);
+        if(rumbleTimer.get() - rumbleStart < 1)
+            this.Controller.setRumble(RumbleType.kBothRumble, 1);
         else
             this.Controller.setRumble(RumbleType.kBothRumble, 0);
         lastRumble = rumble;

@@ -58,7 +58,7 @@ public class AimingPlanner {
         }
         switch (mAimingRequest) {
             case SPEAKER:
-                mFieldToSpeaker = Constants.getShooterPose();
+                mFieldToSpeaker = Constants.getSpeakerPose();
                 break;
             case LOB:
                 mFieldToSpeaker = Constants.getLobPose();
@@ -74,7 +74,7 @@ public class AimingPlanner {
         Pose2d futureOdomToTargetPoint = poseAtTimeFrame.inverse().transformBy(odomToTargetPoint).inverse();
         Rotation2d targetRotation = futureOdomToTargetPoint.getTranslation().getAngle().inverse();
         targetPose = new Pose2d(futureOdomToTargetPoint.getTranslation(), targetRotation);
-        headingController.setTargetHeading(targetPose.getRotation().inverse().rotateBy(Rotation2d.fromDegrees(-1)));
+        headingController.setTargetHeading(targetPose.getRotation().inverse().rotateBy(Rotation2d.fromDegrees(1)));
         double rotationOutput = headingController.updateRotationCorrection(currentOdomToRobot.getRotation().inverse(),
                 timeStamp);
         Logger.recordOutput("aimingoutput", rotationOutput);

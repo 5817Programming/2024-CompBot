@@ -353,7 +353,7 @@ public class SwerveDrive extends Subsystem {
                         headingController,
                         robotState.getSmoothedVelocity());
                 commandModules(
-                        inverseKinematics.updateDriveVectors(translationVector.scale(.5),
+                        inverseKinematics.updateDriveVectors(translationVector.scale(.3),
                         demandedAngle.getRotation().getDegrees()+rotationScalar, drivingPose, robotCentric));
                 break;
 

@@ -386,11 +386,10 @@ public class SuperStructure extends Subsystem {
 
     public void prepareShooterSetpoints(double timestamp) {
         ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
-        Logger.recordOutput("Desired Pivot Angle", shootingParameters.compensatedDesiredPivotAngle);
+        Logger.recordOutput("Desired Pivot Angle", shootingParameters.compensatedDesiredPivotAngle-3.5);
         mShooter.conformToState(Shooter.State.SHOOTING);
-        mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
+        mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle-3);
         mShooter.setSpin(Constants.ShooterConstants.SPIN);
-        mIndexer.setPiece(false);
     }
 
     public void prepareShooterSetpoints(double timestamp, boolean manual) {
@@ -445,7 +444,7 @@ public class SuperStructure extends Subsystem {
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> shotTimeMap = Constants.ShooterConstants.SHOT_TRAVEL_TIME_TREE_MAP;
         double kShotTime = Constants.ShooterConstants.kShotTime;
 
-        Pose2d speakerPose = Constants.getShooterPose();
+        Pose2d speakerPose = Constants.getSpeakerPose();
 
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = ShootingUtils
                 .getPivotMap(false);
@@ -470,7 +469,7 @@ public class SuperStructure extends Subsystem {
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> shotTimeMap = Constants.ShooterConstants.SHOT_TRAVEL_TIME_TREE_MAP;
         double kShotTime = Constants.ShooterConstants.kShotTime;
 
-        Pose2d speakerPose = Constants.getShooterPose();
+        Pose2d speakerPose = Constants.getSpeakerPose();
 
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = ShootingUtils
                 .getPivotMap(lob);
@@ -582,9 +581,8 @@ public class SuperStructure extends Subsystem {
                     mLights.setColorRequest(Color.INTAKING),
                     mPivot.stateRequest(Pivot.State.INTAKING),
                     mIntake.stateRequest(Intake.State.INTAKING),
-                    mIndexer.stateRequest(-.4),
+                    mIndexer.stateRequest(-.20),
                     mIndexer.hasPieceRequest(timeout),
-                    waitRequest(0.1),
                     mLights.setColorRequest(Color.INTAKED),
                     mIndexer.stateRequest(Indexer.State.OFF),
                     mIntake.stateRequest(Intake.State.OFF),
@@ -596,12 +594,12 @@ public class SuperStructure extends Subsystem {
     }
     public void intakeShootState(double timeout) {
         RequestList request;
-            request = new RequestList(Arrays.asList(
+        request = new RequestList(Arrays.asList(
                     logCurrentRequest("Intaking"),
                     mIndexer.setHasPieceRequest(true),
                     mLights.setColorRequest(Color.INTAKING),
                     mIntake.stateRequest(Intake.State.INTAKING),
-                    mIndexer.stateRequest(-.7),
+                    mIndexer.stateRequest(-1),
                     waitRequest(timeout),
                     mLights.setColorRequest(Color.SHOOTING),
                     mIndexer.stateRequest(Indexer.State.OFF),
@@ -609,7 +607,9 @@ public class SuperStructure extends Subsystem {
                     mIndexer.setHasPieceRequest(false))
                     , false);
         queue(request);
-
+    }
+        public void shooterPercentState(double percent) {
+        queue(mShooter.setPercentRequest(percent));
     }
     public void waitForEventState(double timestamp) {
         queue(mDriveMotionPlanner.waitForTrajectoryRequest(timestamp));
@@ -667,7 +667,7 @@ public class SuperStructure extends Subsystem {
                     // mPivot.atTargetRequest(),
                     mLights.setColorRequest(Color.SHOOTING),
                     mIndexer.stateRequest(Indexer.State.TRANSFERING),
-                    mIndexer.hasNoPieceRequest(true),
+                    waitRequest(0.4),
                     mIndexer.stateRequest(Indexer.State.OFF),
                     mIndexer.setHasPieceRequest(false)), false);
             queue(queue);

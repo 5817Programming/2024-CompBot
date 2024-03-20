@@ -19,7 +19,6 @@ import com.uni.frc.Constants.ElevatorConstants;
     private TalonFX elevatorMotor1 = new TalonFX(Ports.elevatorMotor1,"Minivore");
     private TalonFX elevatorMotor2 = new TalonFX(Ports.elevatorMotor2,"Minivore");
     
-
     private TalonFXConfiguration elevator1Config = TalonConfigs.elevatorConfigs();
 
     private State currentState;
@@ -36,6 +35,8 @@ import com.uni.frc.Constants.ElevatorConstants;
 
     /** Creates a new pivot. */
     public Climb() {
+      elevatorMotor1.setNeutralMode(NeutralModeValue.Brake);
+      elevatorMotor2.setNeutralMode(NeutralModeValue.Brake);
       elevatorMotor1.setPosition(0);
       elevatorMotor2.setPosition(0);
       configMotors();
