@@ -73,7 +73,7 @@ public class Controls {
 
         if(Driver.LeftBumper.isActive())
             if(amp)
-                s.setMode(Mode.AMPOVERIDE)
+                s.setMode(Mode.AMPOVERIDE);
             else
                 s.setMode(Mode.FIRING);
         else if(amp)

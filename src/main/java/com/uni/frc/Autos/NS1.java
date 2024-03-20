@@ -2,7 +2,6 @@ package com.uni.frc.Autos;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
-import com.uni.frc.subsystems.Shooter;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.SuperStructure.SuperState;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;

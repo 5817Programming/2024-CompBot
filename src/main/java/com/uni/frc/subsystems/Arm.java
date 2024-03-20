@@ -4,7 +4,6 @@
 
 package com.uni.frc.subsystems;
 
-import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -20,8 +19,7 @@ public class Arm extends Subsystem {
   private PeriodicIO mPeriodicIO = new PeriodicIO();
   private TalonFX armMotor = new TalonFX(Ports.Arm,"Minivore");
   private TalonFXConfiguration pivotConfig = TalonConfigs.armConfigs();
-  private State currentState;
-  private boolean stateChanged;
+
   
   public static Arm instance = null;
 
@@ -33,8 +31,6 @@ public class Arm extends Subsystem {
 
   public Arm() {
     configMotors();
-    currentState = State.MAXDOWN;
-    stateChanged = false;
   }
 
   public enum ControlMode {

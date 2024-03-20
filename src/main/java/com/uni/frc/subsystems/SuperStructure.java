@@ -241,7 +241,7 @@ public class SuperStructure extends Subsystem {
                             scoreAmpState();
                         }
                         mIndexer.setPiece(false);
-                        Optional<Pose2d> targetSnap = AutoAlignPointSelector
+                        targetSnap = AutoAlignPointSelector
                                 .chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
                         if (targetSnap.isEmpty()) {
                             mDrive.setState(SwerveDrive.State.MANUAL);
