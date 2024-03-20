@@ -45,9 +45,9 @@ public class Controls {
         s.setPieceAim(Driver.BButton.isActive());
 
         if(CoDriver.DpadUp.isPressed())
-            s.offsetPivot(5);
+            s.offsetPivot(.5);
         if(CoDriver.DpadDown.isPressed())
-            s.offsetPivot(-5);
+            s.offsetPivot(-.5);
 
         // if(Driver.RightBumper.isActive()){
         //     s.intakePercent(-percent);
@@ -72,7 +72,10 @@ public class Controls {
         //     s.onTheFlyTrajectoryState(new Pose2d(8,2, Rotation2d.fromDegrees(180)), timestamp);
 
         if(Driver.LeftBumper.isActive())
-            s.setMode(Mode.FIRING);
+            if(amp)
+                s.setMode(Mode.AMPOVERIDE)
+            else
+                s.setMode(Mode.FIRING);
         else if(amp)
             s.setMode(Mode.AMP);
         else

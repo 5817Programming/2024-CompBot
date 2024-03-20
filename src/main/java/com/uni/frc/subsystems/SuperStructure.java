@@ -120,7 +120,8 @@ public class SuperStructure extends Subsystem {
     public enum Mode {
         SHOOTING,
         AMP,
-        FIRING
+        FIRING,
+        AMPOVERIDE
     }
 
     public void setState(SuperState state) {
@@ -219,6 +220,22 @@ public class SuperStructure extends Subsystem {
                         break;
 
                     case AMP:
+                        mShooter.setSpin(1);
+                        if (modeChanged || stateChanged) {
+                            scoreAmpState();
+                        }
+                        mIndexer.setPiece(false);
+                        Optional<Pose2d> targetSnap = AutoAlignPointSelector
+                                .chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
+                        if (targetSnap.isEmpty()) {
+                            mDrive.setState(SwerveDrive.State.MANUAL);
+
+                        } else {
+                            mDrive.setAlignment(targetSnap.get());
+                            mDrive.setState(SwerveDrive.State.ALIGNMENT);
+                        }
+                        break;
+                    case AMPOVERIDE:
                         mShooter.setSpin(1);
                         if (modeChanged || stateChanged) {
                             scoreAmpState();
@@ -703,7 +720,18 @@ public class SuperStructure extends Subsystem {
         request(request);
 
     }
+    public void overrideAmpState() {
+        RequestList request = new RequestList(Arrays.asList(
+                mPivot.stateRequest(Pivot.State.AMP),
+                mArm.stateRequest(Arm.State.AMP),
+                mShooter.stateRequest(Shooter.State.AMP),
+                mIndexer.stateRequest(Indexer.State.TRANSFERING),
+                waitRequest(.5),
+                mShooter.stateRequest(Shooter.State.IDLE),
+                mArm.stateRequest(Arm.State.MAXDOWN)), false);
+        request(request);
 
+    }
     public void offsetPivot(double offset) {
         pivotOffset += offset;
     }

@@ -316,9 +316,9 @@ public static final class FieldConstants {
   
     public static Pose2d getSpeakerPose(){
         if(DriverStation.getAlliance().get().equals(Alliance.Red)){
-            return new Pose2d(16.28,5.65,new Rotation2d());
+            return new Pose2d(16.28,5.56,new Rotation2d());
         }
-        return new Pose2d(16.5-16.28,5.65,new Rotation2d());
+        return new Pose2d(16.5-16.28,5.56,new Rotation2d());
     }
     public static Pose2d getLobPose(){
         return getSpeakerPose();
