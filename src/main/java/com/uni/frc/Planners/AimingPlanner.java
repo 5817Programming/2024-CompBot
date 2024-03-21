@@ -67,7 +67,7 @@ public class AimingPlanner {
         Rotation2d targetRotation = futureOdomToTargetPoint.getTranslation().getAngle().inverse();
         targetPose = new Pose2d(futureOdomToTargetPoint.getTranslation(), targetRotation);
         headingController.setTargetHeading(targetPose.getRotation().inverse());
-        double rotationOutput = headingController.updateRotationCorrection(currentOdomToRobot.getRotation().inverse().rotateBy(-1),
+        double rotationOutput = headingController.updateRotationCorrection(currentOdomToRobot.getRotation().inverse().rotateBy(-4),
                 timeStamp);
         Logger.recordOutput("aimingoutput", rotationOutput);
         isAimed = headingController.atTarget();

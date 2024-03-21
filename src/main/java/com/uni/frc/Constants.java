@@ -225,10 +225,10 @@ public class Constants {
             SpeakerAngleMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(38.0));
             SpeakerAngleMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(31.36));
             SpeakerAngleMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(25.4));
-            SpeakerAngleMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(19.28));
-            SpeakerAngleMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(15.32));
-            SpeakerAngleMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(10.64));
-            SpeakerAngleMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(10.12));
+            SpeakerAngleMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(14.28));
+            SpeakerAngleMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(12.32));
+            SpeakerAngleMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(8.64));
+            SpeakerAngleMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(8.12));
             SpeakerAngleMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(0.0));
         }
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> LobAngleMap = new InterpolatingTreeMap<>();
