@@ -22,6 +22,7 @@ import com.uni.frc.Planners.ShootingUtils.ShootingParameters;
 import com.uni.frc.subsystems.Lights.Color;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.frc.subsystems.Requests.RequestList;
+import com.uni.frc.subsystems.Shooter.State;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight;
 import com.uni.lib.geometry.Pose2d;
@@ -264,22 +265,25 @@ public class SuperStructure extends Subsystem {
                 mDrive.setState(SwerveDrive.State.MANUAL);
                 mIntake.conformToState(Intake.State.OFF);
                 mIndexer.conformToState(Indexer.State.OFF);
-                if ((!mIndexer.hasPiece()) || !inAmpZone(timestamp))
-                    mArm.conformToState(Arm.State.MAXDOWN);
-                else if (inAmpZone(timestamp) && mIndexer.hasPiece() && currentMode == Mode.AMP)
-                    mArm.conformToState(Arm.State.PARTIAL);
-                else if (inAmpZone(timestamp)&&currentMode == Mode.AMP)
-                    mPivot.conformToState(Pivot.State.AMP);
-
-                if (mIndexer.hasPiece() && inShootZone(timestamp) && !(currentMode == Mode.AMP)) {
-                    ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
-                    mShooter.conformToState(Shooter.State.PARTIALRAMP);
-                    mPivot.setMotionMagic(shootingParameters.uncompensatedDesiredPivotAngle);
-                } else {
-                    mIntake.conformToState(Intake.State.PARTIALRAMP);
-                    mShooter.conformToState(Shooter.State.IDLE);
-                   
-
+                if(currentMode == Mode.SHOOTING || currentMode == Mode.FIRING){
+                    if(inShootZone(timestamp) && mIndexer.hasPiece()){
+                        ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
+                        mShooter.conformToState(Shooter.State.PARTIALRAMP);
+                        mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
+                    }
+                    else{
+                        mPivot.conformToState(Pivot.State.INTAKING);
+                        mShooter.conformToState(Shooter.State.IDLE);
+                    }
+                    mArm.stateRequest(Arm.State.MAXDOWN);
+                }else{
+                    if(inAmpZone(timestamp) && mIndexer.hasPiece()){
+                        mArm.conformToState(Arm.State.PARTIAL);
+                    }
+                    if(inShootZone(timestamp))
+                        mPivot.conformToState(Pivot.State.AMP);
+                    else
+                        mPivot.conformToState(Pivot.State.INTAKING);
                 }
                 break;
             case OFF:
