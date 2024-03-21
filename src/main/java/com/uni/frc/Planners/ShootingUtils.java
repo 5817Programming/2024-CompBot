@@ -144,14 +144,15 @@ public class ShootingUtils {
 
 
     public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getPivotMap(boolean lob){
-        // if
-        // (lob)
-            // return Constants.PivotConstants.LobAngleMap;
+        System.out.println(lob);
+        if
+        (lob)
+            return Constants.PivotConstants.LobAngleMap;
         return Constants.PivotConstants.SpeakerAngleMap;
     }
  public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> getVelocityMap(boolean lob){
-        // if(lob)
-            // return Constants.ShooterConstants.LOB_VELOCITY_TREE_MAP;
+        if(lob)
+            return Constants.ShooterConstants.LOB_VELOCITY_TREE_MAP;
         return Constants.ShooterConstants.SPEAKER_VELOCITY_TREE_MAP;
     }
 }

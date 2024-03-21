@@ -87,7 +87,7 @@ public class TalonConfigs {
 
     public static TalonFXConfiguration armConfigs() {
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
-        driveConfigs.Slot0.kV = 1;
+        driveConfigs.Slot0.kV = 2;
         driveConfigs.Slot0.kS = .25;
         driveConfigs.Slot0.kA = .01;
         driveConfigs.Slot0.kP = .11;

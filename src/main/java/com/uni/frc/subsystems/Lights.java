@@ -25,7 +25,10 @@ public class Lights extends Subsystem{
         LOCKED(.57),
         SHOOTING(-.99),
         ERROR(0.61),
-        IDLE(.93);// BACKUP .65
+        IDLE(.93),
+        AMP(.69),
+        AMPRAMPED(.65);
+        
         double output = 0;
         Color(double output){
             this.output = output;

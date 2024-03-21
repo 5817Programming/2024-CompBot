@@ -116,10 +116,16 @@ public class RobotState {
     }
 
     public synchronized Pose2d getPredictedPoseFromOdometry(double lookahead_time) {
+        if(DriverStation.getAlliance().get().equals(Alliance.Blue))
+            return getLatestPoseFromOdom().getValue()
+                    .transformBy(Pose2d.projectTwist(PredictedVelocity.scaled(-lookahead_time)));
         return getLatestPoseFromOdom().getValue()
                 .transformBy(Pose2d.projectTwist(PredictedVelocity.scaled(lookahead_time)));
     }
     public synchronized Pose2d getPredictedPose(double lookahead_time) {
+    if(DriverStation.getAlliance().get().equals(Alliance.Blue))
+            return getLatestKalmanPose()
+                    .transformBy(Pose2d.projectTwist(PredictedVelocity.scaled(-lookahead_time)));
         return getLatestKalmanPose().transformBy(Pose2d.exp(PredictedVelocity.scaled(lookahead_time)));
     }
     public synchronized void addPoseObservation(double timestamp, Pose2d observation) {
@@ -251,7 +257,7 @@ public class RobotState {
         Logger.recordOutput("Robot Velocity", getMeasuredVelocity().toString());
         Logger.recordOutput("PoseFromOdometry",  new Pose2d(getLatestPoseFromOdom().getValue().getTranslation(), getLatestPoseFromOdom().getValue().getRotation().inverse()).toWPI());
         Logger.recordOutput("Vision Pose Component", getAbsoluteVisionPoseComponent(Timer.getFPGATimestamp()).toWPI());
-        Logger.recordOutput("Filtered Pose", new Pose2d(getKalmanPose(Timer.getFPGATimestamp()).getTranslation(), getKalmanPose(Timer.getFPGATimestamp()).getRotation()).toWPI());
+        Logger.recordOutput("Filtered Pose", new Pose2d(getKalmanPose(Timer.getFPGATimestamp()).getTranslation(), getKalmanPose(Timer.getFPGATimestamp()).getRotation().inverse()).toWPI());
         Logger.recordOutput("SetPoint Pose", mSetpointPose.toWPI());
         Logger.recordOutput("Vision Pose", getDisplayVisionPose().toWPI());
    }

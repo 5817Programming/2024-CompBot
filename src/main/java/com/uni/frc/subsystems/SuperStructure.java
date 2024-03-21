@@ -20,7 +20,6 @@ import com.uni.frc.Planners.DriveMotionPlanner;
 import com.uni.frc.Planners.ShootingUtils;
 import com.uni.frc.Planners.ShootingUtils.ShootingParameters;
 import com.uni.frc.subsystems.Lights.Color;
-import com.uni.frc.subsystems.Pivot.State;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.frc.subsystems.Requests.RequestList;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
@@ -225,32 +224,14 @@ public class SuperStructure extends Subsystem {
                             scoreAmpState();
                         }
                         mIndexer.setPiece(false);
-                        Optional<Pose2d> targetSnap = AutoAlignPointSelector
-                                .chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
-                        if (targetSnap.isEmpty()) {
-                            mDrive.setState(SwerveDrive.State.MANUAL);
 
-                        } else {
-                            mDrive.setAlignment(targetSnap.get());
-                            mDrive.setState(SwerveDrive.State.ALIGNMENT);
-                        }
                         break;
                     case AMPOVERIDE:
                         mShooter.setSpin(1);
                         if (modeChanged || stateChanged) {
-                            scoreAmpState();
+                            overrideAmpState();
                         }
-                        mIndexer.setPiece(false);
-                        targetSnap = AutoAlignPointSelector
-                                .chooseTargetPoint(RobotState.getInstance().getKalmanPose(timestamp));
-                        if (targetSnap.isEmpty()) {
-                            mDrive.setState(SwerveDrive.State.MANUAL);
-
-                        } else {
-                            mDrive.setAlignment(targetSnap.get());
-                            mDrive.setState(SwerveDrive.State.ALIGNMENT);
-                        }
-                        break;
+                        mIndexer.setPiece(false);;
                 }
 
                 break;
@@ -274,8 +255,10 @@ public class SuperStructure extends Subsystem {
                     clearQueues();
                 if (mIndexer.hasPiece())
                     mLights.setColor(Color.HASPIECE);
-                else if (mDrive.isStatusOK())
+                else if (mDrive.isStatusOK()&&currentMode!=Mode.AMP)
                     mLights.setColor(Color.IDLE);
+                else if(currentMode == Mode.AMP)
+                    mLights.setColor(Color.AMP);
                 else
                     mLights.setColor(Color.ERROR);
                 mDrive.setState(SwerveDrive.State.MANUAL);
@@ -285,6 +268,8 @@ public class SuperStructure extends Subsystem {
                     mArm.conformToState(Arm.State.MAXDOWN);
                 else if (inAmpZone(timestamp) && mIndexer.hasPiece() && currentMode == Mode.AMP)
                     mArm.conformToState(Arm.State.PARTIAL);
+                else if (inAmpZone(timestamp)&&currentMode == Mode.AMP)
+                    mPivot.conformToState(Pivot.State.AMP);
 
                 if (mIndexer.hasPiece() && inShootZone(timestamp) && !(currentMode == Mode.AMP)) {
                     ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
@@ -293,13 +278,7 @@ public class SuperStructure extends Subsystem {
                 } else {
                     mIntake.conformToState(Intake.State.PARTIALRAMP);
                     mShooter.conformToState(Shooter.State.IDLE);
-                    if (!mIndexer.hasPiece()) {
-                        mPivot.conformToState(Pivot.State.INTAKING);
-                    } else if (currentMode == Mode.SHOOTING) {
-                        mPivot.conformToState(State.MAXDOWN);
-                    } else if (inAmpZone(timestamp)) {
-                        mPivot.conformToState(Pivot.State.AMP);
-                    }
+                   
 
                 }
                 break;
@@ -403,18 +382,24 @@ public class SuperStructure extends Subsystem {
 
     public void prepareShooterSetpoints(double timestamp) {
         ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
-        Logger.recordOutput("Desired Pivot Angle", shootingParameters.compensatedDesiredPivotAngle-3.5);
+        Logger.recordOutput("Desired Pivot Angle", shootingParameters.compensatedDesiredPivotAngle);
         mShooter.conformToState(Shooter.State.SHOOTING);
-        mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle-3);
+        mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle-5);
         mShooter.setSpin(Constants.ShooterConstants.SPIN);
     }
 
     public void prepareShooterSetpoints(double timestamp, boolean manual) {
         ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp), manual,
                 !inShootZone(timestamp));
+        if(inShootZone(timestamp)){
         mShooter.conformToState(Shooter.State.SHOOTING);
-        mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
         mShooter.setSpin(ShooterConstants.SPIN);
+        }
+        else{
+        mShooter.setPercent(shootingParameters.compensatedDesiredShooterSpeed);
+        mShooter.setSpin(1);
+        }
+        mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
         mIndexer.setPiece(false);
     }
 
@@ -712,7 +697,7 @@ public class SuperStructure extends Subsystem {
                 mArm.atTargetRequest(),
                 mShooter.stateRequest(Shooter.State.AMP),
                 mShooter.atTargetRequest(.4),
-                mDrive.isAlignedRequest(),
+                mLights.setColorRequest(Color.AMPRAMPED),
                 mIndexer.stateRequest(Indexer.State.TRANSFERING),
                 waitRequest(.5),
                 mShooter.stateRequest(Shooter.State.IDLE),

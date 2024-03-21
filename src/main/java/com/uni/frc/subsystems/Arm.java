@@ -75,7 +75,7 @@ public class Arm extends Subsystem {
 
 
   public boolean atTarget(){
-    return Math.abs(mPeriodicIO.rotationDemand - mPeriodicIO.rotationPosition) < 1;
+    return Math.abs(-mPeriodicIO.rotationDemand - mPeriodicIO.rotationPosition) < 1;
   }
 
   public void conformToState(State state) {
@@ -86,11 +86,11 @@ public class Arm extends Subsystem {
   }
 
   public void motionMagic(){
-    armMotor.setControl(new MotionMagicVoltage(mPeriodicIO.rotationDemand));
+    armMotor.setControl(new MotionMagicVoltage(-mPeriodicIO.rotationDemand));
   }
 
   public void setPercent(){
-    armMotor.setControl(new DutyCycleOut(mPeriodicIO.rotationDemand, true, false, false, false));
+    armMotor.setControl(new DutyCycleOut(-mPeriodicIO.rotationDemand, true, false, false, false));
      
   }
 

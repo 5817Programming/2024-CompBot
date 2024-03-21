@@ -47,15 +47,6 @@ public class AimingPlanner {
         Pose2d targetPose = new Pose2d();
         mVisionUpdate = visionUpdate;
         mAimingRequest = request;
-        if (mAimingRequest == AimingRequest.LOB || mVisionUpdate.isEmpty()) {
-            System.out.println("No Vision Update For Aiming, Switching To Odometry: AimingUtils");
-            mAimingRequest = AimingRequest.SPEAKER;
-        } else {
-            lastVisionTimestamp = mVisionUpdate.get().getTimestamp();
-        }
-        if (timeStamp - lastVisionTimestamp > 10 || !mVisionUpdate.isEmpty() && currentVelocity.norm() < .2) {
-            // mAimingRequest = AimingRequest.LimeLight;
-        }
         switch (mAimingRequest) {
             case SPEAKER:
                 mFieldToSpeaker = Constants.getSpeakerPose();
@@ -64,6 +55,7 @@ public class AimingPlanner {
                 mFieldToSpeaker = Constants.getLobPose();
                 break;
         }
+        Logger.recordOutput("aimPose", mAimingRequest);
         double estimatedTimeFrame = 0;
         Pose2d odomToTargetPoint = visionPoseComponent.inverse().transformBy(mFieldToSpeaker);
         double travelDistance = odomToTargetPoint.transformBy(currentOdomToRobot).getTranslation().norm();
@@ -74,8 +66,8 @@ public class AimingPlanner {
         Pose2d futureOdomToTargetPoint = poseAtTimeFrame.inverse().transformBy(odomToTargetPoint).inverse();
         Rotation2d targetRotation = futureOdomToTargetPoint.getTranslation().getAngle().inverse();
         targetPose = new Pose2d(futureOdomToTargetPoint.getTranslation(), targetRotation);
-        headingController.setTargetHeading(targetPose.getRotation().inverse().rotateBy(Rotation2d.fromDegrees(1)));
-        double rotationOutput = headingController.updateRotationCorrection(currentOdomToRobot.getRotation().inverse(),
+        headingController.setTargetHeading(targetPose.getRotation().inverse());
+        double rotationOutput = headingController.updateRotationCorrection(currentOdomToRobot.getRotation().inverse().rotateBy(-1),
                 timeStamp);
         Logger.recordOutput("aimingoutput", rotationOutput);
         isAimed = headingController.atTarget();

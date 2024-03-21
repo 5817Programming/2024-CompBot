@@ -200,8 +200,8 @@ public class SwerveDrive extends Subsystem {
         robotState.setDisplaySetpointPose(pose);
     }
 
-    public void setLob(boolean lob){
-        this.lob = lob;
+    public void setLob(boolean newlob){
+        this.lob = newlob;
     }
 
     public void commandModules(List<Translation2d> moduleVectors) {
