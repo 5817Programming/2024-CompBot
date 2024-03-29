@@ -142,7 +142,13 @@ public class SwerveDrive extends Subsystem {
         SNAP,
     }
 
+    public enum TrajectoryMode{
+        TRACKING,
+        FOLLOWING,
+    }
+
     private State currentState = State.MANUAL;
+    private TrajectoryMode currentMode = TrajectoryMode.FOLLOWING;
 
     public State getState() {
         return this.currentState;
@@ -154,6 +160,11 @@ public class SwerveDrive extends Subsystem {
         currentState = desiredState;
     }
 
+    public void setMode(TrajectoryMode desiredMode){
+        if(desiredMode != currentMode)
+            stateHasChanged = true;
+        currentMode = desiredMode;
+    }
     public SwerveKinematics getKinematics(){
         return inverseKinematics;
     }
@@ -318,13 +329,20 @@ public class SwerveDrive extends Subsystem {
                     setState(State.MANUAL);
                 }
                 mDriveMotionPlanner.updateTrajectory();
-                Translation2d translationCorrection = mDriveMotionPlanner.updateFollowedTranslation2d(timeStamp).scale(1);
-                headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading().inverse());
-                rotationCorrection = headingController.getRotationCorrection(getRobotHeading().inverse().flip(), timeStamp);
-                desiredRotationScalar = rotationCorrection;
-            translationVector = translationCorrection;
-                commandModules(inverseKinematics.updateDriveVectors(translationCorrection, rotationCorrection, poseMeters,
-                        robotCentric));
+                switch (currentMode) {
+                    case FOLLOWING:
+                        translationVector = mDriveMotionPlanner.getTranslation2dToFollow(timeStamp);
+                        headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading().inverse());
+
+                        break;
+                    case TRACKING:
+                        translationVector = mDriveMotionPlanner.getTranslation2dToTrack(timeStamp, objectVision.getLatestVisionUpdate());
+                        break;
+                }
+                        rotationCorrection = headingController.getRotationCorrection(getRobotHeading().inverse().flip(), timeStamp);
+                        desiredRotationScalar = rotationCorrection;
+                        commandModules(inverseKinematics.updateDriveVectors(translationVector, rotationCorrection, poseMeters,
+                                robotCentric));
                 break;
             case TARGETOBJECT:
                 rotationCorrection = mTargetPiecePlanner.updateAiming(timeStamp, objectVision.getLatestVisionUpdate(), headingController, getRobotHeading());
@@ -438,7 +456,14 @@ public class SwerveDrive extends Subsystem {
         };
     }
 
-
+    public Request setModeRequest(TrajectoryMode mode) {
+        return new Request() {
+            @Override
+            public void act() {
+                setMode(mode);
+            }
+        };
+    }
 
     public Request isAimedRequest(){
         return new Request() {

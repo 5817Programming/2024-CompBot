@@ -156,10 +156,13 @@ public class Constants {
         public static final double IDLE = 0;
         public static final double FEEDFORWARD = 2;
 
+
+        public static final double kShooterZeroAngle = 20;
         public static final double kShotTime = 1.2;
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SHOT_TRAVEL_TIME_TREE_MAP = new InterpolatingTreeMap<>();
         public static final double kDeadband = 0;
         public static final double SPIN = 0.5;
+        public static final double kShooterHeight = 0;
         static {
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.0003));
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(0.0045));
@@ -290,6 +293,8 @@ public class Constants {
     }
     
 public static final class FieldConstants {
+
+    public final static double kSpeakerHeight = 0;
     
          public static double[] reflect(double xs[]) {
             for(int i =0; i<xs.length; i++){

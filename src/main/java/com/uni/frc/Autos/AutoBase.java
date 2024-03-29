@@ -109,9 +109,8 @@ public abstract class AutoBase {
             s.waitForPositionState(m.markerPos);
             s.setContinuousShootState(false);
             s.printState("Intaking");
-            s.intakeState(1.5, false);
+            s.intakeState(1.5);
             s.setContinuousShootState(true);
-
         }
         else{
             System.out.println("Invalid event name: "+ m.getName());

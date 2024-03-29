@@ -24,6 +24,7 @@ import com.uni.frc.subsystems.Requests.Request;
 import com.uni.frc.subsystems.Requests.RequestList;
 import com.uni.frc.subsystems.Shooter.State;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
+import com.uni.frc.subsystems.Swerve.SwerveDrive.TrajectoryMode;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Translation2d;
@@ -566,35 +567,20 @@ public class SuperStructure extends Subsystem {
         request(request);
     }
 
-    public void intakeState(double timeout, boolean shootingOverride) {
-        RequestList request;
-        if (shootingOverride) {
-            request = new RequestList(Arrays.asList(
+    public void intakeState(double timeout) {
+        RequestList request = new RequestList(Arrays.asList(
                     logCurrentRequest("Intaking"),
+                    mDrive.setModeRequest(TrajectoryMode.TRACKING),
                     mLights.setColorRequest(Color.INTAKING),
                     mIntake.stateRequest(Intake.State.INTAKING),
                     mIndexer.stateRequest(Indexer.State.RECIEVING),
                     mIndexer.hasPieceRequest(timeout),
-                    waitRequest(0.1),
                     mLights.setColorRequest(Color.INTAKED),
                     mIndexer.stateRequest(Indexer.State.OFF),
                     mIntake.stateRequest(Intake.State.OFF),
-                    mIndexer.setHasPieceRequest(true))
+                    mIndexer.setHasPieceRequest(true),
+                    mDrive.setModeRequest(TrajectoryMode.FOLLOWING))
                     , false);
-        } else {
-            request = new RequestList(Arrays.asList(
-                    logCurrentRequest("Intaking"),
-                    mLights.setColorRequest(Color.INTAKING),
-                    mPivot.stateRequest(Pivot.State.INTAKING),
-                    mIntake.stateRequest(Intake.State.INTAKING),
-                    mIndexer.stateRequest(-.20),
-                    mIndexer.hasPieceRequest(timeout),
-                    mLights.setColorRequest(Color.INTAKED),
-                    mIndexer.stateRequest(Indexer.State.OFF),
-                    mIntake.stateRequest(Intake.State.OFF),
-                    mIndexer.setHasPieceRequest(true))
-                    , false);
-        }
         queue(request);
 
     }
@@ -602,6 +588,7 @@ public class SuperStructure extends Subsystem {
         RequestList request;
         request = new RequestList(Arrays.asList(
                     logCurrentRequest("Intaking"),
+                    mDrive.setModeRequest(TrajectoryMode.TRACKING),
                     mIndexer.setHasPieceRequest(true),
                     mLights.setColorRequest(Color.INTAKING),
                     mIntake.stateRequest(Intake.State.INTAKING),
@@ -610,7 +597,8 @@ public class SuperStructure extends Subsystem {
                     mLights.setColorRequest(Color.SHOOTING),
                     mIndexer.stateRequest(Indexer.State.OFF),
                     mIntake.stateRequest(Intake.State.OFF),
-                    mIndexer.setHasPieceRequest(false))
+                    mIndexer.setHasPieceRequest(false),
+                    mDrive.setModeRequest(TrajectoryMode.FOLLOWING))
                     , false);
         queue(request);
     }

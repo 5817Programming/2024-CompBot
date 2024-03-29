@@ -4,6 +4,8 @@
 
 package com.uni.frc.Planners;
 
+import java.util.Optional;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.path.PathConstraints;
@@ -11,6 +13,8 @@ import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.RobotStateEstimator;
 import com.uni.frc.subsystems.Requests.Request;
+import com.uni.frc.subsystems.Vision.ObjectLimeLight.VisionObjectUpdate;
+import com.uni.frc.subsystems.Vision.OdometryLimeLight.VisionUpdate;
 import com.uni.frc.subsystems.gyros.Pigeon;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
@@ -38,6 +42,7 @@ public class DriveMotionPlanner {
     PathStateGenerator mPathStateGenerator;
     PathGenerator mPathGenerator;
     PID2d OdometryPID = new PID2d(new SynchronousPIDF(.3, 0, 0), new SynchronousPIDF(.3, 0, 0));
+    SynchronousPIDF mTrackingPID = new SynchronousPIDF(.1 ,0 ,0);
     double lastTimestamp = 0;
     public static DriveMotionPlanner instance = null;
 
@@ -107,7 +112,7 @@ public class DriveMotionPlanner {
         targetFollowTranslation = desiredPose.getTranslation();
     }
 
-    public Translation2d updateFollowedTranslation2d(double timestamp) {
+    public Translation2d getTranslation2dToFollow(double timestamp) {
         double dt = timestamp - lastTimestamp;
         Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestKalmanPose()
                 .getTranslation();
@@ -124,7 +129,27 @@ public class DriveMotionPlanner {
         }
         return new Translation2d(xError, -yError);
     }
-
+    public Translation2d getTranslation2dToTrack(double timestamp, Optional<VisionObjectUpdate> visionUpdate) {
+        double dt = timestamp - lastTimestamp;
+        Pose2d currentPose = RobotState.getInstance().getLatestKalmanPose();
+        Translation2d visionCompensation = Translation2d.identity();
+        if(!visionUpdate.isEmpty()){
+            double yComp = mTrackingPID.calculate(-visionUpdate.get().getCameraToTarget().x(), dt);
+            visionCompensation = new Translation2d(0,yComp).rotateBy(currentPose.getRotation());
+        }
+        Translation2d targetTranslation = targetFollowTranslation.translateBy(visionCompensation);
+        OdometryPID.x().setOutputRange(-1, 1);
+        OdometryPID.y().setOutputRange(-1, 1);
+        double xError = OdometryPID.x().calculate(targetTranslation.x() - currentPose.getTranslation().x(), dt);
+        double yError = OdometryPID.y().calculate(targetTranslation.y() - currentPose.getTranslation().y(), dt);
+        lastTimestamp = timestamp;
+        if (((Math.abs(xError) + Math.abs(yError)) / 2 < .05 && PathStateGenerator.getInstance().isFinished())
+                || trajectoryFinished) {
+            trajectoryFinished = true;
+            return new Translation2d();
+        }
+        return new Translation2d(xError, -yError);
+    }
     public void generateAndPrepareTrajectory(Pose2d startPose, Pose2d endPose, ChassisSpeeds currentVelocity,
             boolean useAllianceColor) {
         PathPlannerTrajectory trajectory = mPathGenerator.generatePath(
