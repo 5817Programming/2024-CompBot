@@ -7,10 +7,7 @@ package com.uni.frc.Planners;
 import org.littletonrobotics.junction.Logger;
 
 import com.uni.frc.Constants;
-import com.uni.frc.Constants.FieldConstants;
-import com.uni.frc.Constants.ShooterConstants;
 import com.uni.frc.subsystems.RobotState;
-import com.uni.frc.subsystems.Shooter;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Translation2d;
 import com.uni.lib.geometry.Twist2d;
@@ -29,25 +26,76 @@ public class ShootingUtils {
     }
 
     public static class ShootingParameters{
+        public double effectiveDistance;
         public double compensatedDistance;
 
+        public double uncompensatedDesiredPivotAngle;
         public double compensatedDesiredPivotAngle;
 
+        public double uncompensatedDesiredShooterSpeed;
         public double compensatedDesiredShooterSpeed;
 
 
 
         public ShootingParameters(
+           double effectiveDistance,
            double compensatedDistance,
            double compensatedDesiredPivotAngle,
-           double compensatedDesiredShooterSpeed
+           double uncompensatedDesiredPivotAngle,
+
+           double compensatedDesiredShooterSpeed,
+           double uncompensatedDesiredShooterSpeed
+
         ){
+         this.effectiveDistance = effectiveDistance;
          this.compensatedDistance = compensatedDistance;
          this.compensatedDesiredPivotAngle = compensatedDesiredPivotAngle;
+         this.uncompensatedDesiredPivotAngle = uncompensatedDesiredPivotAngle;
          this.compensatedDesiredShooterSpeed = compensatedDesiredShooterSpeed;
+         this.uncompensatedDesiredShooterSpeed = uncompensatedDesiredShooterSpeed;
+
+
         }
     }
 
+    public static ShootingParameters getShootingParameters(
+        Pose2d currentPose, 
+        Pose2d targetPose,
+        double kShotTime, 
+        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotAngleTreeMap,
+        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> velocityTreeMap,
+        InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> shotTimeTreeMap,
+        Twist2d currentVelocity){
+         Pose2d robotToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(currentPose.getTranslation().inverse()));
+        double effectiveDistance = robotToTarget.getTranslation().norm();
+        double lookahead_time = shotTimeTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
+        Logger.recordOutput("effective distance", effectiveDistance);
+        Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(lookahead_time+.004).rotateBy(currentPose.getRotation());
+        Pose2d compensatedShooterToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(poseAtTimeFrame.getTranslation().inverse()));
+
+        Logger.recordOutput("Time", lookahead_time);
+
+        double compensatedDistance = compensatedShooterToTarget.getTranslation().norm();
+                Logger.recordOutput("Compensated Position", poseAtTimeFrame.toWPI());
+
+        
+        double desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
+        double compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
+
+
+        double uncompensatedDesiredShooterSpeed = velocityTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
+        double compensatedDesiredShooterSpeed = velocityTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
+
+
+        return new ShootingParameters(
+            effectiveDistance, 
+            compensatedDistance, 
+            compensatedPivotAngle,
+            desiredPivotAngle,
+            compensatedDesiredShooterSpeed, 
+            uncompensatedDesiredShooterSpeed
+);
+    }
     public static ShootingParameters getShootingParameters(
         double pivotOffset,
         Pose2d currentPose, 
@@ -61,27 +109,36 @@ public class ShootingUtils {
          Pose2d robotToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(currentPose.getTranslation().inverse()));
         double effectiveDistance = robotToTarget.getTranslation().norm();
         double lookahead_time = shotTimeTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
-        Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPose(lookahead_time);
+        Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPose(lookahead_time*1.3);
         Translation2d futureOdomToTargetPoint = poseAtTimeFrame.getTranslation().translateBy(targetPose.getTranslation().inverse());
+
+        Logger.recordOutput("speakerpose", poseAtTimeFrame.toWPI());
+        Logger.recordOutput("Time", lookahead_time);
+
         double compensatedDistance = futureOdomToTargetPoint.norm();
+        Logger.recordOutput("Compensated Distance", compensatedDistance);
+
+        
         double compensatedPivotAngle;
         if(manual)
             compensatedPivotAngle = 55;
-        else
-            compensatedPivotAngle = getPivotAngle(compensatedDistance, pivotAngleTreeMap);
+        else{
+            compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value+pivotOffset;
+            Logger.recordOutput("Desired Pivot Angle", compensatedPivotAngle);
+        }
+        double desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
+        double uncompensatedDesiredShooterSpeed = velocityTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
         double compensatedDesiredShooterSpeed = velocityTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value;
+       
         return new ShootingParameters(
+            effectiveDistance, 
             compensatedDistance, 
             compensatedPivotAngle,
-            compensatedDesiredShooterSpeed
-        );
-    }
+            desiredPivotAngle,
+            compensatedDesiredShooterSpeed, 
+            uncompensatedDesiredShooterSpeed
 
-    private static double getPivotAngle(double Distance, InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> dropMap){
-        double x = FieldConstants.kSpeakerHeight - ShooterConstants.kShooterHeight;
-        double desiredAngle = Math.atan(x/Distance) - ShooterConstants.kShooterZeroAngle;
-        double desiredAngleWithDrop = desiredAngle + dropMap.getInterpolated(new InterpolatingDouble(Distance)).value;
-        return desiredAngleWithDrop;
+            );
     }
 
 

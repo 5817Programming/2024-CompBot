@@ -157,12 +157,13 @@ public class Constants {
         public static final double FEEDFORWARD = 2;
 
 
-        public static final double kShooterZeroAngle = 20;
+        public static final double kShooterZeroAngle = 24;
         public static final double kShotTime = 1.2;
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SHOT_TRAVEL_TIME_TREE_MAP = new InterpolatingTreeMap<>();
         public static final double kDeadband = 0;
         public static final double SPIN = 0.5;
-        public static final double kShooterHeight = 0;
+        public static final double kShooterHeight = .14 ;
+        public static final double kEncoderDistance = 0.113;
         static {
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(1.0), new InterpolatingDouble(0.0003));
             SHOT_TRAVEL_TIME_TREE_MAP.put(new InterpolatingDouble(6.0), new InterpolatingDouble(0.0045));
@@ -223,16 +224,17 @@ public class Constants {
 
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SpeakerAngleMap = new InterpolatingTreeMap<>();
         static {
-            SpeakerAngleMap.put(new InterpolatingDouble(1.0), new InterpolatingDouble(59.96));
-            SpeakerAngleMap.put(new InterpolatingDouble(1.5), new InterpolatingDouble(48.8));
-            SpeakerAngleMap.put(new InterpolatingDouble(2.0), new InterpolatingDouble(38.0));
-            SpeakerAngleMap.put(new InterpolatingDouble(2.5), new InterpolatingDouble(31.36));
-            SpeakerAngleMap.put(new InterpolatingDouble(3.0), new InterpolatingDouble(25.4));
-            SpeakerAngleMap.put(new InterpolatingDouble(3.5), new InterpolatingDouble(14.28));
-            SpeakerAngleMap.put(new InterpolatingDouble(4.0), new InterpolatingDouble(12.32));
-            SpeakerAngleMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(8.64));
-            SpeakerAngleMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(8.12));
-            SpeakerAngleMap.put(new InterpolatingDouble(5.5), new InterpolatingDouble(0.0));
+            SpeakerAngleMap.put(new InterpolatingDouble(1.3), new InterpolatingDouble(26.5));
+            SpeakerAngleMap.put(new InterpolatingDouble(2.31), new InterpolatingDouble(16.0));
+            SpeakerAngleMap.put(new InterpolatingDouble(3.26), new InterpolatingDouble(7.75));
+            SpeakerAngleMap.put(new InterpolatingDouble(3.563), new InterpolatingDouble(7.75));
+
+            SpeakerAngleMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(2.75));
+            SpeakerAngleMap.put(new InterpolatingDouble(5.2), new InterpolatingDouble(1.0));
+
+
+
+       
         }
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> LobAngleMap = new InterpolatingTreeMap<>();
         static {
@@ -269,7 +271,7 @@ public class Constants {
                 Rotation2d.fromDegrees(0));
 
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);
-        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(16.5);
+        public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(23);
 
         public static final double IMAGE_CAPTURE_LATENCY = 11.0;
        
@@ -294,7 +296,7 @@ public class Constants {
     
 public static final class FieldConstants {
 
-    public final static double kSpeakerHeight = 0;
+    public final static double kSpeakerHeight = 2.07;
     
          public static double[] reflect(double xs[]) {
             for(int i =0; i<xs.length; i++){
@@ -312,7 +314,7 @@ public static final class FieldConstants {
 
         public static Pose2d getAmpPose() {
             if(DriverStation.getAlliance().get().equals(Alliance.Red)){
-            return new Pose2d(16.5-1.79,8.19,new Rotation2d());
+            return new Pose2d(16.5,8.19,new Rotation2d());
             }
             return new Pose2d(1.79,8.19,new Rotation2d());
         }
@@ -321,7 +323,7 @@ public static final class FieldConstants {
   
     public static Pose2d getSpeakerPose(){
         if(DriverStation.getAlliance().get().equals(Alliance.Red)){
-            return new Pose2d(16.28,5.56,new Rotation2d());
+            return new Pose2d(16.5,5.56,new Rotation2d());
         }
         return new Pose2d(16.6
         -16.28,5.56,new Rotation2d());

@@ -24,10 +24,8 @@ public class AimingPlanner {
     private InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> mShotTimeMap = Constants.ShooterConstants.SHOT_TRAVEL_TIME_TREE_MAP;
 
     private Pose2d mFieldToSpeaker;
-    private Optional<VisionUpdate> mVisionUpdate;
     private AimingRequest mAimingRequest;
     private boolean isAimed = false;
-    private double lastVisionTimestamp;
 
     public enum AimingRequest {
         SPEAKER,
@@ -45,7 +43,6 @@ public class AimingPlanner {
             AimingRequest request, Optional<VisionUpdate> visionUpdate, HeadingController headingController,
             Twist2d currentVelocity) {
         Pose2d targetPose = new Pose2d();
-        mVisionUpdate = visionUpdate;
         mAimingRequest = request;
         switch (mAimingRequest) {
             case SPEAKER:

@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.uni.frc.Ports;
+import com.uni.frc.Constants.ShooterConstants;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.lib.TalonConfigs;
 
@@ -16,7 +17,7 @@ import com.uni.lib.TalonConfigs;
    private TalonFX shooterMotor2 = new TalonFX(Ports.shooter2, "Minivore");
    public State currentState = State.IDLE;
    private TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
-   private double spinMultiplier = .7;
+   private double spinMultiplier = ShooterConstants.SPIN;
    public static Shooter instance = null;
 
    public static Shooter getInstance() {
@@ -132,7 +133,7 @@ import com.uni.lib.TalonConfigs;
     return new Request(){
       @Override
       public boolean isFinished() {
-          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble())>(80*mPeriodicIO.driveDemand-.15) ;
+          return Math.abs(shooterMotor1.getVelocity().getValueAsDouble())>(80*mPeriodicIO.driveDemand) ;
       }
     };
    }

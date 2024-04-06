@@ -36,6 +36,8 @@ import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.frc.subsystems.Vision.ObjectLimeLight;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight;
 import com.uni.frc.subsystems.gyros.Gyro;
+import com.uni.lib.geometry.Pose2d;
+import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.motion.PathStateGenerator;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -138,9 +140,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     swerve = SwerveDrive.getInstance();
     // swerve.fieldzeroSwerve();
     swerve.zeroModules();
-    // RobotState.getInstance().reset(Timer.getFPGATimestamp(), new Pose2d(16.38));
-
-
+    RobotStateEstimator.getInstance().resetOdometry(new Pose2d(15.18,5.48,Rotation2d.kIdentity));
 
   }
 

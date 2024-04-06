@@ -12,7 +12,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 public class M6 extends AutoBase {
     SuperStructure s = SuperStructure.getInstance();
     SwerveDrive mSwerve = SwerveDrive.getInstance();
-    double initRotation = 0;
+    double initRotation = 1;
     PathPlannerPath path = PathPlannerPath.fromPathFile("M6");
     
     PathPlannerTrajectory trajectory = path.getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
@@ -23,7 +23,7 @@ public class M6 extends AutoBase {
         s.setState(SuperState.AUTO);
         Shooter.getInstance().setPercent(0.8);
         s.setContinuousShootState(false);
-        s.setPivotState(60);
+        s.setPivotState(26.5);
         s.waitState(0.2, false);
 
         s.shootState(false);

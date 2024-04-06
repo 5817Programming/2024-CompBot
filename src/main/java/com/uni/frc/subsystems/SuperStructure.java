@@ -8,21 +8,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.Constants;
 import com.uni.frc.Constants.ShooterConstants;
-import com.uni.frc.Planners.AutoAlignPointSelector;
 import com.uni.frc.Planners.DriveMotionPlanner;
 import com.uni.frc.Planners.ShootingUtils;
 import com.uni.frc.Planners.ShootingUtils.ShootingParameters;
 import com.uni.frc.subsystems.Lights.Color;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.frc.subsystems.Requests.RequestList;
-import com.uni.frc.subsystems.Shooter.State;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.frc.subsystems.Swerve.SwerveDrive.TrajectoryMode;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight;
@@ -208,7 +204,6 @@ public class SuperStructure extends Subsystem {
                     case FIRING:
                         if (modeChanged) {
                             shootState(true);
-                            System.out.println("ran");
                         }
                         prepareShooterSetpoints(timestamp, manual);
                         break;
@@ -389,7 +384,7 @@ public class SuperStructure extends Subsystem {
         ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
         Logger.recordOutput("Desired Pivot Angle", shootingParameters.compensatedDesiredPivotAngle);
         mShooter.conformToState(Shooter.State.SHOOTING);
-        mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle-5);
+        mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle-1);
         mShooter.setSpin(Constants.ShooterConstants.SPIN);
     }
 
@@ -477,7 +472,7 @@ public class SuperStructure extends Subsystem {
         double kShotTime = Constants.ShooterConstants.kShotTime;
 
         Pose2d speakerPose = Constants.getSpeakerPose();
-
+        Logger.recordOutput("speakerPose", speakerPose.toWPI());
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = ShootingUtils
                 .getPivotMap(lob);
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> velocityMap = ShootingUtils
@@ -711,6 +706,7 @@ public class SuperStructure extends Subsystem {
     }
     public void offsetPivot(double offset) {
         pivotOffset += offset;
+        Logger.recordOutput("Pivot Offset", pivotOffset);
     }
 
     public void waitState(double waitTime, boolean Override) {

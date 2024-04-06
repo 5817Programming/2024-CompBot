@@ -44,10 +44,10 @@ public class Controls {
 
         s.setPieceAim(Driver.BButton.isActive());
 
-        if(CoDriver.DpadUp.isPressed())
-            s.offsetPivot(.5);
-        if(CoDriver.DpadDown.isPressed())
-            s.offsetPivot(-.5);
+        if(Driver.DpadUp.isPressed())
+            s.offsetPivot(.25);
+        if(Driver.DpadDown.isPressed())
+            s.offsetPivot(-.25);
 
         // if(Driver.RightBumper.isActive()){
         //     s.intakePercent(-percent);

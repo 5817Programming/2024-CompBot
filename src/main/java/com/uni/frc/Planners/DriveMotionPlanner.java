@@ -14,7 +14,6 @@ import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.RobotStateEstimator;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.frc.subsystems.Vision.ObjectLimeLight.VisionObjectUpdate;
-import com.uni.frc.subsystems.Vision.OdometryLimeLight.VisionUpdate;
 import com.uni.frc.subsystems.gyros.Pigeon;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
@@ -42,7 +41,7 @@ public class DriveMotionPlanner {
     PathStateGenerator mPathStateGenerator;
     PathGenerator mPathGenerator;
     PID2d OdometryPID = new PID2d(new SynchronousPIDF(.3, 0, 0), new SynchronousPIDF(.3, 0, 0));
-    SynchronousPIDF mTrackingPID = new SynchronousPIDF(.1 ,0 ,0);
+    SynchronousPIDF mTrackingPID = new SynchronousPIDF(.005 ,0 ,0);
     double lastTimestamp = 0;
     public static DriveMotionPlanner instance = null;
 
@@ -135,9 +134,10 @@ public class DriveMotionPlanner {
         Translation2d visionCompensation = Translation2d.identity();
         if(!visionUpdate.isEmpty()){
             double yComp = mTrackingPID.calculate(-visionUpdate.get().getCameraToTarget().x(), dt);
-            visionCompensation = new Translation2d(0,yComp).rotateBy(currentPose.getRotation());
+            visionCompensation = new Translation2d(0,-yComp).rotateBy(currentPose.getRotation().inverse());
         }
         Translation2d targetTranslation = targetFollowTranslation.translateBy(visionCompensation);
+        Logger.recordOutput("desiredPose", Pose2d.fromTranslation(targetTranslation).toWPI());
         OdometryPID.x().setOutputRange(-1, 1);
         OdometryPID.y().setOutputRange(-1, 1);
         double xError = OdometryPID.x().calculate(targetTranslation.x() - currentPose.getTranslation().x(), dt);

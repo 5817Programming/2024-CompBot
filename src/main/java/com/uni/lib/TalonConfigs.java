@@ -46,13 +46,13 @@ public class TalonConfigs {
 
     public static TalonFXConfiguration pivotConfigs() {
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
-        driveConfigs.Slot0.kV = -10;
+        driveConfigs.Slot0.kV = -20;
         driveConfigs.Slot0.kS = 0;
         driveConfigs.Slot0.kA = 0;
-        driveConfigs.Slot0.kP = -10;
+        driveConfigs.Slot0.kP = -12;
         driveConfigs.Slot0.kI = 0;
         driveConfigs.Slot0.kD = 0;
-        driveConfigs.Slot0.kG = -0.15;
+        driveConfigs.Slot0.kG = -0.13;
         driveConfigs.Feedback.FeedbackRemoteSensorID = Ports.PivotEncoder;
         driveConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         
