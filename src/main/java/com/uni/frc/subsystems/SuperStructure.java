@@ -570,11 +570,11 @@ public class SuperStructure extends Subsystem {
                     mIntake.stateRequest(Intake.State.INTAKING),
                     mIndexer.stateRequest(Indexer.State.RECIEVING),
                     mIndexer.hasPieceRequest(timeout),
+                    mDrive.setModeRequest(TrajectoryMode.FOLLOWING),
                     mLights.setColorRequest(Color.INTAKED),
                     mIndexer.stateRequest(Indexer.State.OFF),
                     mIntake.stateRequest(Intake.State.OFF),
-                    mIndexer.setHasPieceRequest(true),
-                    mDrive.setModeRequest(TrajectoryMode.FOLLOWING))
+                    mIndexer.setHasPieceRequest(true))
                     , false);
         queue(request);
 
@@ -592,8 +592,7 @@ public class SuperStructure extends Subsystem {
                     mLights.setColorRequest(Color.SHOOTING),
                     mIndexer.stateRequest(Indexer.State.OFF),
                     mIntake.stateRequest(Intake.State.OFF),
-                    mIndexer.setHasPieceRequest(false),
-                    mDrive.setModeRequest(TrajectoryMode.FOLLOWING))
+                    mIndexer.setHasPieceRequest(false))
                     , false);
         queue(request);
     }
