@@ -136,11 +136,12 @@ public class DriveMotionPlanner {
         }
         return new Translation2d(xError, -yError);
     }
+
     public Pose2d getTranslation2dToTrack(double timestamp, Pose2d notePose) {
         double dt = timestamp - lastTimestamp;
         Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestKalmanPose()
                 .getTranslation();
-
+        //flkeawjfaw
         if(notePose.getTranslation().translateBy(currentRobotPositionFromStart).norm() > .3|| noteTracked)
             return new Pose2d(getTranslation2dToFollow(timestamp), getTargetHeading());
         OdometryPID.x().setOutputRange(-1, 1);
