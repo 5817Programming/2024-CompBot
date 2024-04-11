@@ -46,7 +46,7 @@ public class AimingPlanner {
         mAimingRequest = request;
         switch (mAimingRequest) {
             case SPEAKER:
-                mFieldToSpeaker = Constants.getSpeakerPose();
+                mFieldToSpeaker = Constants.getSpeakerAimingPose();
                 break;
             case LOB:
                 mFieldToSpeaker = Constants.getLobPose();

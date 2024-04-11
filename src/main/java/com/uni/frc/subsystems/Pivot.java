@@ -94,7 +94,7 @@ import com.uni.frc.Ports;
 
     public boolean atTarget(){
       System.out.println(Math.abs(mPeriodicIO.rotationDemand -mPeriodicIO.rotationPosition));
-      return Math.abs(mPeriodicIO.rotationDemand -mPeriodicIO.rotationPosition) <.01;
+      return Math.abs(mPeriodicIO.rotationDemand -mPeriodicIO.rotationPosition) <2;
     }
 
     public void conformToState(State state) {
