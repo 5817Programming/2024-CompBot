@@ -166,18 +166,10 @@ public class RobotState {
             double visionTimestamp = mLatestVisionUpdate.get().getTimestamp();
             
             Pose2d odomToVehicle = getPoseFromOdom(visionTimestamp);
-            //Rotating Camera by Yaw Offset
-            Pose2d cameraToTag = Pose2d.fromTranslation(mLatestVisionUpdate.get().getCameraToTarget().rotateBy(Constants.VisionConstants.cameraYawOffset));
-            if(DriverStation.getAlliance().get().equals(Alliance.Red)){
-             cameraToTag = cameraToTag.rotateBy(Rotation2d.identity().flip());
-            }
-            //Getting Vehicle to Tag in Field Frame
-            Pose2d vehicleToTag = Pose2d.fromTranslation(Constants.VisionConstants.ROBOT_TO_CAMERA.transformBy(cameraToTag).getTranslation().rotateBy(odomToVehicle.getRotation().inverse().flip()));
 
-            //Getting Field to Vehicle via Vehicle to Tag
-            Pose2d visionFieldToVehicle = mLatestVisionUpdate.get().getFieldToTag().transformBy(vehicleToTag.inverse()).rotateBy(odomToVehicle.getRotation().inverse().flip());
+            Pose2d visionFieldToVehicle = visionUpdate.getPose();
 
-            if (!mPoseAcceptor.shouldAcceptVision(mLatestVisionUpdate.get().getTimestamp(), visionFieldToVehicle, vehicleToTag, MeasuredVelocity)) {
+            if (!mPoseAcceptor.shouldAcceptVision(mLatestVisionUpdate.get().getTimestamp(), visionFieldToVehicle, MeasuredVelocity)) {
                 return;
             }
 

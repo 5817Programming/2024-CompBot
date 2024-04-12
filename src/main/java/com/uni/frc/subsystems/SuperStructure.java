@@ -271,11 +271,13 @@ public class SuperStructure extends Subsystem {
                         mPivot.conformToState(Pivot.State.INTAKING);
                         mShooter.conformToState(Shooter.State.IDLE);
                     }
-                    mArm.stateRequest(Arm.State.MAXDOWN);
+                    mArm.conformToState(Arm.State.MAXDOWN);
                 }else{
                     if(inAmpZone(timestamp) && mIndexer.hasPiece()){
                         mArm.conformToState(Arm.State.PARTIAL);
-                    }
+                    }else
+                        mArm.conformToState(Arm.State.MAXDOWN);
+
                     if(inShootZone(timestamp))
                         mPivot.conformToState(Pivot.State.AMP);
                     else
@@ -446,7 +448,7 @@ public class SuperStructure extends Subsystem {
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> shotTimeMap = Constants.ShooterConstants.SHOT_TRAVEL_TIME_TREE_MAP;
         double kShotTime = Constants.ShooterConstants.kShotTime;
 
-        Pose2d speakerPose = Constants.getSpeakerPose();
+        Pose2d speakerPose = Constants.getSpeakerPivotPose();
 
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = ShootingUtils
                 .getPivotMap(false);
@@ -471,7 +473,7 @@ public class SuperStructure extends Subsystem {
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> shotTimeMap = Constants.ShooterConstants.SHOT_TRAVEL_TIME_TREE_MAP;
         double kShotTime = Constants.ShooterConstants.kShotTime;
 
-        Pose2d speakerPose = Constants.getSpeakerPose();
+        Pose2d speakerPose = Constants.getSpeakerPivotPose();
         Logger.recordOutput("speakerPose", speakerPose.toWPI());
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = ShootingUtils
                 .getPivotMap(lob);
