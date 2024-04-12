@@ -10,6 +10,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
+import com.uni.frc.Constants.VisionConstants;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.RobotStateEstimator;
 import com.uni.frc.subsystems.Requests.Request;
@@ -31,12 +32,15 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 public class DriveMotionPlanner {
 
     boolean useAllianceColor;
+    boolean noteTracked = false;
     private Translation2d targetFollowTranslation = new Translation2d();
     private Rotation2d targetHeading = new Rotation2d();
+    private double lastNoteTimestamp = 0;
 
     boolean trajectoryStarted = false;
     boolean trajectoryFinished = false;
     Pose2d drivingpose = new Pose2d();
+    Pose2d notePose = Pose2d.identity();
     PathPlannerTrajectory trajectoryDesired;
     PathStateGenerator mPathStateGenerator;
     PathGenerator mPathGenerator;
@@ -71,6 +75,10 @@ public class DriveMotionPlanner {
         if(DriverStation.getAlliance().get().equals(Alliance.Red))
         Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).flip().inverse().getDegrees());
 
+    }
+
+    public void resetNoteTracking(){
+        noteTracked = false;
     }
 
     public void setTrajectoryOnTheFly(PathPlannerTrajectory trajectory, boolean useAllianceColor) {
@@ -128,27 +136,27 @@ public class DriveMotionPlanner {
         }
         return new Translation2d(xError, -yError);
     }
-    public Translation2d getTranslation2dToTrack(double timestamp, Optional<VisionObjectUpdate> visionUpdate) {
+
+    public Pose2d getTranslation2dToTrack(double timestamp, Pose2d notePose) {
         double dt = timestamp - lastTimestamp;
-        Pose2d currentPose = RobotState.getInstance().getLatestKalmanPose();
-        Translation2d visionCompensation = Translation2d.identity();
-        if(!visionUpdate.isEmpty()){
-            double yComp = mTrackingPID.calculate(-visionUpdate.get().getCameraToTarget().x(), dt);
-            visionCompensation = new Translation2d(0,-yComp).rotateBy(currentPose.getRotation().inverse());
-        }
-        Translation2d targetTranslation = targetFollowTranslation.translateBy(visionCompensation);
-        Logger.recordOutput("desiredPose", Pose2d.fromTranslation(targetTranslation).toWPI());
+        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestKalmanPose()
+                .getTranslation();
+        //flkeawjfaw
+        if(notePose.getTranslation().translateBy(currentRobotPositionFromStart).norm() > .3|| noteTracked)
+            return new Pose2d(getTranslation2dToFollow(timestamp), getTargetHeading());
         OdometryPID.x().setOutputRange(-1, 1);
         OdometryPID.y().setOutputRange(-1, 1);
-        double xError = OdometryPID.x().calculate(targetTranslation.x() - currentPose.getTranslation().x(), dt);
-        double yError = OdometryPID.y().calculate(targetTranslation.y() - currentPose.getTranslation().y(), dt);
+        Logger.recordOutput("Desired Pose", Pose2d.fromTranslation(targetFollowTranslation).toWPI());
+        double xError = OdometryPID.x().calculate(notePose.getTranslation().x() - currentRobotPositionFromStart.x(), dt);
+        double yError = OdometryPID.y().calculate(notePose.getTranslation().y() - currentRobotPositionFromStart.y(), dt);
+
+        Rotation2d targetAngle = notePose.getTranslation().translateBy(currentRobotPositionFromStart.getTranslation().inverse()).getAngle().flip();
         lastTimestamp = timestamp;
-        if (((Math.abs(xError) + Math.abs(yError)) / 2 < .05 && PathStateGenerator.getInstance().isFinished())
-                || trajectoryFinished) {
-            trajectoryFinished = true;
-            return new Translation2d();
+        
+        if ((Math.abs(xError) + Math.abs(yError)) / 2 < .05) {
+            noteTracked = true;
         }
-        return new Translation2d(xError, -yError);
+        return new Pose2d(xError, yError, targetAngle);
     }
     public void generateAndPrepareTrajectory(Pose2d startPose, Pose2d endPose, ChassisSpeeds currentVelocity,
             boolean useAllianceColor) {

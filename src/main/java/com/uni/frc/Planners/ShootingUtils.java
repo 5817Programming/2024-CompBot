@@ -123,7 +123,7 @@ public class ShootingUtils {
         if(manual)
             compensatedPivotAngle = 55;
         else{
-            compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value+pivotOffset;
+            compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value+pivotOffset+2.52;
             Logger.recordOutput("Desired Pivot Angle", compensatedPivotAngle);
         }
         double desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;

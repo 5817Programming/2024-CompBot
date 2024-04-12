@@ -18,6 +18,7 @@ import com.uni.frc.Planners.AutoAlignMotionPlanner;
 import com.uni.frc.Planners.DriveMotionPlanner;
 import com.uni.frc.Planners.TargetPiecePlanner;
 import com.uni.frc.Planners.AimingPlanner.AimingRequest;
+import com.uni.frc.subsystems.NoteState;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.Subsystem;
 import com.uni.frc.subsystems.Requests.Request;
@@ -61,7 +62,6 @@ public class SwerveDrive extends Subsystem {
     Pigeon gyro;
     OdometryLimeLight odometryVision;
     ObjectLimeLight objectVision;
-    Logger logger;
     Pose2d drivingPose;
 
     Pose2d poseMeters = new Pose2d();
@@ -87,6 +87,7 @@ public class SwerveDrive extends Subsystem {
     AimingPlanner mAimingPlanner;
     TargetPiecePlanner mTargetPiecePlanner;
     RobotState robotState;
+    NoteState mNoteState;
     HeadingController headingController = new HeadingController();
 
 
@@ -94,6 +95,7 @@ public class SwerveDrive extends Subsystem {
     double bestDistance;
     boolean lob = false;
     boolean stateHasChanged = false;
+    boolean modeHasChanged = false;
     double lastTimeStamp = 0;
 
 
@@ -162,7 +164,7 @@ public class SwerveDrive extends Subsystem {
 
     public void setMode(TrajectoryMode desiredMode){
         if(desiredMode != currentMode)
-            stateHasChanged = true;
+            modeHasChanged = true;
         currentMode = desiredMode;
     }
     public SwerveKinematics getKinematics(){
@@ -336,7 +338,11 @@ public class SwerveDrive extends Subsystem {
 
                         break;
                     case TRACKING:
-                        translationVector = mDriveMotionPlanner.getTranslation2dToTrack(timeStamp, objectVision.getLatestVisionUpdate());
+                        if(modeHasChanged)
+                            mDriveMotionPlanner.resetNoteTracking();
+                        Pose2d targetPose = mDriveMotionPlanner.getTranslation2dToTrack(timeStamp, mNoteState.getNotePose(timeStamp));
+                        translationVector = targetPose.getTranslation();
+                        headingController.setTargetHeading(targetPose.getRotation().inverse());
                         break;
                 }
                         rotationCorrection = headingController.getRotationCorrection(getRobotHeading().inverse().flip(), timeStamp);
