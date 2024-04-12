@@ -39,7 +39,7 @@ import static org.opencv.core.CvType.CV_64FC1;
 public class OdometryLimeLight extends Subsystem {
   static {
     System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-  }q
+  }
   public static OdometryLimeLight instance = null;
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-up");
   PeriodicIO mPeriodicIO = new PeriodicIO();

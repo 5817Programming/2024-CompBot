@@ -18,7 +18,6 @@ import com.uni.frc.Planners.AutoAlignMotionPlanner;
 import com.uni.frc.Planners.DriveMotionPlanner;
 import com.uni.frc.Planners.TargetPiecePlanner;
 import com.uni.frc.Planners.AimingPlanner.AimingRequest;
-import com.uni.frc.subsystems.NoteState;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.Subsystem;
 import com.uni.frc.subsystems.Requests.Request;
@@ -87,7 +86,6 @@ public class SwerveDrive extends Subsystem {
     AimingPlanner mAimingPlanner;
     TargetPiecePlanner mTargetPiecePlanner;
     RobotState robotState;
-    NoteState mNoteState;
     HeadingController headingController = new HeadingController();
 
 
@@ -340,7 +338,7 @@ public class SwerveDrive extends Subsystem {
                     case TRACKING:
                         if(modeHasChanged)
                             mDriveMotionPlanner.resetNoteTracking();
-                        Pose2d targetPose = mDriveMotionPlanner.getTranslation2dToTrack(timeStamp, mNoteState.getNotePose(timeStamp));
+                        Pose2d targetPose = new Pose2d();
                         translationVector = targetPose.getTranslation();
                         headingController.setTargetHeading(targetPose.getRotation().inverse());
                         break;
