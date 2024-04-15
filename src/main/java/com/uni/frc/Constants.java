@@ -144,10 +144,10 @@ public class Constants {
     public static final double kMaxAngularAccelerationRadiansPerSecondSquared = kMaxAccelerationMetersPerSecondSquared /
     Math.hypot(mRobotBaseLength / 2.0, mRobotBaseWidth / 2.0);
 
-    public static final double kFrontRightStartingEncoderPosition = isCompbot ? -166.025 : -86; // -354.950352
-    public static final double kFrontLeftStartingEncoderPosition = isCompbot ? -141.5 : -160; // -263.094811
-    public static final double kRearLeftStartingEncoderPosition = isCompbot ? -107.4: -355; // -121.094031
-    public static final double kRearRightStartingEncoderPosition =isCompbot ? -156.2: -265; // -355.170825
+    public static final double kFrontRightStartingEncoderPosition = isCompbot ? -164.025 : -86; // -354.950352
+    public static final double kFrontLeftStartingEncoderPosition = isCompbot ? -154.5 : -160; // -263.094811
+    public static final double kRearLeftStartingEncoderPosition = isCompbot ? -108.4: -355; // -121.094031
+    public static final double kRearRightStartingEncoderPosition =isCompbot ? -155.2: -265; // -355.170825
 
 
 
@@ -218,8 +218,8 @@ public class Constants {
         public static final double TRAP = 0;
         public static final double TRANSFER = 0;
         public static final double SHOOTING = 0;
-        public static final double MAX_UP = 55;
-        public static final double MAX_DOWN = 0;
+        public static final double MAX_UP = 30;
+        public static final double MAX_DOWN = 3;
         public static final double INTAKING = 10;
 
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SpeakerAngleMap = new InterpolatingTreeMap<>();

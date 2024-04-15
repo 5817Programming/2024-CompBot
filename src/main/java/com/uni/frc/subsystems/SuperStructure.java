@@ -397,8 +397,8 @@ public class SuperStructure extends Subsystem {
         mShooter.setSpin(ShooterConstants.SPIN);
         }
         else{
-        mShooter.setPercent(shootingParameters.compensatedDesiredShooterSpeed);
-        mShooter.setSpin(1);
+        mShooter.setPercent(.6);
+        mShooter.setSpin(1.2);
         }
         mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle);
         mIndexer.setPiece(false);
