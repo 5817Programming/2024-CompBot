@@ -13,7 +13,7 @@ public class S4 extends AutoBase {
     SuperStructure s = SuperStructure.getInstance();
     SwerveDrive mSwerve = SwerveDrive.getInstance();
     double initRotation = -60;
-    PathPlannerPath path = PathPlannerPath.fromPathFile("S4");
+    PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("S4");
     
     PathPlannerTrajectory trajectory = path.getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
 
@@ -30,6 +30,6 @@ public class S4 extends AutoBase {
         s.setContinuousShootState(true);
 
         s.trajectoryState(trajectory, initRotation);
-        registerTrajectoryEvents("S4");
+        registerTrajectoryEvents("S4",true);
 
     }}

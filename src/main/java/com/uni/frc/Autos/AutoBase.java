@@ -63,15 +63,20 @@ public abstract class AutoBase {
     }
 
 
-    public void registerTrajectoryEvents(String pathName){
-        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+    public void registerTrajectoryEvents(String pathName, boolean choreo){
+        String name = choreo ? "choreo/" + pathName + ".traj" : "pathPlanner/paths" + pathName + ".path";
+        PathPlannerPath path;
+        if(choreo){
+            path = PathPlannerPath.fromChoreoTrajectory(pathName);
+        }else{
+            path = PathPlannerPath.fromPathFile(pathName);
+        }
         List<EventMarker> eventMarkers = new ArrayList<>();
         var allPoints = path.getAllPathPoints();
-        try (BufferedReader br =
+    try (BufferedReader br =
         new BufferedReader(
             new FileReader(
-                new File(
-                    Filesystem.getDeployDirectory(), "pathplanner/paths/" + pathName + ".path")))) {
+                new File(Filesystem.getDeployDirectory(), name)))) {
       StringBuilder fileContentBuilder = new StringBuilder();
       String line;
       while ((line = br.readLine()) != null) {
@@ -126,12 +131,12 @@ public abstract class AutoBase {
     public void updateAuto(double timestamp){
         if(!stopPoses.isEmpty()){
                 if (DriverStation.getAlliance().get().equals(Alliance.Blue)){
-                    if(stopPoses.get(0).getTranslation().translateBy(mRobotState.getKalmanPose(timestamp).getTranslation().inverse()).norm() < 0.5){
+                    if(stopPoses.get(0).getTranslation().translateBy(PathStateGenerator.getInstance().getDesiredPose2d(true).getTranslation().inverse()).norm() < 0.1){
                         mPathStateGenerator.stopTimer();
                         stopPoses.remove(0);
                     }
                 }else{
-                    if(stopPoses.get(0).getTranslation().reflect().translateBy(mRobotState.getKalmanPose(timestamp).getTranslation().inverse()).norm() < 0.5){
+                    if(stopPoses.get(0).getTranslation().reflect().translateBy(PathStateGenerator.getInstance().getDesiredPose2d(true).getTranslation().inverse()).norm() < 0.1){
                         mPathStateGenerator.stopTimer();
                         stopPoses.remove(0);
                     }

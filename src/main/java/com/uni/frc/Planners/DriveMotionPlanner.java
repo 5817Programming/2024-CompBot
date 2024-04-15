@@ -4,17 +4,13 @@
 
 package com.uni.frc.Planners;
 
-import java.util.Optional;
-
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
-import com.uni.frc.Constants.VisionConstants;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.RobotStateEstimator;
 import com.uni.frc.subsystems.Requests.Request;
-import com.uni.frc.subsystems.Vision.ObjectLimeLight.VisionObjectUpdate;
 import com.uni.frc.subsystems.gyros.Pigeon;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
@@ -35,7 +31,6 @@ public class DriveMotionPlanner {
     boolean noteTracked = false;
     private Translation2d targetFollowTranslation = new Translation2d();
     private Rotation2d targetHeading = new Rotation2d();
-    private double lastNoteTimestamp = 0;
 
     boolean trajectoryStarted = false;
     boolean trajectoryFinished = false;

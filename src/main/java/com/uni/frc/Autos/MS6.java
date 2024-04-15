@@ -13,7 +13,7 @@ public class MS6 extends AutoBase {
     SuperStructure s = SuperStructure.getInstance();
     SwerveDrive mSwerve = SwerveDrive.getInstance();
     double initRotation = 0;
-    PathPlannerPath path = PathPlannerPath.fromPathFile("M6 Staggered");
+    PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("M6 Staggered");
     
     PathPlannerTrajectory trajectory = path.getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
 
@@ -30,6 +30,6 @@ public class MS6 extends AutoBase {
         s.setContinuousShootState(true);
 
         s.trajectoryState(trajectory, initRotation);
-        registerTrajectoryEvents("M6 Staggered");
+        registerTrajectoryEvents("M6 Staggered",true);
 
     }}

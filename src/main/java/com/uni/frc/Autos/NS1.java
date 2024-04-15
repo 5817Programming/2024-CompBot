@@ -12,7 +12,7 @@ public class NS1 extends AutoBase {
     SuperStructure s = SuperStructure.getInstance();
     SwerveDrive mSwerve = SwerveDrive.getInstance();
     double initRotation = 60;
-    PathPlannerPath path = PathPlannerPath.fromPathFile("NS1");
+    PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("NS1");
     PathPlannerTrajectory trajectory = path.getTrajectory(new ChassisSpeeds(), Rotation2d.fromDegrees(initRotation));
 
     @Override
@@ -29,7 +29,7 @@ public class NS1 extends AutoBase {
         s.setContinuousShootState(true);
 
         s.trajectoryState(trajectory, initRotation);
-        registerTrajectoryEvents("NS1");
+        registerTrajectoryEvents("NS1",true);
     }
 
 }

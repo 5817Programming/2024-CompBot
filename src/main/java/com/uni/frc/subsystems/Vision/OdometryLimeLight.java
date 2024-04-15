@@ -19,8 +19,6 @@ import com.uni.frc.Field.FieldLayout;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.Subsystem;
 import com.uni.frc.subsystems.Requests.Request;
-import com.uni.frc.subsystems.Swerve.SwerveDrive;
-import com.uni.frc.subsystems.gyros.Gyro;
 import com.uni.frc.subsystems.gyros.Pigeon;
 import com.uni.lib.Vision.LimelightHelpers;
 import com.uni.lib.Vision.TargetInfo;
@@ -110,7 +108,6 @@ public class OdometryLimeLight extends Subsystem {
     Pose2d mt2 = new Pose2d(LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-up").pose);
     
 
-    int tagId = mPeriodicIO.tagId;
 
     if (mPeriodicIO.seesTarget) {
       if (mt2 != Pose2d.identity()) {
