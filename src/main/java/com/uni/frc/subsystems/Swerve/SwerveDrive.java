@@ -16,8 +16,8 @@ import com.uni.frc.Ports;
 import com.uni.frc.Planners.AimingPlanner;
 import com.uni.frc.Planners.AutoAlignMotionPlanner;
 import com.uni.frc.Planners.DriveMotionPlanner;
-import com.uni.frc.Planners.TargetPiecePlanner;
 import com.uni.frc.Planners.AimingPlanner.AimingRequest;
+import com.uni.frc.subsystems.NoteState;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.Subsystem;
 import com.uni.frc.subsystems.Requests.Request;
@@ -84,8 +84,8 @@ public class SwerveDrive extends Subsystem {
     AutoAlignMotionPlanner mAutoAlignMotionPlanner;
     DriveMotionPlanner mDriveMotionPlanner;
     AimingPlanner mAimingPlanner;
-    TargetPiecePlanner mTargetPiecePlanner;
-    RobotState robotState;
+    RobotState mRobotState;
+    NoteState mNoteState;
     HeadingController headingController = new HeadingController();
 
 
@@ -124,11 +124,11 @@ public class SwerveDrive extends Subsystem {
         gyro = Pigeon.getInstance();
         odometryVision = OdometryLimeLight.getInstance();
         objectVision = ObjectLimeLight.getInstance();
-        robotState = RobotState.getInstance();
+        mRobotState = RobotState.getInstance();
         mDriveMotionPlanner =  DriveMotionPlanner.getInstance();
         mAutoAlignMotionPlanner = new AutoAlignMotionPlanner();
         mAimingPlanner = new AimingPlanner();
-        mTargetPiecePlanner = new TargetPiecePlanner();
+        mNoteState = NoteState.getInstance();
 
     }
 
@@ -208,7 +208,7 @@ public class SwerveDrive extends Subsystem {
 
     public void setAlignment(Pose2d pose){
         mAutoAlignMotionPlanner.setTargetPoint(pose);
-        robotState.setDisplaySetpointPose(pose);
+        mRobotState.setDisplaySetpointPose(pose);
     }
 
     public void setLob(boolean newlob){
@@ -293,7 +293,7 @@ public class SwerveDrive extends Subsystem {
     @Override
     public void update() {
         double timeStamp = Timer.getFPGATimestamp();
-        poseMeters = robotState.getKalmanPose(timeStamp);
+        poseMeters = mRobotState.getKalmanPose(timeStamp);
         drivingPose = Pose2d.fromRotation(getRobotHeading());
         double rotationCorrection;
         switch (currentState) {
@@ -349,34 +349,41 @@ public class SwerveDrive extends Subsystem {
                                 robotCentric));
                 break;
             case TARGETOBJECT:
-                rotationCorrection = mTargetPiecePlanner.updateAiming(timeStamp, objectVision.getLatestVisionUpdate(), headingController, getRobotHeading());
+                rotationCorrection = mAimingPlanner.updateAiming(
+                        timeStamp,
+                        RobotState.getInstance().getLatestPoseFromOdom().getValue(),
+                        Pose2d.fromTranslation(RobotState.getInstance().getLatestVisionPoseComponent()),
+                        AimingRequest.SPEAKER,
+                        mNoteState.getNotePose(timeStamp),
+                        headingController,
+                        mRobotState.getSmoothedVelocity());
                 commandModules(
                         inverseKinematics.updateDriveVectors(translationVector.scale(.5),
-                        rotationCorrection*.7+rotationScalar, drivingPose, robotCentric));
+                        rotationCorrection+rotationScalar*.7, drivingPose, robotCentric));
                 break;
             case AIMING:
-            Pose2d demandedAngle;
+            double demandedAngle;
                     if(!lob)
                     demandedAngle = mAimingPlanner.updateAiming(
                         timeStamp,
                         RobotState.getInstance().getLatestPoseFromOdom().getValue(),
                         Pose2d.fromTranslation(RobotState.getInstance().getLatestVisionPoseComponent()),
                         AimingRequest.SPEAKER,
-                        odometryVision.getLatestVisionUpdate(),
+                        Pose2d.identity(),
                         headingController,
-                        robotState.getSmoothedVelocity());
+                        mRobotState.getSmoothedVelocity());
                     else
                        demandedAngle = mAimingPlanner.updateAiming(
                         timeStamp,
                         RobotState.getInstance().getLatestPoseFromOdom().getValue(),
                         Pose2d.fromTranslation(RobotState.getInstance().getLatestVisionPoseComponent()),
                         AimingRequest.LOB,
-                        odometryVision.getLatestVisionUpdate(),
+                        Pose2d.identity(),
                         headingController,
-                        robotState.getSmoothedVelocity());
+                        mRobotState.getSmoothedVelocity());
                 commandModules(
                         inverseKinematics.updateDriveVectors(translationVector.scale(.3),
-                        demandedAngle.getRotation().getDegrees()+rotationScalar, drivingPose, robotCentric));
+                        demandedAngle+rotationScalar, drivingPose, robotCentric));
                 break;
 
             case OFF:
@@ -398,9 +405,9 @@ public class SwerveDrive extends Subsystem {
 
     public ChassisSpeeds updateAutoAlign(){
         final double now = Timer.getFPGATimestamp();
-        var fieldToOdometry = robotState.getAbsoluteVisionPoseComponent(now);
-        var odomToVehicle = robotState.getPoseFromOdom(now);
-        ChassisSpeeds output = mAutoAlignMotionPlanner.updateAutoAlign(now, odomToVehicle, Pose2d.fromTranslation(fieldToOdometry), robotState.getMeasuredVelocity(),headingController, getRobotHeading());
+        var fieldToOdometry = mRobotState.getAbsoluteVisionPoseComponent(now);
+        var odomToVehicle = mRobotState.getPoseFromOdom(now);
+        ChassisSpeeds output = mAutoAlignMotionPlanner.updateAutoAlign(now, odomToVehicle, Pose2d.fromTranslation(fieldToOdometry), mRobotState.getMeasuredVelocity(),headingController, getRobotHeading());
         return output;
     }
 
@@ -502,7 +509,7 @@ public class SwerveDrive extends Subsystem {
             }
         }
         mAutoAlignMotionPlanner.setTargetPoint(targetPoint);
-        robotState.setDisplaySetpointPose(targetPoint);
+        mRobotState.setDisplaySetpointPose(targetPoint);
     }
 
     @Override

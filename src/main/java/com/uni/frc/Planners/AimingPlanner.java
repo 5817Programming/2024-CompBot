@@ -14,6 +14,7 @@ import com.uni.frc.subsystems.Vision.OdometryLimeLight.VisionUpdate;
 import com.uni.lib.HeadingController;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
+import com.uni.lib.geometry.Translation2d;
 import com.uni.lib.geometry.Twist2d;
 import com.uni.lib.util.InterpolatingDouble;
 import com.uni.lib.util.InterpolatingTreeMap;
@@ -30,6 +31,7 @@ public class AimingPlanner {
     public enum AimingRequest {
         SPEAKER,
         LOB,
+        PIECE,
     }
 
     public AimingPlanner() {
@@ -39,8 +41,8 @@ public class AimingPlanner {
         return mAimingRequest;
     }
 
-    public Pose2d updateAiming(double timeStamp, Pose2d currentOdomToRobot, Pose2d visionPoseComponent,
-            AimingRequest request, Optional<VisionUpdate> visionUpdate, HeadingController headingController,
+    public double updateAiming(double timeStamp, Pose2d currentOdomToRobot, Pose2d visionPoseComponent,
+            AimingRequest request, Pose2d notePose, HeadingController headingController,
             Twist2d currentVelocity) {
         Pose2d targetPose = new Pose2d();
         mAimingRequest = request;
@@ -50,6 +52,9 @@ public class AimingPlanner {
                 break;
             case LOB:
                 mFieldToSpeaker = Constants.getLobPose();
+                break;
+            case PIECE:
+                mFieldToSpeaker = notePose;
                 break;
         }
         Logger.recordOutput("aimPose", mAimingRequest);
@@ -63,16 +68,31 @@ public class AimingPlanner {
         Pose2d futureOdomToTargetPoint = poseAtTimeFrame.inverse().transformBy(odomToTargetPoint).inverse();
         Rotation2d targetRotation = futureOdomToTargetPoint.getTranslation().getAngle().inverse();
         targetPose = new Pose2d(futureOdomToTargetPoint.getTranslation(), targetRotation);
-        headingController.setTargetHeading(targetPose.getRotation().inverse());
+
+        switch (mAimingRequest) {
+            case SPEAKER:
+                headingController.setTargetHeading(targetPose.getRotation().inverse());
+                
+                break;
+        
+            case LOB:
+                headingController.setTargetHeading(targetPose.getRotation().inverse());
+                break;
+            
+            case PIECE:
+                if (notePose.getTranslation().distance(Translation2d.identity()) == 0) {
+                    headingController.setTargetHeading(currentOdomToRobot.getRotation().inverse());
+                    break;
+                }
+                headingController.setTargetHeading(targetPose.getRotation().inverse().flip());
+                break;
+        }
         double rotationOutput = headingController.updateRotationCorrection(currentOdomToRobot.getRotation().inverse().rotateBy(-4),
                 timeStamp);
         Logger.recordOutput("aimingoutput", rotationOutput);
         isAimed = headingController.atTarget();
-        targetPose = new Pose2d(
-                targetPose.getTranslation(),
-                Rotation2d.fromDegrees(rotationOutput * 1.75));
+        return rotationOutput;
 
-        return targetPose;
     }
 
     public boolean isAimed() {
