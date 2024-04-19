@@ -61,11 +61,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @Override
   public void robotInit() {
     autos.put("Middle 6", new M6());
-    autos.put("Staggered Middle 6", new MS6());
-    autos.put("Amp 1", new NS1());
-    autos.put("Source 1", new S1());
-    autos.put("Source 4", new S4());
-    autos.put("Amp 1", new NS1());
+
 
     autos.put("1", new Shoot());
 

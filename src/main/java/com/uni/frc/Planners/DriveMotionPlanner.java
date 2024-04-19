@@ -66,9 +66,9 @@ public class DriveMotionPlanner {
         mPathStateGenerator.setTrajectory(trajectory);
         // Pose2d newpose = (mPathStateGenerator.getInitial(trajectory, initRotation, useAllianceColor));
         // RobotStateEstimator.getInstance().resetOdometry(newpose);
-        Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).getDegrees());
+            Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).getDegrees());
         if(DriverStation.getAlliance().get().equals(Alliance.Red))
-        Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).flip().inverse().getDegrees());
+            Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).flip().inverse().getDegrees());
 
     }
 
