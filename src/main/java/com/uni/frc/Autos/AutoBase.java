@@ -22,6 +22,7 @@ import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.lib.ChoreoEventMarker;
+import com.uni.lib.EventMarker;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Translation2d;
 import com.uni.lib.motion.PathStateGenerator;
@@ -121,7 +122,67 @@ public abstract class AutoBase {
         
     
     }
+    public void registerPathEvents(String pathName){
+        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+        List<EventMarker> eventMarkers = new ArrayList<>();
+        var allPoints = path.getAllPathPoints();
+        try (BufferedReader br =
+        new BufferedReader(
+            new FileReader(
+                new File(
+                    Filesystem.getDeployDirectory(), "pathplanner/paths/" + pathName + ".path")))) {
+      StringBuilder fileContentBuilder = new StringBuilder();
+      String line;
+      while ((line = br.readLine()) != null) {
+        fileContentBuilder.append(line);
+      }
 
+      String fileContent = fileContentBuilder.toString();
+      JSONObject json = (JSONObject) new JSONParser().parse(fileContent);
+
+    for (var markerJson : (JSONArray) json.get("eventMarkers")) {
+      eventMarkers.add(EventMarker.fromJson((JSONObject) markerJson));
+    }
+    for (EventMarker m : eventMarkers) {
+        int pointIndex = (int) Math.round(m.getWaypointRelativePos() / PathSegment.RESOLUTION);
+        m.markerPos = new Translation2d(allPoints.get(pointIndex).position);
+        Logger.recordOutput("Marker Pose " + eventMarkers.indexOf(m), Pose2d.fromTranslation(m.markerPos).toWPI());
+
+        if(m.getName().equals("Shoot")){
+            s.waitForPositionState(m.markerPos);
+            s.printState("Shooting");
+            s.shootState(false);
+            s.resumeTrajectoryState();
+            stopPoses.add(m.markerPos);
+            stopTimestamps.add(0.0);
+        }
+        else if(m.getName().equals("Intake Shoot")){
+            s.waitForPositionState(m.markerPos);
+            s.printState("Intaking + Shooting");
+            s.intakeShootState(.6);
+            s.resumeTrajectoryState();
+          }
+        else if(m.getName().equals("Stop")){
+            stopPoses.add(m.markerPos);
+            stopTimestamps.add(0.0);
+        }
+        else if(m.getName().equals("Intake")){
+            s.waitForPositionState(m.markerPos);
+            s.setContinuousShootState(false);
+            s.printState("Intaking");
+            s.intakeState(1.5);
+            s.setContinuousShootState(true);
+        }
+        else{
+            System.out.println("Invalid event name: "+ m.getName());
+        }
+    }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+        
+    
+    }
     public void updateAuto(){
         if(!stopPoses.isEmpty()){
                 Translation2d markerPose = stopPoses.get(0);
