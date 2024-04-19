@@ -131,7 +131,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() { 
-    auto.updateAuto(Timer.getFPGATimestamp());
+    auto.updateAuto();
   }
 
   /** This function is called once when teleop is enabled. */  

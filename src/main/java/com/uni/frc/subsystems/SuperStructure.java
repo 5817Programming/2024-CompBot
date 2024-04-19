@@ -22,6 +22,7 @@ import com.uni.frc.subsystems.Requests.RequestList;
 import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.frc.subsystems.Swerve.SwerveDrive.TrajectoryMode;
 import com.uni.frc.subsystems.Vision.OdometryLimeLight;
+import com.uni.lib.ChoreoEventMarker;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Translation2d;
 import com.uni.lib.motion.PathStateGenerator;
@@ -627,6 +628,27 @@ public class SuperStructure extends Subsystem {
                 });
     }
 
+    public void waitForMarkerState(ChoreoEventMarker m) {
+        queue(
+                new Request() {
+                    @Override
+                    public boolean isFinished() {
+                        Translation2d other = m.markerPos;
+                        Logger.recordOutput("event", Pose2d.fromTranslation(other.reflect()).toWPI());
+                        double timeStamp = Timer.getFPGATimestamp();
+                        if(mPathStateGenerator.getTime() > m.getTimestamp())
+                            return false;
+                        if (DriverStation.getAlliance().get().equals(Alliance.Blue))
+                            return other.translateBy(
+                                    mRobotState.getKalmanPose(timeStamp).getTranslation().inverse())
+                                    .norm() < 0.7;
+                        return other.reflect().translateBy(
+                                mRobotState.getKalmanPose(timeStamp).getTranslation().inverse())
+                                .norm() < 0.7;
+
+                    }
+                });
+    }
     public void printState(String string) {
         queue(new Request() {
             @Override

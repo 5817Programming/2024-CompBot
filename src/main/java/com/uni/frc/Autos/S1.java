@@ -29,7 +29,7 @@ public class S1 extends AutoBase {
         s.setContinuousShootState(true);
 
         s.trajectoryState(trajectory, initRotation);
-        registerTrajectoryEvents("S1",true);
+        registerChoreoEvents("S1");
     }
 
 }
