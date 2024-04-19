@@ -102,8 +102,8 @@ public abstract class AutoBase {
             s.resumeTrajectoryState();
           }
         else if(m.getName().equals("Stop")){
-        stopPoses.add(m.markerPos);
-        stopTimestamps.add(m.getTimestamp());
+            stopPoses.add(m.markerPos);
+            stopTimestamps.add(m.getTimestamp());
         }
         else if(m.getName().equals("Intake")){
             s.waitForMarkerState(m);

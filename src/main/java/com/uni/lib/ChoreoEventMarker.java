@@ -1,6 +1,5 @@
 package com.uni.lib;
 
-import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Translation2d;
 
 import org.json.simple.JSONObject;
@@ -12,7 +11,6 @@ public class ChoreoEventMarker {
   private final String name;
 
   public Translation2d markerPos;
-  private Translation2d lastRobotPos;
 
   /**
    * Create a new event marker
