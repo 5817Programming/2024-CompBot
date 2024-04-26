@@ -120,7 +120,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   public void autonomousInit() {
     auto = autoChooser.getSelected();
     swerve = SwerveDrive.getInstance();
-    swerve.fieldzeroSwerve();
+    swerve.fieldZeroSwerve();
     swerve.zeroModules();
     SuperStructure.getInstance().setState(SuperState.AUTO);
     Pivot.getInstance().conformToState(Pivot.State.MAXUP);
@@ -156,7 +156,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   public void disabledInit() {
     subsystemManager.stopSubsystems();
     SuperStructure.getInstance().clearQueues();
-    PathStateGenerator.getInstance().resetTimer();
+    PathStateGenerator.getInstance().resetTrajectory();
   }
 
   /** This function is called periodically when disabled. */

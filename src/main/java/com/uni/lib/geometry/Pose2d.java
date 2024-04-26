@@ -253,6 +253,10 @@ public class Pose2d implements IPose2d<Pose2d> {
         return this;
     }
 
+    public Pose2d reflect(){
+        return new Pose2d(new Translation2d(16.5-getTranslation().x(), getTranslation().y()), getRotation().inverse());
+    }
+
     @Override
     public Pose2d mirror() {
         return new Pose2d(new Translation2d(getTranslation().x(), -getTranslation().y()), getRotation().inverse());

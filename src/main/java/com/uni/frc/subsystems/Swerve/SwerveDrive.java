@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.uni.frc.Constants;
 import com.uni.frc.Options;
 import com.uni.frc.Ports;
@@ -19,6 +20,7 @@ import com.uni.frc.Planners.DriveMotionPlanner;
 import com.uni.frc.Planners.AimingPlanner.AimingRequest;
 import com.uni.frc.subsystems.NoteState;
 import com.uni.frc.subsystems.RobotState;
+import com.uni.frc.subsystems.RobotStateEstimator;
 import com.uni.frc.subsystems.Subsystem;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.frc.subsystems.Swerve.SwerveDriveModule.ModuleStatus;
@@ -30,6 +32,7 @@ import com.uni.lib.HeadingController;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
+import com.uni.lib.motion.PathStateGenerator;
 import com.uni.lib.swerve.ChassisSpeeds;
 import com.uni.lib.swerve.SwerveKinematics;
 import com.uni.lib.util.Util;
@@ -63,7 +66,7 @@ public class SwerveDrive extends Subsystem {
     ObjectLimeLight objectVision;
     Pose2d drivingPose;
 
-    Pose2d poseMeters = new Pose2d();
+    Pose2d currentPose = new Pose2d();
     
     List<SwerveDriveModule> positionModules;
     Translation2d currentVelocity = new Translation2d();
@@ -83,7 +86,9 @@ public class SwerveDrive extends Subsystem {
     SwerveKinematics inverseKinematics = new SwerveKinematics();
     AutoAlignMotionPlanner mAutoAlignMotionPlanner;
     DriveMotionPlanner mDriveMotionPlanner;
+    PathStateGenerator mPathStateGenerator;
     AimingPlanner mAimingPlanner;
+    RobotStateEstimator mRobotStateEstimator;
     RobotState mRobotState;
     NoteState mNoteState;
     HeadingController headingController = new HeadingController();
@@ -124,11 +129,13 @@ public class SwerveDrive extends Subsystem {
         gyro = Pigeon.getInstance();
         odometryVision = OdometryLimeLight.getInstance();
         objectVision = ObjectLimeLight.getInstance();
+        mRobotStateEstimator = RobotStateEstimator.getInstance();
         mRobotState = RobotState.getInstance();
-        mDriveMotionPlanner =  DriveMotionPlanner.getInstance();
+        mDriveMotionPlanner = DriveMotionPlanner.getInstance();
         mAutoAlignMotionPlanner = new AutoAlignMotionPlanner();
         mAimingPlanner = new AimingPlanner();
         mNoteState = NoteState.getInstance();
+        mPathStateGenerator = PathStateGenerator.getInstance();
 
     }
 
@@ -139,7 +146,6 @@ public class SwerveDrive extends Subsystem {
         TARGETOBJECT,
         AIMING,
         ALIGNMENT,
-        SNAP,
     }
 
     public enum TrajectoryMode{
@@ -293,9 +299,9 @@ public class SwerveDrive extends Subsystem {
     @Override
     public void update() {
         double timeStamp = Timer.getFPGATimestamp();
-        poseMeters = mRobotState.getKalmanPose(timeStamp);
+        currentPose = mRobotState.getKalmanPose(timeStamp);
         drivingPose = Pose2d.fromRotation(getRobotHeading());
-        double rotationCorrection;
+        double rotationCorrection = 0;
         switch (currentState) {
             case MANUAL:
                 if(stateHasChanged){
@@ -319,7 +325,7 @@ public class SwerveDrive extends Subsystem {
                     -targetChassisSpeeds.vxMetersPerSecond,
                     targetChassisSpeeds.vyMetersPerSecond),
                     targetChassisSpeeds.omegaRadiansPerSecond*8,
-                    poseMeters,
+                    currentPose,
                     false
                     ));
                 break;
@@ -328,24 +334,20 @@ public class SwerveDrive extends Subsystem {
                 if(DriverStation.isTeleop() && translationVector.norm() != 0){
                     setState(State.MANUAL);
                 }
-                mDriveMotionPlanner.updateTrajectory();
                 switch (currentMode) {
                     case FOLLOWING:
-                        translationVector = mDriveMotionPlanner.getTranslation2dToFollow(timeStamp);
-                        headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading().inverse());
-
+                        Pose2d poseControl = mDriveMotionPlanner.getPoseControl(headingController, currentPose, timeStamp);
+                        translationVector = poseControl.getTranslation();
+                        rotationCorrection = poseControl.getRotation().getDegrees();
                         break;
                     case TRACKING:
-                        if(modeHasChanged)
-                            mDriveMotionPlanner.resetNoteTracking();
-                        Pose2d targetPose = new Pose2d();
-                        translationVector = targetPose.getTranslation();
-                        headingController.setTargetHeading(targetPose.getRotation().inverse());
+                        poseControl = mDriveMotionPlanner.getNoteTrackingControl(headingController, currentPose, mNoteState.getNotePose(timeStamp), timeStamp);
+                        translationVector = poseControl.getTranslation();
+                        rotationCorrection = poseControl.getRotation().getDegrees();
                         break;
                 }
-                        rotationCorrection = headingController.getRotationCorrection(getRobotHeading().inverse().flip(), timeStamp);
                         desiredRotationScalar = rotationCorrection;
-                        commandModules(inverseKinematics.updateDriveVectors(translationVector, rotationCorrection, poseMeters,
+                        commandModules(inverseKinematics.updateDriveVectors(translationVector, rotationCorrection, currentPose,
                                 robotCentric));
                 break;
             case TARGETOBJECT:
@@ -390,16 +392,32 @@ public class SwerveDrive extends Subsystem {
                 commandModules(inverseKinematics.updateDriveVectors(new Translation2d(), 0, drivingPose, robotCentric));
                 break;
 
-            case SNAP:
-                headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading());
-                rotationCorrection = headingController.getRotationCorrection(getRobotHeading(), timeStamp);
-                desiredRotationScalar = rotationCorrection;
-                commandModules(inverseKinematics.updateDriveVectors(translationVector, rotationCorrection, poseMeters,
-                        robotCentric));
-                break;
 
         }
         stateHasChanged = false;
+    }
+
+    public Request setTrajectoryRequest(PathPlannerTrajectory trajectory){
+        return new Request() {
+            @Override
+            public void act(){
+                mPathStateGenerator.setTrajectory(trajectory);
+                Pose2d initalPose = mPathStateGenerator.getInitialPose();
+                gyro.setAngle(initalPose.getRotation().getDegrees());
+                mRobotStateEstimator.resetOdometry(initalPose);
+                setState(State.TRAJECTORY);
+            }
+        };
+    }
+
+    public Request startTrajectoryRequest(){
+        return new Request() {
+            @Override
+            public void act(){
+                mPathStateGenerator.resetTrajectory();
+                mPathStateGenerator.startTrajectory();
+            }
+        };
     }
 
 
@@ -411,12 +429,8 @@ public class SwerveDrive extends Subsystem {
         return output;
     }
 
-    public void snap(double r) {
-        setState(State.SNAP);
-        headingController.setTargetHeading(Rotation2d.fromDegrees(r));
-    }
 
-    public void fieldzeroSwerve() {// starts the zero 180 off
+    public void fieldZeroSwerve() {// starts the zero 180 off
         headingController.setTargetHeading(Rotation2d.fromDegrees(0));
         gyro.setAngle(180);
         if(DriverStation.getAlliance().get().equals(Alliance.Blue)){

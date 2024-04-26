@@ -502,7 +502,7 @@ public class SuperStructure extends Subsystem {
         Request stopRequest = new Request() {
             @Override
             public void act() {
-                mPathStateGenerator.stopTimer();
+                mPathStateGenerator.stopTrajectory();
             }
         };
         queue(stopRequest);
@@ -512,7 +512,7 @@ public class SuperStructure extends Subsystem {
         Request stopRequest = new Request() {
             @Override
             public void act() {
-                mPathStateGenerator.startTimer();
+                mPathStateGenerator.startTrajectory();
             }
         };
         queue(stopRequest);
@@ -526,25 +526,10 @@ public class SuperStructure extends Subsystem {
         RequestList request = new RequestList(Arrays.asList(
                 logCurrentRequest("trajectory")), true);
         RequestList queue = new RequestList(Arrays.asList(
-                mDriveMotionPlanner.setTrajectoryRequest(trajectory, initRotation, true),
-                mDrive.setStateRequest(SwerveDrive.State.TRAJECTORY),
-                mDriveMotionPlanner.startPathRequest(true)), false);
+                mDrive.setTrajectoryRequest(trajectory),
+                mDrive.startTrajectoryRequest()), false);
         queue(request);
         queue(queue);
-    }
-
-    public void onTheFlyTrajectoryState(Pose2d endPose, double timestamp) {
-        RequestList request = new RequestList(Arrays.asList(
-                logCurrentRequest("OnTheFly"),
-                mDriveMotionPlanner.generatePathRequest(
-                        mRobotState.getKalmanPose(timestamp),
-                        endPose,
-                        ChassisSpeeds.fromTwist2d(mRobotState.getPredictedVelocity(), mDrive.getRobotHeading()),
-                        false),
-                mDrive.setStateRequest(SwerveDrive.State.TRAJECTORY),
-                mDriveMotionPlanner.startPathRequest(false)), false);
-
-        request(request);
     }
 
     public void intakeState() {
@@ -599,9 +584,6 @@ public class SuperStructure extends Subsystem {
     }
         public void shooterPercentState(double percent) {
         queue(mShooter.setPercentRequest(percent));
-    }
-    public void waitForEventState(double timestamp) {
-        queue(mDriveMotionPlanner.waitForTrajectoryRequest(timestamp));
     }
 
     public void setManual(boolean Override) {
