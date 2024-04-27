@@ -181,9 +181,9 @@ import com.uni.frc.Ports;
 
     @Override
     public void outputTelemetry() {
-      Logger.recordOutput("Pivot Position", pivotMotor1.getPosition().getValue());
-      Logger.recordOutput("Pivot Absolute Position",encoder.getAbsolutePosition().getValue());
-      Logger.recordOutput("pivot demand", mPeriodicIO.rotationDemand);
+      Logger.recordOutput("Pivot/Position", pivotMotor1.getPosition().getValue());
+      Logger.recordOutput("Pivot/Absolute Position",encoder.getAbsolutePosition().getValue());
+      Logger.recordOutput("Pivot/demand", mPeriodicIO.rotationDemand);
 
     }
 

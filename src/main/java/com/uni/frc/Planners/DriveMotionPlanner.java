@@ -68,7 +68,7 @@ public class DriveMotionPlanner {
         this.useAllianceColor = useAllianceColor;
         mPathStateGenerator.setTrajectory(trajectory);
         Pose2d newpose = (mPathStateGenerator.getInitial(trajectory, initRotation, useAllianceColor));
-        Logger.recordOutput("initalPose", newpose.toWPI());
+        Logger.recordOutput("Auto/initalPose", newpose.toWPI());
         for(int i = 0; i<3; i++)
             RobotStateEstimator.getInstance().resetOdometry(newpose);
         Pigeon.getInstance().setAngle(Rotation2d.fromDegrees(initRotation).getDegrees());
@@ -129,7 +129,7 @@ public class DriveMotionPlanner {
             desiredState.velocityMps * desiredState.heading.getCos()/Constants.SwerveMaxspeedMPS;
         double yFF =
             desiredState.velocityMps * desiredState.heading.getSin()/Constants.SwerveMaxspeedMPS;
-        Logger.recordOutput("Desired Pose", new Pose2d(targetFollowTranslation , new Rotation2d(desiredState.heading)).toWPI());
+        Logger.recordOutput("Auto/Desired Pose", new Pose2d(targetFollowTranslation , new Rotation2d(desiredState.heading)).toWPI());
         double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.x(), dt)+xFF;
         double yError = OdometryPID.y().calculate(targetFollowTranslation.y() - currentRobotPositionFromStart.y(), dt)+yFF;
         targetHeading = new Rotation2d(desiredState.targetHolonomicRotation);
@@ -151,7 +151,7 @@ public class DriveMotionPlanner {
             return new Pose2d(getTranslation2dToFollow(timestamp), getTargetHeading());
         OdometryPID.x().setOutputRange(-1, 1);
         OdometryPID.y().setOutputRange(-1, 1);
-        Logger.recordOutput("Desired Pose", Pose2d.fromTranslation(targetFollowTranslation).toWPI());
+        Logger.recordOutput("Auto/Desired Pose", Pose2d.fromTranslation(targetFollowTranslation).toWPI());
         double xError = OdometryPID.x().calculate(notePose.getTranslation().x() - currentRobotPositionFromStart.x(), dt);
         double yError = OdometryPID.y().calculate(notePose.getTranslation().y() - currentRobotPositionFromStart.y(), dt);
 

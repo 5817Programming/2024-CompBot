@@ -39,7 +39,6 @@ public class SuperStructure extends Subsystem {
     protected Intake mIntake;
     protected OdometryLimeLight vision;
     protected DriveMotionPlanner mDriveMotionPlanner;
-    protected Logger logger;
     protected DriveMotionPlanner dMotionPlanner;
     protected RobotState mRobotState;
     protected Indexer mIndexer;
@@ -310,7 +309,6 @@ public class SuperStructure extends Subsystem {
     }
 
     public boolean inAmpZone(double timestamp) {
-        Logger.recordOutput("AmpPose", Constants.FieldConstants.getAmpPose().toWPI());
         return mRobotState.getKalmanPose(timestamp).getTranslation()
                 .translateBy(Constants.FieldConstants.getAmpPose().inverse().getTranslation()).norm() < 4;
     }
@@ -384,7 +382,6 @@ public class SuperStructure extends Subsystem {
 
     public void prepareShooterSetpoints(double timestamp) {
         ShootingParameters shootingParameters = getShootingParams(mRobotState.getKalmanPose(timestamp));
-        Logger.recordOutput("Desired Pivot Angle", shootingParameters.compensatedDesiredPivotAngle);
         mShooter.conformToState(Shooter.State.SHOOTING);
         mPivot.conformToState(shootingParameters.compensatedDesiredPivotAngle-1);
         mShooter.setSpin(Constants.ShooterConstants.SPIN);
@@ -474,7 +471,6 @@ public class SuperStructure extends Subsystem {
         double kShotTime = Constants.ShooterConstants.kShotTime;
 
         Pose2d speakerPose = Constants.getSpeakerPivotPose();
-        Logger.recordOutput("speakerPose", speakerPose.toWPI());
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> pivotMap = ShootingUtils
                 .getPivotMap(lob);
         InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> velocityMap = ShootingUtils
@@ -614,7 +610,7 @@ public class SuperStructure extends Subsystem {
                 new Request() {
                     @Override
                     public boolean isFinished() {
-                        Logger.recordOutput("event", Pose2d.fromTranslation(other.reflect()).toWPI());
+                        Logger.recordOutput("Auto/Current Event Marker", Pose2d.fromTranslation(other.reflect()).toWPI());
                         double timeStamp = Timer.getFPGATimestamp();
                         if (DriverStation.getAlliance().get().equals(Alliance.Blue))
                             return other.translateBy(

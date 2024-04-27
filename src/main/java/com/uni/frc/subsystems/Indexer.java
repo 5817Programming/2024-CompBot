@@ -226,10 +226,10 @@ import edu.wpi.first.wpilibj.Timer;
 
    @Override
    public void outputTelemetry() {
-    Logger.recordOutput("indexer beambreak ", indexerBeamBreak.get());
-    Logger.recordOutput("indexer hasPiece ", mPeriodicIO.hasPiece);
-    Logger.recordOutput("indexer current", indexerMotor.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput("indexer demand", mPeriodicIO.driveDemand);
+    Logger.recordOutput("Indexer/beambreak ", indexerBeamBreak.get());
+    Logger.recordOutput("Indexer/hasPiece ", mPeriodicIO.hasPiece);
+    Logger.recordOutput("Indexer/current", indexerMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Indexer/demand", mPeriodicIO.driveDemand);
    }
 
    @Override

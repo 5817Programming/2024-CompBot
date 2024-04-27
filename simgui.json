@@ -11,6 +11,7 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/AutoChooser": "String Chooser",
       "/SmartDashboard/Autonomous routine": "String Chooser"
     }
   },

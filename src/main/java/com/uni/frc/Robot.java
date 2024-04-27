@@ -10,6 +10,7 @@ import java.util.HashMap;
 import org.littletonrobotics.junction.LoggedRobot;
 
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 
 import com.uni.frc.Autos.AutoBase;
@@ -39,8 +40,7 @@ import com.uni.lib.motion.PathStateGenerator;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 
 public class Robot extends LoggedRobot {
@@ -54,7 +54,7 @@ public class Robot extends LoggedRobot {
   Music music;
   Gyro pigeon;
   AutoBase auto = new M6();
-  public SendableChooser<AutoBase> autoChooser = new SendableChooser<>();
+  public LoggedDashboardChooser<AutoBase> autoChooser = new LoggedDashboardChooser<>("AutoChooser");
 
 HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
   @Override
@@ -73,7 +73,6 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
       autoChooser.addOption(N, A);
     }
 
-    SmartDashboard.putData("Autonomous routine", autoChooser);
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
     swerve = SwerveDrive.getInstance();
@@ -114,7 +113,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
 
   @Override
   public void autonomousInit() {
-    auto = autoChooser.getSelected();
+    auto = autoChooser.get();
     swerve = SwerveDrive.getInstance();
     swerve.fieldzeroSwerve();
     swerve.zeroModules();

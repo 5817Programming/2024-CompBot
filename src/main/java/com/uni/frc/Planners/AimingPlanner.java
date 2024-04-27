@@ -52,21 +52,20 @@ public class AimingPlanner {
                 mFieldToSpeaker = Constants.getLobPose();
                 break;
         }
-        Logger.recordOutput("aimPose", mAimingRequest);
+        Logger.recordOutput("Shooting/Mode", mAimingRequest);
         double estimatedTimeFrame = 0;
         Pose2d odomToTargetPoint = visionPoseComponent.inverse().transformBy(mFieldToSpeaker);
         double travelDistance = odomToTargetPoint.transformBy(currentOdomToRobot).getTranslation().norm();
         estimatedTimeFrame = mShotTimeMap.getInterpolated(new InterpolatingDouble(travelDistance)).value;
         Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(estimatedTimeFrame);
 
-        Logger.recordOutput("poseAttmie", poseAtTimeFrame.toWPI());
+        Logger.recordOutput("Shooting/Future Pose", poseAtTimeFrame.toWPI());
         Pose2d futureOdomToTargetPoint = poseAtTimeFrame.inverse().transformBy(odomToTargetPoint).inverse();
         Rotation2d targetRotation = futureOdomToTargetPoint.getTranslation().getAngle().inverse();
         targetPose = new Pose2d(futureOdomToTargetPoint.getTranslation(), targetRotation);
         headingController.setTargetHeading(targetPose.getRotation().inverse());
         double rotationOutput = headingController.updateRotationCorrection(currentOdomToRobot.getRotation().inverse().rotateBy(-4),
                 timeStamp);
-        Logger.recordOutput("aimingoutput", rotationOutput);
         isAimed = headingController.atTarget();
         targetPose = new Pose2d(
                 targetPose.getTranslation(),

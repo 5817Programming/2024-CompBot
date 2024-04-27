@@ -4,7 +4,6 @@
 
 package com.uni.frc.Planners;
 
-import org.littletonrobotics.junction.Logger;
 
 import com.uni.frc.Constants;
 import com.uni.frc.subsystems.RobotState;
@@ -69,14 +68,11 @@ public class ShootingUtils {
          Pose2d robotToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(currentPose.getTranslation().inverse()));
         double effectiveDistance = robotToTarget.getTranslation().norm();
         double lookahead_time = shotTimeTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
-        Logger.recordOutput("effective distance", effectiveDistance);
         Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPoseFromOdometry(lookahead_time+.004).rotateBy(currentPose.getRotation());
         Pose2d compensatedShooterToTarget = Pose2d.fromTranslation(targetPose.getTranslation().translateBy(poseAtTimeFrame.getTranslation().inverse()));
 
-        Logger.recordOutput("Time", lookahead_time);
 
         double compensatedDistance = compensatedShooterToTarget.getTranslation().norm();
-                Logger.recordOutput("Compensated Position", poseAtTimeFrame.toWPI());
 
         
         double desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
@@ -112,11 +108,8 @@ public class ShootingUtils {
         Pose2d poseAtTimeFrame = RobotState.getInstance().getPredictedPose(lookahead_time*1.3);
         Translation2d futureOdomToTargetPoint = poseAtTimeFrame.getTranslation().translateBy(targetPose.getTranslation().inverse());
 
-        Logger.recordOutput("speakerpose", poseAtTimeFrame.toWPI());
-        Logger.recordOutput("Time", lookahead_time);
 
         double compensatedDistance = futureOdomToTargetPoint.norm();
-        Logger.recordOutput("Compensated Distance", compensatedDistance);
 
         
         double compensatedPivotAngle;
@@ -124,7 +117,6 @@ public class ShootingUtils {
             compensatedPivotAngle = 55;
         else{
             compensatedPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(compensatedDistance)).value+pivotOffset+2.52;
-            Logger.recordOutput("Desired Pivot Angle", compensatedPivotAngle);
         }
         double desiredPivotAngle = pivotAngleTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;
         double uncompensatedDesiredShooterSpeed = velocityTreeMap.getInterpolated(new InterpolatingDouble(effectiveDistance)).value;

@@ -6,7 +6,6 @@ package com.uni.frc.subsystems.Vision;
 
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
 
 import com.uni.frc.Constants;
 import com.uni.frc.subsystems.Subsystem;
@@ -63,7 +62,6 @@ public class ObjectLimeLight extends Subsystem {
     mPeriodicIO.givenPipeline = (int) table.getEntry("getpipe").getDouble(0);
     mPeriodicIO.seesTarget = table.getEntry("tv").getDouble(0) == 1.0;
     Translation2d cameraToTarget = new Translation2d(mPeriodicIO.tx, mPeriodicIO.ty);
-    Logger.recordOutput("seesobject", mPeriodicIO.seesTarget);
     if (mPeriodicIO.seesTarget) {
         mPeriodicIO.visionUpdate = Optional.of(new VisionObjectUpdate(timestamp, cameraToTarget));
     }

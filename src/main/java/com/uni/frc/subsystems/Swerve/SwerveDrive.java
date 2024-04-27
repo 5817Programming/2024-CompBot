@@ -508,10 +508,10 @@ public class SwerveDrive extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        Logger.recordOutput("State", getState());
+        Logger.recordOutput("Swerve/State", getState());
         modules.forEach((m) -> m.outputTelemetry());
-        Logger.recordOutput("Heading", getRobotHeading().getDegrees());
-        Logger.recordOutput("Desired Heading", headingController.getTargetHeading());
+        Logger.recordOutput("Swerve/Heading", getRobotHeading().getDegrees());
+        Logger.recordOutput("Swerve/Desired Heading", headingController.getTargetHeading());
         }
 
 
