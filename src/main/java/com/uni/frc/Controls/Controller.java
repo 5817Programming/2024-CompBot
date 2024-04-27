@@ -4,7 +4,6 @@
 
 package com.uni.frc.Controls;
 
-import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
