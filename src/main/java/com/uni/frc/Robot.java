@@ -14,10 +14,6 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 
 import com.uni.frc.Autos.AutoBase;
 import com.uni.frc.Autos.M6;
-import com.uni.frc.Autos.MS6;
-import com.uni.frc.Autos.S4;
-import com.uni.frc.Autos.NS1;
-import com.uni.frc.Autos.S1;
 import com.uni.frc.Autos.Shoot;
 import com.uni.frc.Controls.Controls;
 import com.uni.frc.subsystems.Arm;
@@ -39,6 +35,9 @@ import com.uni.frc.subsystems.gyros.Gyro;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.motion.PathStateGenerator;
+
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -65,6 +64,7 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
 
     autos.put("1", new Shoot());
 
+    DriverStation.startDataLog(DataLogManager.getLog());
 
     RobotState.getInstance().resetKalmanFilters(Timer.getFPGATimestamp());
     for(HashMap.Entry<String, AutoBase> entry : autos.entrySet()) {

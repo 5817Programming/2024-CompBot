@@ -2,6 +2,7 @@ package com.uni.frc.Autos;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
+import com.uni.frc.Planners.DriveMotionPlanner;
 import com.uni.frc.subsystems.Shooter;
 import com.uni.frc.subsystems.SuperStructure;
 import com.uni.frc.subsystems.SuperStructure.SuperState;
@@ -19,6 +20,7 @@ public class M6 extends AutoBase {
 
     @Override
     public void auto() {
+        DriveMotionPlanner.getInstance().setTrajectory(trajectory, initRotation, true);
         Shooter.getInstance().setPercent(.8);
         s.setState(SuperState.AUTO);
         Shooter.getInstance().setPercent(0.8);
@@ -26,7 +28,7 @@ public class M6 extends AutoBase {
         s.setPivotState(26.5);
         s.waitState(0.2, false);
 
-        s.shootState(false);
+        // s.shootState(false);
         s.setContinuousShootState(true);
 
         s.trajectoryState(trajectory, initRotation);

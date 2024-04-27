@@ -15,6 +15,7 @@ import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
 
+
 /** Add your docs here. */
 public class SwerveKinematics {
 
@@ -47,7 +48,7 @@ public class SwerveKinematics {
      * @param robotCentric -Should the determine it's heading based off of the robot. False = Field Centric(i.e, when you push forward, 
      *                      the robot will always move in the same direction, no matter it's heading)
      */
-    public List<Translation2d> updateDriveVectors(Translation2d translationVector, double rotationalMagnitude, Pose2d robotPosition, boolean robotCentric) {
+    public List<Translation2d> updateDriveVectors(Translation2d translationVector, double rotationalMagnitude, Pose2d robotPosition, boolean robotCentric, boolean Velocity) {
         List<Translation2d> driveVectors = new ArrayList<>(kNumberOfModules);
         if(!robotCentric)
             translationVector = translationVector.rotateBy(robotPosition.getRotation().inverse()); //Rotates by the translation vector by inverse rotation of the robot 
@@ -63,8 +64,9 @@ public class SwerveKinematics {
         }
         for (int i =0; i< kNumberOfModules; i++) {
             Translation2d driveVector = driveVectors.get(i);
-            driveVectors.set(i, driveVector.scale(1.0/maxMagnitude));
+            driveVectors.set(i, driveVector.scale(1.0/maxMagnitude*(Velocity?Constants.SwerveMaxspeedMPS:1)));
         }
+        
         return driveVectors;
         
     }

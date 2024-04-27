@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
+import java.util.Optional;
+
 import org.littletonrobotics.junction.Logger;
 
 /** Custom PathPlanner version of SwerveControllerCommand */
@@ -51,21 +53,17 @@ public class PathStateGenerator{
     return new Pose2d(transformedTrajectory.sample(timestamp).getTargetHolonomicPose());
   }
 
-  public Pose2d getDesiredPose2d(boolean useAllianceColor) {
-    return getDesiredPose2d(useAllianceColor,timer.get());
+  public State getDesiredState(boolean useAllianceColor) {
+    return getDesiredState(useAllianceColor,timer.get());
   }
-  public Pose2d getDesiredPose2d(boolean useAllianceColor,double time) {
+  public State getDesiredState(boolean useAllianceColor,double time) {
     double currentTime = this.timer.get();
     State desiredState = transformedTrajectory.sample(currentTime);
-    double desiredRotation = -((State) transformedTrajectory.sample(currentTime)).targetHolonomicRotation
-        .getDegrees();
-    double desiredX = desiredState.getTargetHolonomicPose().getTranslation().getX();
-    double desiredY = desiredState.getTargetHolonomicPose().getTranslation().getY();
-    Logger.recordOutput("desiredPose", new Pose2d(desiredX, desiredY, Rotation2d.fromDegrees(desiredRotation)).toWPI());
-    if (alliance()&& useAllianceColor)
-      return new Pose2d(new Translation2d(reflect(desiredX), desiredY), Rotation2d.fromDegrees(desiredRotation));
-    else
-      return new Pose2d(new Translation2d(desiredX, desiredY), Rotation2d.fromDegrees(desiredRotation).flip().inverse());
+    desiredState = transformStateForAlliance(desiredState, DriverStation.getAlliance().get());
+
+
+    Logger.recordOutput("desiredPose", desiredState.getTargetHolonomicPose());
+    return desiredState;
 
   }
 
@@ -117,5 +115,30 @@ public class PathStateGenerator{
   public double getTime(){
     return this.timer.get();
   }
+  public static State transformStateForAlliance(
+    State state, DriverStation.Alliance alliance) {
+  if (alliance == DriverStation.Alliance.Red) {
+    // Create a new state so that we don't overwrite the original
+    State transformedState = new State();
 
+    Translation2d transformedTranslation =
+        new Translation2d(16.5-state.positionMeters.getX(), state.positionMeters.getY());
+    Rotation2d transformedHeading = new Rotation2d(state.heading.times(-1));
+    Rotation2d transformedHolonomicRotation = new Rotation2d(state.targetHolonomicRotation.times(-1));
+
+    transformedState.timeSeconds = state.timeSeconds;
+    transformedState.velocityMps = state.velocityMps;
+    transformedState.accelerationMpsSq = state.accelerationMpsSq;
+    transformedState.positionMeters = new Pose2d(transformedTranslation, transformedHeading).toWPI().getTranslation();
+    transformedState.accelerationMpsSq = -state.accelerationMpsSq;
+    transformedState.targetHolonomicRotation = transformedHolonomicRotation.toWPI();
+    transformedState.holonomicAngularVelocityRps = Optional.of(-state.holonomicAngularVelocityRps.get());
+    transformedState.curvatureRadPerMeter = -state.curvatureRadPerMeter;
+    transformedState.heading = transformedHeading.toWPI();
+    
+    return transformedState;
+  } else {
+    return state;
+  }
+}
 }

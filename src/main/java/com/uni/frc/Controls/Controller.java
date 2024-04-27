@@ -4,6 +4,8 @@
 
 package com.uni.frc.Controls;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -77,6 +79,7 @@ public class Controller {
         DpadUp.update(Controller.getPOV() == 0);
         DpadRight.update(Controller.getPOV() == 90);
         DpadDown.update(Controller.getPOV() == 180);
+
     }
 
     public class ButtonCheck {

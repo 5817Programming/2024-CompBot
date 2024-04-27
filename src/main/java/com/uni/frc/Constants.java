@@ -96,9 +96,9 @@ public class Constants {
     // Scrub Factors
     public static final boolean kSimulateReversedCarpet = false;
     public static final double[] kWheelScrubFactors = new double[] { 1.0, 1.0, 1.0, 1.0 };
-    public static final double kXScrubFactorP = isCompbot?.95:0.85;
+    public static final double kXScrubFactorP = isCompbot?.97:0.85;
     public static final double kYScrubFactorP = isCompbot?.97:.875;
-    public static final double kXScrubFactorN = isCompbot?.95:0.85;
+    public static final double kXScrubFactorN = isCompbot?.97:0.85;
     public static final double kYScrubFactorN = isCompbot?.97:.875;
 
 
@@ -106,8 +106,7 @@ public class Constants {
     public static final double driveKV = (1.51 / 12);
     public static final double driveKA = (0.27 / 12);
 
-    public static final double kSwerveMaxspeedMPS = 10;
-    public static final double SwerveMaxspeedMPS = 120;
+    public static final double SwerveMaxspeedMPS = 5.28;
     public static final double kSwerveDriveMaxSpeed = 22000.0; // The theoretical max speed(For the Falcon 500s)
     public static final double kSwerveRotation10VoltMaxSpeed = 1350.0;
 
@@ -220,17 +219,17 @@ public class Constants {
         public static final double SHOOTING = 0;
         public static final double MAX_UP = 30;
         public static final double MAX_DOWN = 3;
-        public static final double INTAKING = 10;
+        public static final double INTAKING = 2;
 
         public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> SpeakerAngleMap = new InterpolatingTreeMap<>();
         static {
-            SpeakerAngleMap.put(new InterpolatingDouble(1.3), new InterpolatingDouble(26.5));
-            SpeakerAngleMap.put(new InterpolatingDouble(2.31), new InterpolatingDouble(16.0));
-            SpeakerAngleMap.put(new InterpolatingDouble(3.26), new InterpolatingDouble(7.75));
-            SpeakerAngleMap.put(new InterpolatingDouble(3.563), new InterpolatingDouble(7.75));
+            SpeakerAngleMap.put(new InterpolatingDouble(1.1), new InterpolatingDouble(26.5));
+            SpeakerAngleMap.put(new InterpolatingDouble(2.11), new InterpolatingDouble(16.0));
+            SpeakerAngleMap.put(new InterpolatingDouble(3.06), new InterpolatingDouble(7.75));
+            SpeakerAngleMap.put(new InterpolatingDouble(3.63), new InterpolatingDouble(7.75));
 
-            SpeakerAngleMap.put(new InterpolatingDouble(4.5), new InterpolatingDouble(2.75));
-            SpeakerAngleMap.put(new InterpolatingDouble(5.2), new InterpolatingDouble(1.0));
+            SpeakerAngleMap.put(new InterpolatingDouble(4.3), new InterpolatingDouble(2.75));
+            SpeakerAngleMap.put(new InterpolatingDouble(5.0), new InterpolatingDouble(1.0));
 
 
 
@@ -265,7 +264,7 @@ public class Constants {
         public static final Rotation2d cameraYawOffset = Rotation2d.fromDegrees(0);
         public static final Rotation2d HORIZONTAL_PLANE_TO_LENSE = Rotation2d.fromDegrees(23);
 
-        public static final double IMAGE_CAPTURE_LATENCY = 11.0;
+        public static final double IMAGE_CAPTURE_LATENCY = 80.0;
        
 
         public static final UndistortConstants UNDISTORT_CONSTANTS =  new UndistortConstants(

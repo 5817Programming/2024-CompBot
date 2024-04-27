@@ -304,7 +304,7 @@ public class SwerveDriveModule extends Subsystem {
         Logger.recordOutput(this.name + " Drive Motor Demand", mPeriodicIO.driveDemand);
         Logger.recordOutput(this.name + " Status", getModuleStatus().toString());
         // Logger.recordOutput(this.name + " Drive Position", mPeriodicIO.drivePosition);
-        // Logger.recordOutput(this.name + "drive velocity", driveMotor.getVelocity().getValueAsDouble());
+        Logger.recordOutput(this.name + "drive velocity", driveMotor.getVelocity().getValueAsDouble());
         // Logger.recordOutput(this.name + "Drive Control Mode", mPeriodicIO.driveControlMode);
         // Logger.recordOutput(this.name + "Rotation Control Mode", mPeriodicIO.rotationControlMode);
         // Logger.recordOutput(this.name + "modulePose2d", Pose2d.fromTranslation(position).toWPI());

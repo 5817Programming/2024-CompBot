@@ -25,8 +25,6 @@ import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Translation2d;
 import com.uni.lib.motion.PathStateGenerator;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 
 /** 
@@ -130,16 +128,10 @@ public abstract class AutoBase {
 
     public void updateAuto(double timestamp){
         if(!stopPoses.isEmpty()){
-                if (DriverStation.getAlliance().get().equals(Alliance.Blue)){
-                    if(stopPoses.get(0).getTranslation().translateBy(PathStateGenerator.getInstance().getDesiredPose2d(true).getTranslation().inverse()).norm() < 0.1){
+                    if(stopPoses.get(0).getTranslation().translateBy(PathStateGenerator.getInstance().getDesiredState(true).getTargetHolonomicPose().getTranslation()).norm() < 0.1){
                         mPathStateGenerator.stopTimer();
                         stopPoses.remove(0);
-                    }
-                }else{
-                    if(stopPoses.get(0).getTranslation().reflect().translateBy(PathStateGenerator.getInstance().getDesiredPose2d(true).getTranslation().inverse()).norm() < 0.1){
-                        mPathStateGenerator.stopTimer();
-                        stopPoses.remove(0);
-                    }
+                        System.out.println("Stoping");
             }
     }}
 

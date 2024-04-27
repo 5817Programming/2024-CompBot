@@ -215,7 +215,7 @@ public class SwerveDrive extends Subsystem {
         this.lob = newlob;
     }
 
-    public void commandModules(List<Translation2d> moduleVectors) {
+    public void commandModule(List<Translation2d> moduleVectors) {
         this.moduleVectors = moduleVectors;
         for (int i = 0; i < moduleVectors.size(); i++) {
             if (Util.shouldReverse(moduleVectors.get(i).direction(),
@@ -306,8 +306,8 @@ public class SwerveDrive extends Subsystem {
                 if (translationVector.norm() == 0 || rotationScalar != 0) {
                     rotationCorrection = 0;
                 }
-                commandModules(inverseKinematics.updateDriveVectors(translationVector,
-                        rotationScalar + rotationCorrection, drivingPose, robotCentric));
+                commandModule(inverseKinematics.updateDriveVectors(translationVector,
+                        rotationScalar + rotationCorrection, drivingPose, robotCentric,false));
                 break;
 
             case ALIGNMENT:
@@ -320,7 +320,8 @@ public class SwerveDrive extends Subsystem {
                     targetChassisSpeeds.vyMetersPerSecond),
                     targetChassisSpeeds.omegaRadiansPerSecond*8,
                     poseMeters,
-                    false
+                    false,
+                    true
                     ));
                 break;
 
@@ -332,7 +333,7 @@ public class SwerveDrive extends Subsystem {
                 switch (currentMode) {
                     case FOLLOWING:
                         translationVector = mDriveMotionPlanner.getTranslation2dToFollow(timeStamp);
-                        headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading().inverse());
+                        headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading());
 
                         break;
                     case TRACKING:
@@ -345,14 +346,14 @@ public class SwerveDrive extends Subsystem {
                 }
                         rotationCorrection = headingController.getRotationCorrection(getRobotHeading().inverse().flip(), timeStamp);
                         desiredRotationScalar = rotationCorrection;
-                        commandModules(inverseKinematics.updateDriveVectors(translationVector, rotationCorrection, poseMeters,
-                                robotCentric));
+                        commandModuleVelocitys(inverseKinematics.updateDriveVectors(translationVector, rotationCorrection, poseMeters,
+                                robotCentric,true));
                 break;
             case TARGETOBJECT:
                 rotationCorrection = mTargetPiecePlanner.updateAiming(timeStamp, objectVision.getLatestVisionUpdate(), headingController, getRobotHeading());
-                commandModules(
+                commandModule(
                         inverseKinematics.updateDriveVectors(translationVector.scale(.5),
-                        rotationCorrection*.7+rotationScalar, drivingPose, robotCentric));
+                        rotationCorrection*.7+rotationScalar, drivingPose, robotCentric,false));
                 break;
             case AIMING:
             Pose2d demandedAngle;
@@ -374,21 +375,21 @@ public class SwerveDrive extends Subsystem {
                         odometryVision.getLatestVisionUpdate(),
                         headingController,
                         robotState.getSmoothedVelocity());
-                commandModules(
+                commandModule(
                         inverseKinematics.updateDriveVectors(translationVector.scale(.3),
-                        demandedAngle.getRotation().getDegrees()+rotationScalar, drivingPose, robotCentric));
+                        demandedAngle.getRotation().getDegrees()+rotationScalar, drivingPose, robotCentric,false));
                 break;
 
             case OFF:
-                commandModules(inverseKinematics.updateDriveVectors(new Translation2d(), 0, drivingPose, robotCentric));
+                commandModule(inverseKinematics.updateDriveVectors(new Translation2d(), 0, drivingPose, robotCentric,false));
                 break;
 
             case SNAP:
                 headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading());
                 rotationCorrection = headingController.getRotationCorrection(getRobotHeading(), timeStamp);
                 desiredRotationScalar = rotationCorrection;
-                commandModules(inverseKinematics.updateDriveVectors(translationVector, rotationCorrection, poseMeters,
-                        robotCentric));
+                commandModule(inverseKinematics.updateDriveVectors(translationVector, rotationCorrection, poseMeters,
+                        robotCentric,false));
                 break;
 
         }
