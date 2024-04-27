@@ -196,8 +196,8 @@ public class SuperStructure extends Subsystem {
     }
 
     public void processState(double timestamp) {
-        Logger.recordOutput("Mode", currentMode);
-        Logger.recordOutput("SuperState", currentState);
+        Logger.recordOutput("SuperStructure/Mode", currentMode);
+        Logger.recordOutput("SuperStructure/SuperState", currentState);
         switch (currentState) {
             case SCORE:
                 switch (currentMode) {
@@ -630,7 +630,7 @@ public class SuperStructure extends Subsystem {
                     @Override
                     public boolean isFinished() {
                         Translation2d other = m.markerPos;
-                        Logger.recordOutput("event", Pose2d.fromTranslation(other.reflect()).toWPI());
+                        Logger.recordOutput("Auto/Current Event Marker", Pose2d.fromTranslation(other.reflect()).toWPI());
                         double timeStamp = Timer.getFPGATimestamp();
                         if(mPathStateGenerator.getTime() > m.getTimestamp())
                             return false;
@@ -779,9 +779,9 @@ public class SuperStructure extends Subsystem {
 
     @Override
     public void outputTelemetry() {
-        Logger.recordOutput("Countinuous Shoot", continuousShoot);
-        Logger.recordOutput("RequestsCompleted", requestsCompleted());
-        Logger.recordOutput("CurrentRequest", currentRequestLog);
+        Logger.recordOutput("Auto/Countinuous Shoot", continuousShoot);
+        Logger.recordOutput("SuperStructure/RequestsCompleted", requestsCompleted());
+        Logger.recordOutput("SuperStructure/CurrentRequest", currentRequestLog);
     }
 
     @Override

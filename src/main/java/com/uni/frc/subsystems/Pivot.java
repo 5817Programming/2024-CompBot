@@ -14,6 +14,12 @@ import com.uni.frc.Ports;
  import com.uni.frc.subsystems.Requests.Request;
  import com.uni.lib.TalonConfigs;
 
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
+
 
   public class Pivot extends Subsystem {
     private PeriodicIO mPeriodicIO = new PeriodicIO();
@@ -31,9 +37,12 @@ import com.uni.frc.Ports;
         instance = new Pivot();
       return instance;
     }
-
+    Mechanism2d mech = new Mechanism2d(.8, 1.25);
+    MechanismRoot2d root = mech.getRoot("Pivot", 0, 0);
     /** Creates a new pivot. */
+    MechanismLigament2d joint;
     public Pivot() {
+      joint = root.append(new MechanismLigament2d("Shooter", .8,18, 10, new Color8Bit(Color.kAliceBlue)));
       configMotors();
       resetToAbsolute();
     }
@@ -104,7 +113,7 @@ import com.uni.frc.Ports;
       setMotionMagic(Override);
     }
 
-    public void motionMagic(){//.299 is og zero
+    public void motionMagic(){
       pivotMotor1.setControl(new MotionMagicVoltage(mPeriodicIO.rotationDemand));
       pivotMotor2.setControl(new Follower(Ports.Pivot1, false));
 
@@ -181,9 +190,11 @@ import com.uni.frc.Ports;
 
     @Override
     public void outputTelemetry() {
+      joint.setAngle(getAbsolutePosition()+18);
       Logger.recordOutput("Pivot/Position", pivotMotor1.getPosition().getValue());
       Logger.recordOutput("Pivot/Absolute Position",encoder.getAbsolutePosition().getValue());
       Logger.recordOutput("Pivot/demand", mPeriodicIO.rotationDemand);
+      Logger.recordOutput("Pivot/Mechanism", mech);
 
     }
 
