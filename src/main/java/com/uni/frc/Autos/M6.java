@@ -32,6 +32,6 @@ public class M6 extends AutoBase {
         s.setContinuousShootState(true);
 
         s.trajectoryState(trajectory, initRotation);
-        registerTrajectoryEvents("M6",true);
+        registerChoreoEvents("M6");
 
     }}

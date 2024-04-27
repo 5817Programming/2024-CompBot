@@ -30,6 +30,6 @@ public class S4 extends AutoBase {
         s.setContinuousShootState(true);
 
         s.trajectoryState(trajectory, initRotation);
-        registerTrajectoryEvents("S4",true);
+        registerChoreoEvents("S4");
 
     }}

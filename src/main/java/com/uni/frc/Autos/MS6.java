@@ -30,6 +30,6 @@ public class MS6 extends AutoBase {
         s.setContinuousShootState(true);
 
         s.trajectoryState(trajectory, initRotation);
-        registerTrajectoryEvents("M6 Staggered",true);
+        registerChoreoEvents("M6 Staggered");
 
     }}
