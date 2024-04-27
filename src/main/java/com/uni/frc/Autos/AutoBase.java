@@ -186,20 +186,14 @@ public abstract class AutoBase {
     public void updateAuto(){
         if(!stopPoses.isEmpty()){
                 Translation2d markerPose = stopPoses.get(0);
-                Translation2d currentPose = PathStateGenerator.getInstance().getDesiredPose2d(true).getTranslation();
+                Translation2d currentPose = new Translation2d(PathStateGenerator.getInstance().getDesiredState(true).positionMeters);
                 double pathTimesamp = PathStateGenerator.getInstance().getTime();
-                if(stopTimestamps.get(0) < pathTimesamp+.2){
-                if (DriverStation.getAlliance().get().equals(Alliance.Blue)){
+                if(stopTimestamps.get(0) < pathTimesamp+.2){//hubert I don't think you did this right
                     if(markerPose.translateBy(currentPose.inverse()).norm() < 0.1){
                         mPathStateGenerator.stopTimer();
                         stopPoses.remove(0);
                     }
-                }else{
-                    if(stopPoses.get(0).getTranslation().reflect().translateBy(PathStateGenerator.getInstance().getDesiredPose2d(true).getTranslation().inverse()).norm() < 0.1){
-                        mPathStateGenerator.stopTimer();
-                        stopPoses.remove(0);
-                    }
-            }
+               
             
     }}
 
