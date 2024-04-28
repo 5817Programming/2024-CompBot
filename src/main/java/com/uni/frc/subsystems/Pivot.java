@@ -6,9 +6,9 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
   import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.uni.frc.Constants;
 import com.uni.frc.Ports;
  import com.uni.frc.Constants.PivotConstants;
  import com.uni.frc.subsystems.Requests.Request;
@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
     private TalonFX pivotMotor1 = new TalonFX(Ports.Pivot1,"Minivore");
     private TalonFX pivotMotor2 = new TalonFX(Ports.Pivot2,"Minivore");
 
-    private CANcoder encoder = new CANcoder(Ports.PivotEncoder,"Minivore");
     private TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
 
 
@@ -37,12 +36,12 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
         instance = new Pivot();
       return instance;
     }
-    Mechanism2d mech = new Mechanism2d(.8, 1.25);
+    Mechanism2d mech = new Mechanism2d(.6, 1.25);
     MechanismRoot2d root = mech.getRoot("Pivot", 0, 0);
     /** Creates a new pivot. */
     MechanismLigament2d joint;
     public Pivot() {
-      joint = root.append(new MechanismLigament2d("Shooter", .8,18, 10, new Color8Bit(Color.kAliceBlue)));
+      joint = root.append(new MechanismLigament2d("Shooter", .7,18, 10, new Color8Bit(Color.kAliceBlue)));
       configMotors();
       resetToAbsolute();
     }
@@ -80,7 +79,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
     }
 
     public double getAbsolutePosition(){
-      return encoder.getAbsolutePosition().getValueAsDouble()*360;
+      return mPeriodicIO.rotationPosition*360;
     }
 
     public void configMotors() {
@@ -171,9 +170,10 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 
     @Override
     public void writePeriodicOutputs() {
-      mPeriodicIO.rotationPosition = pivotMotor1.getPosition().getValueAsDouble();
-      mPeriodicIO.velocity = pivotMotor1.getVelocity().getValueAsDouble();
-      mPeriodicIO.statorCurrent = pivotMotor1.getStatorCurrent().getValueAsDouble();
+      if (Constants.currentMode == Constants.Mode.SIM) 
+        mPeriodicIO.rotationPosition = mPeriodicIO.rotationDemand;
+      else
+        mPeriodicIO.rotationPosition = pivotMotor1.getPosition().getValueAsDouble();
     }
 
     @Override
@@ -190,10 +190,9 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 
     @Override
     public void outputTelemetry() {
-      joint.setAngle(getAbsolutePosition()+18);
-      Logger.recordOutput("Pivot/Position", pivotMotor1.getPosition().getValue());
-      Logger.recordOutput("Pivot/Absolute Position",encoder.getAbsolutePosition().getValue());
-      Logger.recordOutput("Pivot/demand", mPeriodicIO.rotationDemand);
+      joint.setAngle(getAbsolutePosition()+23);
+      Logger.recordOutput("Pivot/Absolute Position",getAbsolutePosition());
+      Logger.recordOutput("Pivot/demand", mPeriodicIO.rotationDemand*360);
       Logger.recordOutput("Pivot/Mechanism", mech);
 
     }

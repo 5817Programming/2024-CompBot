@@ -37,7 +37,7 @@ public class Constants {
         SIM,
         REPLAY
     }
-    public static Mode currentMode = Mode.REAL;
+    public static Mode currentMode = Mode.SIM;
 
     /**
      * Talon FX supports multiple (cascaded) PID loops. For
