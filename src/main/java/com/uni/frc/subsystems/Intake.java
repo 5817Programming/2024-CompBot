@@ -2,6 +2,8 @@
  
 
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
   import com.ctre.phoenix6.controls.DutyCycleOut;
   import com.ctre.phoenix6.hardware.TalonFX;
@@ -108,6 +110,9 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
     @Override
     public void outputTelemetry() {
+     Logger.recordOutput("Intake/Demand", mPeriodicIO.driveDemand);
+     Logger.recordOutput("Intake/Position", mPeriodicIO.drivePosition);
+     Logger.recordOutput("Intake/Velocity", mPeriodicIO.velocity);
 
     }
 
@@ -120,7 +125,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
       double velocity = 0;
       double statorCurrent = 0;
 
-      double rotationDemand = 0.0;
       double driveDemand = 0.0;
     }
   }

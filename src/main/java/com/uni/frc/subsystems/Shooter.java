@@ -2,6 +2,8 @@ package com.uni.frc.subsystems;
 
 
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -161,6 +163,9 @@ import com.uni.lib.TalonConfigs;
 
    @Override
    public void outputTelemetry() {
+    Logger.recordOutput("Shooter/Velocity", mPeriodicIO.velocity);
+    Logger.recordOutput("Shooter/Demand", mPeriodicIO.driveDemand);
+    
    }
 
    @Override
