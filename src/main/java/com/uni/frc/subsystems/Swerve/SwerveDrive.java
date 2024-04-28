@@ -193,6 +193,7 @@ public class SwerveDrive extends Subsystem {
         if (translationVector.norm() <= translationDeadband) {
             translationVector = new Translation2d();
         }
+        simHeading +=rotationScalar*5;
         if(DriverStation.getAlliance().get().equals(Alliance.Blue))
             translationVector = translationVector.inverse();
         rotationScalar *= 0.025;
@@ -273,8 +274,10 @@ public class SwerveDrive extends Subsystem {
             m.resetModulePositionToAbsolute();
         });
     }
-
+    double simHeading =0;
     public Rotation2d getRobotHeading() {
+        if(Constants.currentMode==Constants.Mode.SIM)
+            return Rotation2d.fromDegrees(simHeading);
         return Rotation2d.fromDegrees(gyro.getAngle());
     }
 
@@ -307,7 +310,7 @@ public class SwerveDrive extends Subsystem {
                     rotationCorrection = 0;
                 }
                 commandModule(inverseKinematics.updateDriveVectors(translationVector,
-                        rotationScalar + rotationCorrection, drivingPose, robotCentric,false));
+                        rotationScalar, drivingPose, robotCentric,false));
                 break;
 
             case ALIGNMENT:

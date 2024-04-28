@@ -28,6 +28,9 @@ import com.uni.lib.swerve.SwerveModuleState;
 import com.uni.lib.util.Util;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 /** Add your docs here. */
 public class SwerveDriveModule extends Subsystem {
@@ -47,8 +50,7 @@ public class SwerveDriveModule extends Subsystem {
     
     Translation2d modulePosition;
 
-    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.driveKS, Constants.driveKV,
-            Constants.driveKA);
+    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.driveKS, Constants.driveKV, Constants.driveKA);
 
     boolean rotationEncoderFlipped;
 
@@ -68,6 +70,8 @@ public class SwerveDriveModule extends Subsystem {
      *                           (clockwise = increasing, counter-clockwise =
      *                           decreasing)
      */
+    DCMotorSim driveSim = new DCMotorSim(DCMotor.getKrakenX60(1), 0.99, .025);
+    
     public SwerveDriveModule(int rotationMotorPort, int driveMotorPort, int moduleID, double encoderStartingPos,
             Translation2d modulePoseInches, boolean flipEncoder ,Translation2d moduleposemeters){
         this.rotationMotor = new TalonFX(rotationMotorPort, Constants.isCompbot? "Minivore": "");
@@ -77,10 +81,10 @@ public class SwerveDriveModule extends Subsystem {
         this.encoderOffset = encoderStartingPos;
         this.modulePosition = modulePoseInches;
         this.mstartingPosition =moduleposemeters;
-
+        
 
         this.rotationEncoderFlipped = flipEncoder;
-
+        
         if (Options.encoderType == "Mag Encoder") {
             rotationMagEncoder = new MagEncoder(Ports.SWERVE_ENCODERS[moduleID]);
         } 
@@ -194,7 +198,7 @@ public class SwerveDriveModule extends Subsystem {
     }
     
     public synchronized void updatePose(Rotation2d robotHeading){
-		double currentEncDistance = Conversions.falconToMeters(driveMotor.getPosition().getValueAsDouble(), Constants.kWheelCircumference, Options.driveRatio);
+		double currentEncDistance = Conversions.falconToMeters(mPeriodicIO.drivePosition, Constants.kWheelCircumference, Options.driveRatio);
 		double deltaEncDistance = (currentEncDistance - previousEncDistance) * Constants.kWheelScrubFactors[moduleID];
 		Rotation2d currentWheelAngle = getFieldCentricAngle(robotHeading);
 		Translation2d deltaPosition = new Translation2d(-currentWheelAngle.cos()*deltaEncDistance, 
@@ -254,23 +258,34 @@ public class SwerveDriveModule extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
-        mPeriodicIO.rotationPosition = rotationMotor.getPosition().getValue();
-        mPeriodicIO.drivePosition = driveMotor.getPosition().getValue();
-        mPeriodicIO.velocity = driveMotor.getVelocity().getValue();
+        switch (Constants.currentMode) {
+            case REAL:
+                mPeriodicIO.rotationPosition = rotationMotor.getPosition().getValue();
+                mPeriodicIO.drivePosition = driveMotor.getPosition().getValue();
+                mPeriodicIO.velocity = driveMotor.getVelocity().getValue();
+                break;
+            case SIM:
+                mPeriodicIO.rotationPosition = mPeriodicIO.rotationDemand;
+                mPeriodicIO.drivePosition = driveSim.getAngularPositionRotations();
+                mPeriodicIO.velocity = driveSim.getAngularVelocityRPM()*60;
+                driveSim.setState(driveSim.getAngularPositionRad(), driveSim.getAngularVelocityRadPerSec()*0.99);
+            default:
+                break;
+        }
+        
     }
-
+    double lastTimeStamp = 0;
       @Override
   public void readPeriodicInputs() {
+    double timestamp = Timer.getFPGATimestamp();
+    driveSim.update(timestamp-lastTimeStamp);
     switch (mPeriodicIO.driveControlMode) {
       case PercentOuput:
           runPercentOutput(mPeriodicIO.driveDemand, driveMotor);
+          driveSim.setInputVoltage(12*mPeriodicIO.driveDemand);
         break;
-      case MotionMagic:
-          runMotionMagic(mPeriodicIO.driveDemand, driveMotor);
-        break;
-      case Velocity:
-          runVelocity(mPeriodicIO.driveDemand, driveMotor);
-        break;
+        default:
+            break;
     }
     switch (mPeriodicIO.rotationControlMode) {
       case PercentOuput:
@@ -282,7 +297,7 @@ public class SwerveDriveModule extends Subsystem {
           runMotionMagic(mPeriodicIO.rotationDemand, rotationMotor);
         break;
     }
-
+    lastTimeStamp = timestamp;
   }
 
   public void runPercentOutput(double percent, TalonFX motor){
@@ -294,6 +309,7 @@ public class SwerveDriveModule extends Subsystem {
 
   public void runVelocity(double velocity, TalonFX motor){
     motor.setControl(new MotionMagicVelocityVoltage(velocity).withSlot(0).withEnableFOC(true));
+
   }
     @Override
     public void outputTelemetry() {
@@ -310,12 +326,12 @@ public class SwerveDriveModule extends Subsystem {
     }
 
     @Override
-    public void stop() {// stops everything
+    public void stop() {
         setModuleAngle(getModuleAngle());
         setDriveOpenLoop(0.0);
     }
 
-    public static class PeriodicIO {// data
+    public static class PeriodicIO {
         double rotationPosition = 0;
         double drivePosition = 0;
         double velocity = 0;

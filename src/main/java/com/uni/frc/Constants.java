@@ -32,6 +32,12 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 /** Add your docs here. */
 public class Constants {
     public static final int kSlotIdx = 0;
+    public enum Mode{
+        REAL,
+        SIM,
+        REPLAY
+    }
+    public static Mode currentMode = Mode.REAL;
 
     /**
      * Talon FX supports multiple (cascaded) PID loops. For

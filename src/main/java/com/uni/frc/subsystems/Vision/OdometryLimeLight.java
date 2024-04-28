@@ -19,7 +19,7 @@ import com.uni.frc.Field.FieldLayout;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.Subsystem;
 import com.uni.frc.subsystems.Requests.Request;
-import com.uni.frc.subsystems.gyros.Pigeon;
+import com.uni.frc.subsystems.Swerve.SwerveDrive;
 import com.uni.lib.Vision.LimelightHelpers;
 import com.uni.lib.Vision.TargetInfo;
 import com.uni.lib.Vision.UndistortMap;
@@ -104,7 +104,7 @@ public class OdometryLimeLight extends Subsystem {
     mPeriodicIO.ty = table.getEntry("ty").getDouble(0);
     mPeriodicIO.corners = table.getEntry("tcornxy").getNumberArray(new Number[] { 0, 0, 0, 0, 0 });
     mPeriodicIO.ta = table.getEntry("ta").getDouble(0);
-    LimelightHelpers.SetRobotOrientation("limelight-up", 180-Pigeon.getInstance().getAngle(), 0, 0, 0, 0, 0);
+    LimelightHelpers.SetRobotOrientation("limelight-up", 180-SwerveDrive.getInstance().getRobotHeading().getDegrees(), 0, 0, 0, 0, 0);
     Pose2d mt2 = new Pose2d(LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-up").pose);
     
 

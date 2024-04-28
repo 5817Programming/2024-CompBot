@@ -10,6 +10,7 @@
   },
   "NTProvider": {
     "types": {
+      "/AdvantageKit/RealOutputs/Pivot/Mechanism": "Mechanism2d",
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/AutoChooser": "String Chooser",
       "/SmartDashboard/Autonomous routine": "String Chooser"
@@ -19,6 +20,14 @@
     "retained": {
       "SmartDashboard": {
         "Autonomous routine": {
+          "open": true
+        },
+        "open": true
+      }
+    },
+    "transitory": {
+      "AdvantageKit": {
+        "DashboardInputs": {
           "open": true
         },
         "open": true

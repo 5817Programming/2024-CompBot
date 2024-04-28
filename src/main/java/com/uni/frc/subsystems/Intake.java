@@ -1,7 +1,8 @@
  package com.uni.frc.subsystems;
  
 
-  import com.ctre.phoenix6.configs.TalonFXConfiguration;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
   import com.ctre.phoenix6.controls.DutyCycleOut;
   import com.ctre.phoenix6.hardware.TalonFX;
  import com.uni.frc.Ports;
@@ -64,14 +65,7 @@
       intakePercent(state.output);
     }
 
-    public Request hasPeiceRequest(){
-        return new Request() { 
-            @Override 
-            public boolean isFinished() {
-                return mPeriodicIO.hasPiece;
-            }
-        };
-       }
+
     public Request stateRequest(State state) {
       return new Request() {
 
@@ -121,12 +115,10 @@
     public void stop() {
       setIntakePercentRequest(0);
     }
-
     public static class PeriodicIO { 
       double drivePosition = 0;
       double velocity = 0;
       double statorCurrent = 0;
-      boolean hasPiece = false;
 
       double rotationDemand = 0.0;
       double driveDemand = 0.0;
