@@ -96,6 +96,18 @@ public class Constants {
     public static final List<Translation2d> kModulePositions = Arrays.asList(kFrontRightPosition, kFrontLeftPosition,
             kRearLeftPosition, kRearRightPosition);
 
+    public static final edu.wpi.first.math.geometry.Translation2d FrontRightPosition = new Translation2d(kRobotBaseWidth / 2,
+                                                                                                        -kRobotBaseLength / 2).toWPI();
+    public static final edu.wpi.first.math.geometry.Translation2d FrontLeftPosition = new Translation2d(kRobotBaseWidth / 2,
+                                                                                                        kRobotBaseLength / 2).toWPI();
+    public static final edu.wpi.first.math.geometry.Translation2d RearLeftPosition = new Translation2d(-kRobotBaseWidth / 2,
+                                                                                                        kRobotBaseLength / 2).toWPI();
+    public static final edu.wpi.first.math.geometry.Translation2d RearRightPosition = new Translation2d(-kRobotBaseWidth / 2,
+                                                                                                        -kRobotBaseLength / 2).toWPI();
+
+    public static final edu.wpi.first.math.geometry.Translation2d[] ModulePositions = {FrontRightPosition, FrontLeftPosition,
+            RearLeftPosition, RearRightPosition};
+
     public static double kSwerveRotationMaxSpeed = 12720 * 0.8;
     public static double GrannyModeWeight = .5;
 

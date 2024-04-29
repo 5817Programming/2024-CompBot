@@ -7,11 +7,18 @@ package com.uni.lib.swerve;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.littletonrobotics.junction.Logger;
+
+import com.uni.frc.Constants;
 import com.uni.frc.subsystems.Swerve.SwerveDriveModule;
+import com.uni.frc.subsystems.gyros.Gyro;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
+import com.uni.lib.geometry.Twist2d;
 
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
@@ -35,15 +42,29 @@ public class SwerveOdometry {
     public ChassisSpeeds getVelocity(){
         return m_velocity;
     }
+    public SwerveModulePosition[] getModulePositions(List<SwerveDriveModule> modules){
+        SwerveModulePosition[] positions = {new SwerveModulePosition(),new SwerveModulePosition(),new SwerveModulePosition(),new SwerveModulePosition()};
+        for(int i= 0; i<modules.size();i++){
+            positions[i] = new SwerveModulePosition(modules.get(i).getDistanceTraveled(),Rotation2d.fromDegrees(modules.get(i).getModuleAngle()).toWPI());
+        }
+        return positions;
+    }
 
-    public Pose2d updateWithSwerveModuleStates(Rotation2d heading, List<SwerveDriveModule> modules, double timestamp){
+        SwerveModulePosition[] lastModulePositions = {
+            new SwerveModulePosition(),
+            new SwerveModulePosition(),
+            new SwerveModulePosition(),
+            new SwerveModulePosition()
+        };
 
+
+    public Pose2d updateWithSwerveModuleStates(Gyro gyro, List<SwerveDriveModule> modules, double timestamp){
             double x = 0.0;
             double y = 0.0;      
             double averageDistance = 0.0;
             double[] distances = new double[4];
             for (SwerveDriveModule m : modules) {
-                m.updatePose(heading);
+                m.updatePose(Rotation2d.fromDegrees(gyro.getAngle()));
                 double distance = m.getEstimatedRobotPose().getTranslation().translateBy(m_poseMeters.getTranslation().inverse())
                         .norm();
                 distances[0] = distance;
@@ -52,7 +73,6 @@ public class SwerveOdometry {
             averageDistance /= modules.size();
 
             m_velocity = m_kinematics.toChassisSpeedWheelConstraints(modules);
-
             int minDevianceIndex = 0;
             double minDeviance = Units.inchesToMeters(100);
             List<SwerveDriveModule> modulesToUse = new ArrayList<>();
@@ -75,7 +95,7 @@ public class SwerveOdometry {
                 x += m.getEstimatedRobotPose().getTranslation().x();
                 y += m.getEstimatedRobotPose().getTranslation().y();
             }
-            Pose2d updatedPose = new Pose2d(new Translation2d(x / modulesToUse.size(), y / modulesToUse.size()), heading);
+            Pose2d updatedPose = new Pose2d(new Translation2d(x / modulesToUse.size(), y / modulesToUse.size()), Rotation2d.fromDegrees(gyro.getAngle()));
             Translation2d deltaPos = updatedPose.getTranslation().translateBy(m_poseMeters.getTranslation().inverse());
             m_velocity.vxMetersPerSecond = deltaPos.scale(1 / (timestamp - m_previousTimestamp)).x();
             m_velocity.vyMetersPerSecond = deltaPos.scale(1 / (timestamp - m_previousTimestamp)).y();
@@ -85,6 +105,22 @@ public class SwerveOdometry {
             modules.forEach((m) -> m.resetPose(m_poseMeters));
             m_previousTimestamp = timestamp;
 
+            // Read wheel positions and deltas from each module
+            SwerveModulePosition[] modulePositions = getModulePositions(modules);
+            SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
+            for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+            moduleDeltas[moduleIndex] =
+                new SwerveModulePosition(
+                    modulePositions[moduleIndex].distanceMeters
+                        - lastModulePositions[moduleIndex].distanceMeters,
+                    modulePositions[moduleIndex].angle);
+            lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
+            }
+            SwerveDriveKinematics swerveDriveKinematics = new SwerveDriveKinematics(Constants.ModulePositions);
+            Twist2d twist = new Twist2d(swerveDriveKinematics.toTwist2d(moduleDeltas));
+                
+            gyro.update(Rotation2d.fromRadians(twist.dtheta*100));
+            Logger.recordOutput("dtheta", twist.dtheta*100);
             return m_poseMeters;
     }
 

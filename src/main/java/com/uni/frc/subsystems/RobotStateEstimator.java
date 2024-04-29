@@ -40,7 +40,7 @@ public class RobotStateEstimator extends Subsystem {
   @Override
   public void update(){
     double timeStamp = Timer.getFPGATimestamp();
-    mOdometry.updateWithSwerveModuleStates(mDrive.getRobotHeading(), mDrive.getModules(), timeStamp);
+    mOdometry.updateWithSwerveModuleStates(mDrive.getGyro(), mDrive.getModules(), timeStamp);
     mDrive.resetModulePose(mOdometry.getPoseMeters());
     Twist2d measuredVelocity = mOdometry.getVelocity().toTwist2d();
     Twist2d predictedVelocity = mDrive.getSetPoint().toTwist2d();

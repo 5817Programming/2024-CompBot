@@ -4,6 +4,8 @@
 
 package com.uni.frc.subsystems.gyros;
 
+import com.uni.lib.geometry.Rotation2d;
+
 /** 
  * This is an abstract class
  * abstract classes tell its child methods it needs to have or it will raise an errror
@@ -18,5 +20,11 @@ package com.uni.frc.subsystems.gyros;
      */
     public abstract double getAngle();
     public abstract double getPitch();
-
+    public abstract boolean getConnected();
+    public abstract void update(Rotation2d odomUpdate);
+    class mPeriodicIO{
+        static double yawVelocityRadPerSec = 0;
+        static Rotation2d yawPosition = new Rotation2d();
+        static boolean connected = false;
+    }
 }

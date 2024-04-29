@@ -4,10 +4,19 @@
 
 package com.uni.frc.subsystems.gyros;
 
+
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.uni.frc.Constants;
 import com.uni.frc.Ports;
+import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Twist2d;
+
+import edu.wpi.first.math.util.Units;
+
 
 
 /** 
@@ -22,16 +31,23 @@ public class Pigeon extends Gyro {
             instance = new Pigeon();
         return instance;
     }
+    Pigeon2  pigeon = new Pigeon2(Ports.PIGEON, Constants.isCompbot?"Minivore":"");
 
-    Pigeon2 pigeon;
+    private final StatusSignal<Double> yaw = pigeon.getYaw();
+    private final StatusSignal<Double> yawVelocity = pigeon.getAngularVelocityZWorld();
 
     public Pigeon() {
         try {
-            pigeon = new Pigeon2(Ports.PIGEON, Constants.isCompbot?"Minivore":"");
             // secondPigeon = new PigeonIMU(Ports.SECONDARY_PIGEON);
+             pigeon.getConfigurator().apply(new Pigeon2Configuration());
+            pigeon.getConfigurator().setYaw(0.0);
+            yaw.setUpdateFrequency(100.0);
+            yawVelocity.setUpdateFrequency(100.0);
+            pigeon.optimizeBusUtilization();
         } catch (Exception e) {
             System.out.println(e);
         }
+        
     }
 
     public double getPitch() {
@@ -39,9 +55,17 @@ public class Pigeon extends Gyro {
     }
 
     public void setAngle(double angle) {
+        
         pigeon.setYaw(angle);
-        // pigeon.setFusedHeading(-angle * 64.0, Constants.kCANTimeoutMs);
-
+    }
+    @Override
+    public void update(Rotation2d odomUpdate){
+        mPeriodicIO.connected = BaseStatusSignal.refreshAll(yaw, yawVelocity).equals(StatusCode.OK);
+        if(mPeriodicIO.connected&&!Constants.currentMode.equals(Constants.Mode.SIM))
+            mPeriodicIO.yawPosition = Rotation2d.fromDegrees(yaw.getValueAsDouble());
+        else
+            mPeriodicIO.yawPosition = mPeriodicIO.yawPosition.rotateBy(odomUpdate.inverse());
+        mPeriodicIO.yawVelocityRadPerSec = Units.degreesToRadians(yawVelocity.getValueAsDouble());
     }
 
     public Twist2d getVelocity(){
@@ -53,6 +77,11 @@ public class Pigeon extends Gyro {
 
     @Override
     public double getAngle() {
-        return -pigeon.getYaw().getValue();
+        return -mPeriodicIO.yawPosition.getDegrees();
     }
+    @Override
+    public boolean getConnected(){
+        return mPeriodicIO.connected;
+    }
+
 }

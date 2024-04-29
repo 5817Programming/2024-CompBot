@@ -150,7 +150,9 @@ public class SwerveDriveModule extends Subsystem {
     }
 
 
-
+    public double getDistanceTraveled(){
+        return mPeriodicIO.distanceTraveled;
+    }
     public void resetEncoders() {
         driveMotor.setPosition(0);
 
@@ -217,6 +219,7 @@ public class SwerveDriveModule extends Subsystem {
 	
 		deltaPosition = new Translation2d(deltaPosition.x() * xScrubFactor,
 			deltaPosition.y() * yScrubFactor);
+        mPeriodicIO.deltaDistanceTraveled = deltaPosition.norm();
         mPeriodicIO.distanceTraveled += deltaPosition.norm();
 		Translation2d updatedPosition = position.translateBy(deltaPosition);
 		Pose2d staticWheelPose = new Pose2d(updatedPosition, robotHeading);
@@ -224,6 +227,8 @@ public class SwerveDriveModule extends Subsystem {
 		position = updatedPosition;
 		estimatedRobotPose =  robotPose;
 		previousEncDistance = currentEncDistance;
+        Logger.recordOutput("Swerve/Module "+moduleID+"/Position", Pose2d.fromTranslation(updatedPosition).toWPI());
+
 	}
 
     public double degreesToRotations(double degrees){
@@ -332,6 +337,7 @@ public class SwerveDriveModule extends Subsystem {
     }
 
     public static class PeriodicIO {
+        double deltaDistanceTraveled = 0;;
         double rotationPosition = 0;
         double drivePosition = 0;
         double velocity = 0;
