@@ -2,6 +2,7 @@
  
 
 
+import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -13,7 +14,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
 
   public class Intake extends Subsystem {
-    private PeriodicIO mPeriodicIO = new PeriodicIO();
+    private IntakeIOAutoLogged mPeriodicIO = new IntakeIOAutoLogged();
     private TalonFX intakeMotor = new TalonFX(Ports.Intake, "Minivore");
     private TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
 
@@ -110,9 +111,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
     @Override
     public void outputTelemetry() {
-     Logger.recordOutput("Intake/Demand", mPeriodicIO.driveDemand);
-     Logger.recordOutput("Intake/Position", mPeriodicIO.drivePosition);
-     Logger.recordOutput("Intake/Velocity", mPeriodicIO.velocity);
+     Logger.processInputs("Intake", mPeriodicIO);
+
 
     }
 
@@ -120,11 +120,11 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
     public void stop() {
       setIntakePercentRequest(0);
     }
-    public static class PeriodicIO { 
+    @AutoLog
+    public static class IntakeIO { 
       double drivePosition = 0;
       double velocity = 0;
       double statorCurrent = 0;
-
       double driveDemand = 0.0;
     }
   }

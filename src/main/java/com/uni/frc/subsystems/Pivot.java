@@ -1,6 +1,7 @@
  package com.uni.frc.subsystems;
 
-  import org.littletonrobotics.junction.Logger;
+  import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
   import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -22,7 +23,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 
 
   public class Pivot extends Subsystem {
-    private PeriodicIO mPeriodicIO = new PeriodicIO();
+    private PivotIOAutoLogged mPeriodicIO = new PivotIOAutoLogged();
     private TalonFX pivotMotor1 = new TalonFX(Ports.Pivot1,"Minivore");
     private TalonFX pivotMotor2 = new TalonFX(Ports.Pivot2,"Minivore");
 
@@ -170,10 +171,14 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 
     @Override
     public void writePeriodicOutputs() {
-      if (Constants.currentMode == Constants.Mode.SIM) 
+      if (Constants.currentMode == Constants.Mode.SIM) {
         mPeriodicIO.rotationPosition = mPeriodicIO.rotationDemand;
-      else
+      }
+      else{
         mPeriodicIO.rotationPosition = pivotMotor1.getPosition().getValueAsDouble();
+        mPeriodicIO.statorCurrent = pivotMotor1.getStatorCurrent().getValue();
+        mPeriodicIO.velocity = pivotMotor1.getVelocity().getValue();
+      }
     }
 
     @Override
@@ -191,18 +196,16 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
     @Override
     public void outputTelemetry() {
       joint.setAngle(getAbsolutePosition()+23);
-      Logger.recordOutput("Pivot/Absolute Position",getAbsolutePosition());
-      Logger.recordOutput("Pivot/demand", mPeriodicIO.rotationDemand*360);
       Logger.recordOutput("Pivot/Mechanism", mech);
-
+      Logger.processInputs("Pivot", mPeriodicIO);
     }
 
     @Override
     public void stop() {
       setpivotPercentRequest(0);
     }
-
-    public static class PeriodicIO {
+    @AutoLog
+    public static class PivotIO {
       ControlMode rotationControlMode = ControlMode.MotionMagic;
       double rotationPosition = 0;
       double velocity = 0;

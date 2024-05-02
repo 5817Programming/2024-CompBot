@@ -1,5 +1,6 @@
  package com.uni.frc.subsystems;
 
+import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -15,7 +16,7 @@ import com.uni.frc.Constants.ElevatorConstants;
 
 
   public class Climb extends Subsystem {
-    private PeriodicIO mPeriodicIO = new PeriodicIO();
+    private ClimbIOAutoLogged mPeriodicIO = new ClimbIOAutoLogged();
     private TalonFX elevatorMotor1 = new TalonFX(Ports.elevatorMotor1,"Minivore");
     private TalonFX elevatorMotor2 = new TalonFX(Ports.elevatorMotor2,"Minivore");
     
@@ -165,8 +166,7 @@ import com.uni.frc.Constants.ElevatorConstants;
 
     @Override
     public void outputTelemetry() {
-      Logger.recordOutput("Climber/Demand", mPeriodicIO.rotationDemand);
-      Logger.recordOutput("Climber/Position",mPeriodicIO.rotationPosition);
+      Logger.processInputs("Climber", mPeriodicIO);
       
 
     }
@@ -175,8 +175,8 @@ import com.uni.frc.Constants.ElevatorConstants;
     public void stop() {
       setpivotPercentRequest(0);
     }
-
-    public static class PeriodicIO {
+    @AutoLog
+    static class ClimbIO{
       ControlMode rotationControlMode = ControlMode.MotionMagic;
       double rotationPosition = 0;
       double velocity = 0;

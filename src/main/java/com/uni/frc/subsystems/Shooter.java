@@ -2,6 +2,7 @@ package com.uni.frc.subsystems;
 
 
 
+import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -14,7 +15,7 @@ import com.uni.lib.TalonConfigs;
 
 
  public class Shooter extends Subsystem {
-   private PeriodicIO mPeriodicIO = new PeriodicIO();
+   private ShooterIOAutoLogged mPeriodicIO = new ShooterIOAutoLogged();
    private TalonFX shooterMotor1 = new TalonFX(Ports.shooter1, "Minivore");
    private TalonFX shooterMotor2 = new TalonFX(Ports.shooter2, "Minivore");
    public State currentState = State.IDLE;
@@ -70,10 +71,6 @@ import com.uni.lib.TalonConfigs;
    }
 
 
-  
-   public void setAcceleration(double accelerationDemand){
-     mPeriodicIO.accelerationDemand = accelerationDemand;
-   }
 
 
   
@@ -102,17 +99,6 @@ import com.uni.lib.TalonConfigs;
     }
   };
  }
- public Request setAccelerationRequest(double percentage) {
-     return new Request() {
-
-       @Override
-       public void act() {
-         setAcceleration(percentage);
-       }
-
-     };
-
-   }
 
 
    @Override
@@ -163,8 +149,7 @@ import com.uni.lib.TalonConfigs;
 
    @Override
    public void outputTelemetry() {
-    Logger.recordOutput("Shooter/Velocity", mPeriodicIO.velocity);
-    Logger.recordOutput("Shooter/Demand", mPeriodicIO.driveDemand);
+    Logger.processInputs("Shooter", mPeriodicIO);
     
    }
 
@@ -172,12 +157,11 @@ import com.uni.lib.TalonConfigs;
    public void stop() {
      setPercentRequest(0);
    }
-
-   public static class PeriodicIO {
+   @AutoLog
+   public static class ShooterIO {
      double drivePosition = 0;
      double velocity = 0;
      double statorCurrent = 0;
-     double accelerationDemand = 0;
      double driveDemand = 0.0;
    }
  }

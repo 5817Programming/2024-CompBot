@@ -191,7 +191,7 @@ public class SwerveDriveModule extends Subsystem {
 
     public SwerveModuleState getSwerveModuleState(){
         return new SwerveModuleState(Conversions.falconToMPS(
-            mPeriodicIO.velocity,
+            mPeriodicIO.driveVelocity,
             Constants.kWheelCircumference,
             Options.driveRatio),
             mPeriodicIO.distanceTraveled ,
@@ -250,29 +250,32 @@ public class SwerveDriveModule extends Subsystem {
     }
 
    
-
-    public ModuleStatus getModuleStatus() {
+    public ModuleStatus getModuleStatus(){
+        return mPeriodicIO.status;
+    }
+    public void updateModuleStatus() {
         if (!isMagEncoderConnected())
-            return ModuleStatus.ABSOLUTE_ENCODER_ERROR;
+            mPeriodicIO.status = ModuleStatus.ABSOLUTE_ENCODER_ERROR;
         else if (driveMotor.isAlive())
-            return ModuleStatus.DRIVE_MOTOR_ERROR;
+            mPeriodicIO.status = ModuleStatus.DRIVE_MOTOR_ERROR;
         else if (rotationMotor.isAlive())
-            return ModuleStatus.ROTATION_MOTOR_ERROR;
-        return ModuleStatus.OK;
+            mPeriodicIO.status = ModuleStatus.ROTATION_MOTOR_ERROR;
+        mPeriodicIO.status = ModuleStatus.OK;
     }
 
     @Override
     public void writePeriodicOutputs() {
         switch (Constants.currentMode) {
             case REAL:
+                updateModuleStatus();
                 mPeriodicIO.rotationPosition = rotationMotor.getPosition().getValue();
                 mPeriodicIO.drivePosition = driveMotor.getPosition().getValue();
-                mPeriodicIO.velocity = driveMotor.getVelocity().getValue();
+                mPeriodicIO.driveVelocity = driveMotor.getVelocity().getValue();
                 break;
             case SIM:
                 mPeriodicIO.rotationPosition = mPeriodicIO.rotationDemand;
                 mPeriodicIO.drivePosition = driveSim.getAngularPositionRotations();
-                mPeriodicIO.velocity = driveSim.getAngularVelocityRPM()*60;
+                mPeriodicIO.driveVelocity = driveSim.getAngularVelocityRPM()*60;
                 driveSim.setState(driveSim.getAngularPositionRad(), driveSim.getAngularVelocityRadPerSec()*0.99);
             default:
                 break;
@@ -318,14 +321,13 @@ public class SwerveDriveModule extends Subsystem {
   }
     @Override
     public void outputTelemetry() {
-        Logger.recordOutput("Swerve/"+this.name+  "/Angle Demand", rotationsToDegrees(mPeriodicIO.rotationDemand));
+        Logger.recordOutput("Swerve/"+this.name + "/Angle Demand", rotationsToDegrees(mPeriodicIO.rotationDemand));
         Logger.recordOutput("Swerve/"+this.name + "/Angle", rotationsToDegrees(mPeriodicIO.rotationPosition));
-        Logger.recordOutput("Swerve/"+this.name + "/Mag Encoder Raw Value", getModuleAbsolutePosition() / 360.0);
         Logger.recordOutput("Swerve/"+this.name + "/Absolute Position", getModuleAbsolutePosition());
         Logger.recordOutput("Swerve/"+this.name + "/Drive Motor Demand", mPeriodicIO.driveDemand);
-        Logger.recordOutput("Swerve/"+this.name + "/Status", getModuleStatus().toString());
+        Logger.recordOutput("Swerve/"+this.name + "/Status", mPeriodicIO.status);
         Logger.recordOutput("Swerve/"+this.name + "/Drive Position", mPeriodicIO.drivePosition);
-        Logger.recordOutput("Swerve/"+this.name + "/drive velocity", driveMotor.getVelocity().getValueAsDouble());
+        Logger.recordOutput("Swerve/"+this.name + "/Drive velocity", mPeriodicIO.driveVelocity);
         Logger.recordOutput("Swerve/"+this.name + "/Drive Control Mode", mPeriodicIO.driveControlMode);
         Logger.recordOutput("Swerve/"+this.name + "/Rotation Control Mode", mPeriodicIO.rotationControlMode);
     }
@@ -340,9 +342,9 @@ public class SwerveDriveModule extends Subsystem {
         double deltaDistanceTraveled = 0;;
         double rotationPosition = 0;
         double drivePosition = 0;
-        double velocity = 0;
+        double driveVelocity = 0;
         double distanceTraveled = 0;
-
+        ModuleStatus status = ModuleStatus.OK;
         ControlMode rotationControlMode = ControlMode.MotionMagic;
         ControlMode driveControlMode = ControlMode.PercentOuput;
         double rotationDemand = 0.0;

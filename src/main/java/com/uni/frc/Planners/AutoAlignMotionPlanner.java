@@ -4,7 +4,6 @@ import java.util.OptionalDouble;
 
 
 import com.uni.frc.Constants;
-import com.uni.frc.subsystems.Music;
 import com.uni.lib.HeadingController;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
@@ -87,7 +86,6 @@ public class AutoAlignMotionPlanner {
         mAutoAlignComplete = yOutputWithinDeadband && xOutputWithinDeadband;
 
         if (mStartTime.isPresent() && mAutoAlignComplete) {
-            Music.getInstance().play("output.chrp");
             System.out.println("Alignment took " + (Timer.getFPGATimestamp() - mStartTime.getAsDouble()));
             mStartTime = OptionalDouble.empty();
         }

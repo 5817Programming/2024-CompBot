@@ -22,7 +22,6 @@ import com.uni.frc.subsystems.Climb;
 import com.uni.frc.subsystems.Indexer;
 import com.uni.frc.subsystems.Intake;
 import com.uni.frc.subsystems.Lights;
-import com.uni.frc.subsystems.Music;
 import com.uni.frc.subsystems.Pivot;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.RobotStateEstimator;
@@ -51,7 +50,6 @@ public class Robot extends LoggedRobot {
   SwerveDrive swerve;
   double yaw;
   OdometryLimeLight vision;
-  Music music;
   Gyro pigeon;
   AutoBase auto = new M6();
   public LoggedDashboardChooser<AutoBase> autoChooser = new LoggedDashboardChooser<>("AutoChooser");
@@ -76,7 +74,6 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
     swerve = SwerveDrive.getInstance();
-    music = Music.getInstance();
     controls = Controls.getInstance();
     vision = OdometryLimeLight.getInstance();
     swerve.zeroModules();
@@ -88,7 +85,6 @@ HashMap<String,AutoBase> autos = new HashMap<String,AutoBase>();
         OdometryLimeLight.getInstance(),
         RobotStateEstimator.getInstance(),
         ObjectLimeLight.getInstance(),
-        Music.getInstance(),
         Shooter.getInstance(),
         Indexer.getInstance(),
         Intake.getInstance(),

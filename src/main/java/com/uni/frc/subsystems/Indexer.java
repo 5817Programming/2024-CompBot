@@ -2,6 +2,7 @@ package com.uni.frc.subsystems;
 
 
 
+import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -15,10 +16,10 @@ import edu.wpi.first.wpilibj.Timer;
 
  public class Indexer extends Subsystem {
 
-   private PeriodicIO mPeriodicIO = new PeriodicIO();
-   private TalonFX indexerMotor = new TalonFX(Ports.Indexer, "Minivore");
+   private IndexerIOAutoLogged mPeriodicIO = new IndexerIOAutoLogged();
+   private TalonFX indexer = new TalonFX(Ports.Indexer, "Minivore");
    private boolean lastBeam = false;
-   private BeamBreak indexerBeamBreak;
+   private BeamBreak beamBreak;
    private TalonFXConfiguration indexerConfig;
 
 
@@ -34,7 +35,7 @@ import edu.wpi.first.wpilibj.Timer;
    /** Creates a new intake. */
    public Indexer() {
      configMotors();
-     indexerBeamBreak = new BeamBreak(0);
+     beamBreak = new BeamBreak(0);
    }
    public enum State{
     OFF(0),
@@ -51,14 +52,14 @@ import edu.wpi.first.wpilibj.Timer;
    }
 
    public void setRamp(double rampTime) {
-     indexerMotor.getConfigurator().refresh(indexerConfig);
+     indexer.getConfigurator().refresh(indexerConfig);
      indexerConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = rampTime;
-     indexerMotor.getConfigurator().apply(indexerConfig);
+     indexer.getConfigurator().apply(indexerConfig);
    }
 
    public void configMotors() {
      indexerConfig = TalonConfigs.indexerConfigs();
-     indexerMotor.getConfigurator().apply(indexerConfig);
+     indexer.getConfigurator().apply(indexerConfig);
    }
 
    public void setPercent(double Percentage) {
@@ -210,39 +211,38 @@ import edu.wpi.first.wpilibj.Timer;
    @Override
    public void writePeriodicOutputs() {
 
-     mPeriodicIO.drivePosition = indexerMotor.getPosition().getValueAsDouble();
-     mPeriodicIO.velocity = indexerMotor.getVelocity().getValueAsDouble();
-     mPeriodicIO.statorCurrent = indexerMotor.getStatorCurrent().getValueAsDouble();
+     mPeriodicIO.drivePosition = indexer.getPosition().getValueAsDouble();
+     mPeriodicIO.velocity = indexer.getVelocity().getValueAsDouble();
+     mPeriodicIO.statorCurrent = indexer.getStatorCurrent().getValueAsDouble();
+     mPeriodicIO.rawBeamBreak = beamBreak.get();
 
-    if(lastBeam != indexerBeamBreak.get()&& lastBeam==true)
+    if(lastBeam != beamBreak.get()&& lastBeam==true)
       mPeriodicIO.hasPiece = !mPeriodicIO.hasPiece;
-    lastBeam = indexerBeamBreak.get();
+    lastBeam = beamBreak.get();
   }
 
    @Override
    public void readPeriodicInputs() {
-     indexerMotor.setControl(new DutyCycleOut(mPeriodicIO.driveDemand, true, false, false, false));
+     indexer.setControl(new DutyCycleOut(mPeriodicIO.driveDemand, true, false, false, false));
    }
 
    @Override
    public void outputTelemetry() {
-    Logger.recordOutput("Indexer/beambreak ", indexerBeamBreak.get());
-    Logger.recordOutput("Indexer/hasPiece ", mPeriodicIO.hasPiece);
-    Logger.recordOutput("Indexer/current", indexerMotor.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput("Indexer/demand", mPeriodicIO.driveDemand);
+    Logger.processInputs("Indexer", mPeriodicIO);
+
    }
 
    @Override
    public void stop() {
      stateRequest(0);
    }
-
-   public static class PeriodicIO {
+   @AutoLog
+   public static class IndexerIO{
      double drivePosition = 0;
      double velocity = 0;
      double statorCurrent = 0;
-
-    boolean hasPiece = true;
+     boolean rawBeamBreak = false;
+     boolean hasPiece = true;
      double rotationDemand = 0.0;
      double driveDemand = 0.0;
    }

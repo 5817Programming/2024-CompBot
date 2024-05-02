@@ -38,8 +38,7 @@ public class Pigeon extends Gyro {
 
     public Pigeon() {
         try {
-            // secondPigeon = new PigeonIMU(Ports.SECONDARY_PIGEON);
-             pigeon.getConfigurator().apply(new Pigeon2Configuration());
+            pigeon.getConfigurator().apply(new Pigeon2Configuration());
             pigeon.getConfigurator().setYaw(0.0);
             yaw.setUpdateFrequency(100.0);
             yawVelocity.setUpdateFrequency(100.0);

@@ -5,6 +5,9 @@
 package com.uni.frc.subsystems;
 
 
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -16,7 +19,7 @@ import com.uni.lib.TalonConfigs;
 
 public class Arm extends Subsystem {
   
-  private PeriodicIO mPeriodicIO = new PeriodicIO();
+  private ArmIOAutoLogged mPeriodicIO = new ArmIOAutoLogged();
   private TalonFX armMotor = new TalonFX(Ports.Arm,"Minivore");
   private TalonFXConfiguration pivotConfig = TalonConfigs.armConfigs();
 
@@ -160,14 +163,15 @@ public class Arm extends Subsystem {
 
   @Override
   public void outputTelemetry() {
+    Logger.processInputs("Arm", mPeriodicIO);
   }
 
   @Override
   public void stop() {
     setpivotPercentRequest(0);
   }
-
-  public static class PeriodicIO {
+  @AutoLog
+  public static class ArmIO {
     ControlMode rotationControlMode = ControlMode.MotionMagic;
     double rotationPosition = 0;
     double velocity = 0;
