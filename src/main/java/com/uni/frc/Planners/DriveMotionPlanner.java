@@ -9,7 +9,6 @@ import org.littletonrobotics.junction.Logger;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.path.PathPlannerTrajectory.State;
-import com.uni.frc.Constants;
 import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.RobotStateEstimator;
 import com.uni.frc.subsystems.Requests.Request;
@@ -17,6 +16,7 @@ import com.uni.frc.subsystems.gyros.Pigeon;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
+import com.uni.lib.geometry.Twist2d;
 import com.uni.lib.motion.PathGenerator;
 import com.uni.lib.motion.PathStateGenerator;
 import com.uni.lib.swerve.ChassisSpeeds;
@@ -41,7 +41,8 @@ public class DriveMotionPlanner {
     PathPlannerTrajectory trajectoryDesired;
     PathStateGenerator mPathStateGenerator;
     PathGenerator mPathGenerator;
-    PID2d OdometryPID = new PID2d(new SynchronousPIDF(.5, 0, 0), new SynchronousPIDF(.5, 0, 0));
+    PID2d OdometryPID = new PID2d(new SynchronousPIDF(2.5, 0, 0), new SynchronousPIDF(2.5, 0, 0));
+    SynchronousPIDF ThetaController = new SynchronousPIDF(1,0,0);
     SynchronousPIDF mTrackingPID = new SynchronousPIDF(.005 ,0 ,0);
     double lastTimestamp = 0;
     public static DriveMotionPlanner instance = null;
@@ -117,51 +118,54 @@ public class DriveMotionPlanner {
         desiredState = mPathStateGenerator.getDesiredState(useAllianceColor);
     }
 
-    public Translation2d getTranslation2dToFollow(double timestamp) {
+    public Pose2d getTwist2dToFollow(double timestamp) {
         targetFollowTranslation = new Translation2d(desiredState.getTargetHolonomicPose().getTranslation());
 
         double dt = timestamp - lastTimestamp;
-        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestKalmanPose()
-                .getTranslation();
+        Pose2d currentRobotPositionFromStart = RobotState.getInstance().getLatestKalmanPose();
         OdometryPID.x().setOutputRange(-1, 1);
         OdometryPID.y().setOutputRange(-1, 1);
         double xFF =
-            desiredState.velocityMps * desiredState.heading.getCos()/Constants.SwerveMaxspeedMPS;
+            desiredState.velocityMps * desiredState.heading.getCos();
         double yFF =
-            desiredState.velocityMps * desiredState.heading.getSin()/Constants.SwerveMaxspeedMPS;
-        Logger.recordOutput("Auto/Desired Pose", new Pose2d(targetFollowTranslation , new Rotation2d(desiredState.heading)).toWPI());
-        double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.x(), dt)+xFF;
-        double yError = OdometryPID.y().calculate(targetFollowTranslation.y() - currentRobotPositionFromStart.y(), dt)+yFF;
-        targetHeading = new Rotation2d(desiredState.targetHolonomicRotation);
+            desiredState.velocityMps * desiredState.heading.getSin();
+        double thetaFF = desiredState.holonomicAngularVelocityRps.get();
 
+        Logger.recordOutput("Auto/Desired Pose", new Pose2d(targetFollowTranslation , new Rotation2d(desiredState.heading)).toWPI());
+        double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.getTranslation().x(), dt) + xFF;
+        double yError = OdometryPID.y().calculate(targetFollowTranslation.y() - currentRobotPositionFromStart.getTranslation().y(), dt) + yFF;
+        double dtheta = desiredState.targetHolonomicRotation.getDegrees() - currentRobotPositionFromStart.getRotation().getDegrees();
+        double thetaError = ThetaController.calculate(dtheta, dt)+ thetaFF;
+        targetHeading = new Rotation2d(desiredState.targetHolonomicRotation);
         lastTimestamp = timestamp;
         if (((Math.abs(xError) + Math.abs(yError)) / 2 < .05 && PathStateGenerator.getInstance().isFinished())
                 || trajectoryFinished) {
             trajectoryFinished = true;
-            return new Translation2d();
+            return new Pose2d(0,0,Rotation2d.identity());
         }
-        return new Translation2d(xError, -yError);
+        return new Pose2d(xFF, -yFF, Rotation2d.fromDegrees(thetaFF));
     }
 
     public Pose2d getTranslation2dToTrack(double timestamp, Pose2d notePose) {
-        double dt = timestamp - lastTimestamp;
-        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestKalmanPose()
-                .getTranslation();
-        if(notePose.getTranslation().translateBy(currentRobotPositionFromStart).norm() > .3|| noteTracked)
-            return new Pose2d(getTranslation2dToFollow(timestamp), getTargetHeading());
-        OdometryPID.x().setOutputRange(-1, 1);
-        OdometryPID.y().setOutputRange(-1, 1);
-        Logger.recordOutput("Auto/Desired Pose", Pose2d.fromTranslation(targetFollowTranslation).toWPI());
-        double xError = OdometryPID.x().calculate(notePose.getTranslation().x() - currentRobotPositionFromStart.x(), dt);
-        double yError = OdometryPID.y().calculate(notePose.getTranslation().y() - currentRobotPositionFromStart.y(), dt);
+        // double dt = timestamp - lastTimestamp;
+        // Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestKalmanPose()
+        //         .getTranslation();
+        // if(notePose.getTranslation().translateBy(currentRobotPositionFromStart).norm() > .3|| noteTracked)
+        //     return new Pose2d(getTwist2dToFollow(timestamp), getTargetHeading());
+        // OdometryPID.x().setOutputRange(-1, 1);
+        // OdometryPID.y().setOutputRange(-1, 1);
+        // Logger.recordOutput("Auto/Desired Pose", Pose2d.fromTranslation(targetFollowTranslation).toWPI());
+        // double xError = OdometryPID.x().calculate(notePose.getTranslation().x() - currentRobotPositionFromStart.x(), dt);
+        // double yError = OdometryPID.y().calculate(notePose.getTranslation().y() - currentRobotPositionFromStart.y(), dt);
 
-        Rotation2d targetAngle = notePose.getTranslation().translateBy(currentRobotPositionFromStart.getTranslation().inverse()).getAngle().flip();
-        lastTimestamp = timestamp;
+        // Rotation2d targetAngle = notePose.getTranslation().translateBy(currentRobotPositionFromStart.getTranslation().inverse()).getAngle().flip();
+        // lastTimestamp = timestamp;
         
-        if ((Math.abs(xError) + Math.abs(yError)) / 2 < .05) {
-            noteTracked = true;
-        }
-        return new Pose2d(xError, yError, targetAngle);
+        // if ((Math.abs(xError) + Math.abs(yError)) / 2 < .05) {
+        //     noteTracked = true;
+        // }
+        // return new Pose2d(xError, yError, targetAngle);
+        return null;
     }
     public void generateAndPrepareTrajectory(Pose2d startPose, Pose2d endPose, ChassisSpeeds currentVelocity,
             boolean useAllianceColor) {

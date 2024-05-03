@@ -35,6 +35,9 @@ import com.uni.lib.swerve.ChassisSpeeds;
 import com.uni.lib.swerve.SwerveKinematics;
 import com.uni.lib.util.Util;
 
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics.SwerveDriveWheelStates;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -231,8 +234,10 @@ public class SwerveDrive extends Subsystem {
         }
     }
 
-    public void commandModuleVelocitys(List<Translation2d> moduleVectors){
-         this.moduleVectors = moduleVectors;
+    public void commandModuleVelocitys(SwerveDriveWheelStates wheelStates){
+        for(int i  = 0; i < wheelStates.states.length; i++){
+            moduleVectors.set(i, new Translation2d(wheelStates.states[i].speedMetersPerSecond,0).rotateBy(new Rotation2d(wheelStates.states[i].angle))); 
+        }
         for (int i = 0; i < moduleVectors.size(); i++) {
             if (Util.shouldReverse(moduleVectors.get(i).direction(),
                     Rotation2d.fromDegrees(modules.get(i).getModuleAngle()))) {
@@ -241,7 +246,6 @@ public class SwerveDrive extends Subsystem {
             } else {
                 modules.get(i).setModuleAngle(moduleVectors.get(i).direction().getDegrees());
                 modules.get(i).setDriveVelocity(moduleVectors.get(i).norm());
-
             }
         }
     }
@@ -318,14 +322,14 @@ public class SwerveDrive extends Subsystem {
                     mAutoAlignMotionPlanner.reset();
                 }
                 ChassisSpeeds targetChassisSpeeds = updateAutoAlign();
-                commandModuleVelocitys(inverseKinematics.updateDriveVectors(new Translation2d(
-                    -targetChassisSpeeds.vxMetersPerSecond,
-                    targetChassisSpeeds.vyMetersPerSecond),
-                    targetChassisSpeeds.omegaRadiansPerSecond*8,
-                    poseMeters,
-                    false,
-                    true
-                    ));
+                // commandModuleVelocitys(inverseKinematics.updateDriveVectors(new Translation2d(
+                //     -targetChassisSpeeds.vxMetersPerSecond,
+                //     targetChassisSpeeds.vyMetersPerSecond),
+                //     targetChassisSpeeds.omegaRadiansPerSecond*8,
+                //     poseMeters,
+                //     false,
+                //     true
+                //     ));
                 break;
 
             case TRAJECTORY:
@@ -333,10 +337,13 @@ public class SwerveDrive extends Subsystem {
                     setState(State.MANUAL);
                 }
                 mDriveMotionPlanner.updateTrajectory();
+                Pose2d desiredVelocities = Pose2d.identity();
                 switch (currentMode) {
                     case FOLLOWING:
-                        translationVector = mDriveMotionPlanner.getTranslation2dToFollow(timeStamp);
-                        headingController.setTargetHeading(mDriveMotionPlanner.getTargetHeading());
+
+                        desiredVelocities = mDriveMotionPlanner.getTwist2dToFollow(timeStamp);
+                        translationVector = desiredVelocities.getTranslation();
+                        desiredRotationScalar = desiredVelocities.getRotation().getDegrees();
 
                         break;
                     case TRACKING:
@@ -344,13 +351,11 @@ public class SwerveDrive extends Subsystem {
                             mDriveMotionPlanner.resetNoteTracking();
                         Pose2d targetPose = new Pose2d();
                         translationVector = targetPose.getTranslation();
-                        headingController.setTargetHeading(targetPose.getRotation().inverse());
                         break;
                 }
-                        rotationCorrection = headingController.getRotationCorrection(getRobotHeading().inverse().flip(), timeStamp);
-                        desiredRotationScalar = rotationCorrection;
-                        commandModuleVelocitys(inverseKinematics.updateDriveVectors(translationVector, rotationCorrection, poseMeters,
-                                robotCentric,true));
+                        SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.ModulePositions);
+                        commandModuleVelocitys(kinematics.toWheelSpeeds(new edu.wpi.first.math.kinematics.ChassisSpeeds(translationVector.x(),translationVector.y(), -desiredRotationScalar)));
+                        
                 break;
             case TARGETOBJECT:
                 rotationCorrection = mTargetPiecePlanner.updateAiming(timeStamp, objectVision.getLatestVisionUpdate(), headingController, getRobotHeading());

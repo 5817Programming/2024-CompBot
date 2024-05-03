@@ -292,7 +292,10 @@ public class SwerveDriveModule extends Subsystem {
           runPercentOutput(mPeriodicIO.driveDemand, driveMotor);
           driveSim.setInputVoltage(12*mPeriodicIO.driveDemand);
         break;
-        default:
+        case Velocity:
+            runVelocity(mPeriodicIO.driveDemand, driveMotor);
+            break;
+        case MotionMagic:
             break;
     }
     switch (mPeriodicIO.rotationControlMode) {
