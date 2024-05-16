@@ -37,7 +37,6 @@ import com.uni.lib.util.Util;
 
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics.SwerveDriveWheelStates;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -234,10 +233,12 @@ public class SwerveDrive extends Subsystem {
         }
     }
 
-    public void commandModuleVelocitys(SwerveDriveWheelStates wheelStates){
-        for(int i  = 0; i < wheelStates.states.length; i++){
-            moduleVectors.set(i, new Translation2d(wheelStates.states[i].speedMetersPerSecond,0).rotateBy(new Rotation2d(wheelStates.states[i].angle))); 
+    public void commandModuleVelocitys(SwerveModuleState[] wheelStates){
+        for(int i  = 0; i < wheelStates.length; i++){
+            moduleVectors.set(i, new Translation2d(wheelStates[i].speedMetersPerSecond,0).rotateBy(new Rotation2d(wheelStates[i].angle))); 
         }
+        Logger.recordOutput("WheelStates", wheelStates);
+        Logger.recordOutput("moduleVectors", moduleVectors.get(0).toWPI());
         for (int i = 0; i < moduleVectors.size(); i++) {
             if (Util.shouldReverse(moduleVectors.get(i).direction(),
                     Rotation2d.fromDegrees(modules.get(i).getModuleAngle()))) {
@@ -340,7 +341,6 @@ public class SwerveDrive extends Subsystem {
                 Pose2d desiredVelocities = Pose2d.identity();
                 switch (currentMode) {
                     case FOLLOWING:
-
                         desiredVelocities = mDriveMotionPlanner.getTwist2dToFollow(timeStamp);
                         translationVector = desiredVelocities.getTranslation();
                         desiredRotationScalar = desiredVelocities.getRotation().getDegrees();
@@ -354,7 +354,7 @@ public class SwerveDrive extends Subsystem {
                         break;
                 }
                         SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.ModulePositions);
-                        commandModuleVelocitys(kinematics.toWheelSpeeds(new edu.wpi.first.math.kinematics.ChassisSpeeds(translationVector.x(),translationVector.y(), -desiredRotationScalar)));
+                        commandModuleVelocitys(kinematics.toSwerveModuleStates(edu.wpi.first.math.kinematics.ChassisSpeeds.fromFieldRelativeSpeeds(translationVector.x(), translationVector.y(), desiredRotationScalar, getRobotHeading().toWPI())));
                         
                 break;
             case TARGETOBJECT:
