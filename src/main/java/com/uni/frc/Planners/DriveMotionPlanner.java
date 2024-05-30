@@ -13,17 +13,21 @@ import com.uni.frc.subsystems.RobotState;
 import com.uni.frc.subsystems.RobotStateEstimator;
 import com.uni.frc.subsystems.Requests.Request;
 import com.uni.frc.subsystems.gyros.Pigeon;
+import com.uni.lib.HeadingController;
+import com.uni.lib.PathHeadingController;
 import com.uni.lib.geometry.Pose2d;
 import com.uni.lib.geometry.Rotation2d;
 import com.uni.lib.geometry.Translation2d;
 import com.uni.lib.motion.PathGenerator;
 import com.uni.lib.motion.PathStateGenerator;
 import com.uni.lib.swerve.ChassisSpeeds;
+import com.uni.lib.util.LoggedTunableNumber;
 import com.uni.lib.util.PID2d;
 import com.uni.lib.util.SynchronousPIDF;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.ADXL345_I2C.AllAxes;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class DriveMotionPlanner {
@@ -33,17 +37,18 @@ public class DriveMotionPlanner {
     private Translation2d targetFollowTranslation = new Translation2d();
     private Rotation2d targetHeading = new Rotation2d();
 
-    boolean trajectoryStarted = false;
-    boolean trajectoryFinished = false;
-    Pose2d drivingpose = new Pose2d();
-    Pose2d notePose = Pose2d.identity();
-    PathPlannerTrajectory trajectoryDesired;
-    PathStateGenerator mPathStateGenerator;
-    PathGenerator mPathGenerator;
-    PID2d OdometryPID = new PID2d(new SynchronousPIDF(2.5, 0, 0), new SynchronousPIDF(2.5, 0, 0));
-    SynchronousPIDF ThetaController = new SynchronousPIDF(.003,0,0);
-    SynchronousPIDF mTrackingPID = new SynchronousPIDF(.01 ,0 ,0);
-    double lastTimestamp = 0;
+    private final LoggedTunableNumber autoP = new LoggedTunableNumber("Auto/P",8);
+    private boolean trajectoryStarted = false;
+    private boolean trajectoryFinished = false;
+    private Pose2d drivingpose = new Pose2d();
+    private Pose2d notePose = Pose2d.identity();
+    private PathPlannerTrajectory trajectoryDesired;
+    private PathStateGenerator mPathStateGenerator;
+    private PathGenerator mPathGenerator;
+    private PID2d OdometryPID = new PID2d(new SynchronousPIDF(autoP.get(), 0., 0.3), new SynchronousPIDF(autoP.get(), 0.0, 0.3));
+    private PathHeadingController ThetaController = new PathHeadingController(0.003, 0.0, 0, 0.0);
+    private SynchronousPIDF mTrackingPID = new SynchronousPIDF(.01 ,0 ,0.005); 
+    private double lastTimestamp = 0;
     public static DriveMotionPlanner instance = null;
     State desiredState;
 
@@ -121,26 +126,28 @@ public class DriveMotionPlanner {
     public Pose2d getTwist2dToFollow(double timestamp) {
         targetFollowTranslation = new Translation2d(desiredState.getTargetHolonomicPose().getTranslation());
 
+        if(autoP.hasChanged(hashCode())){
+            OdometryPID.x().setPID(autoP.get(), 0.0, OdometryPID.x().getD());
+            OdometryPID.y().setPID(autoP.get(), 0.0, OdometryPID.y().getD());
 
-
-
-    
+        }
 
         double dt = timestamp - lastTimestamp;
-        Pose2d currentRobotPositionFromStart = RobotState.getInstance().getLatestKalmanPose();
-        OdometryPID.x().setOutputRange(-1, 1);
-        OdometryPID.y().setOutputRange(-1, 1);
+
+        Rotation2d currentRotation = DriverStation .getAlliance().get().equals(Alliance.Red)?RobotState.getInstance().getLatestKalmanPose().getRotation().flip():RobotState.getInstance().getLatestKalmanPose().getRotation();
+        Pose2d currentRobotPositionFromStart =new Pose2d(RobotState.getInstance().getLatestKalmanPose().getTranslation(), currentRotation );
+
+
         double xFF =
             desiredState.velocityMps * desiredState.heading.getCos();
         double yFF =
             desiredState.velocityMps * desiredState.heading.getSin();
-        Rotation2d targetRotation = new Rotation2d(desiredState.targetHolonomicRotation);
+        Rotation2d targetRotation = new Rotation2d(desiredState.targetHolonomicRotation).inverse();
 
-
-
-        double rotationFeedback =
-            ThetaController.calculate(
-                currentRobotPositionFromStart.getRotation().inverse().getRadians()-targetRotation.getRadians(),dt);
+        Logger.recordOutput("targetRotation", targetRotation.getRotation().getDegrees());
+        ThetaController.setTargetHeading(targetRotation);
+        double rotationFeedback = ThetaController.getRotationCorrection(currentRobotPositionFromStart.getRotation(), timestamp);
+           
 
         Logger.recordOutput("Auto/Desired Pose", new Pose2d(targetFollowTranslation , new Rotation2d(desiredState.targetHolonomicRotation)).toWPI());
         double xError = OdometryPID.x().calculate(targetFollowTranslation.x() - currentRobotPositionFromStart.getTranslation().x(), dt) + xFF;
@@ -152,30 +159,30 @@ public class DriveMotionPlanner {
             trajectoryFinished = true;
             return new Pose2d(0,0,Rotation2d.identity());
         }
-        return new Pose2d(xError, -yError, Rotation2d.fromDegrees(rotationFeedback));
+        return new Pose2d(xError, -yError, Rotation2d.fromDegrees(-rotationFeedback));
     }
 
     public Pose2d getTranslation2dToTrack(double timestamp, Pose2d notePose) {
-        // double dt = timestamp - lastTimestamp;
-        // Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestKalmanPose()
-        //         .getTranslation();
-        // if(notePose.getTranslation().translateBy(currentRobotPositionFromStart).norm() > .3|| noteTracked)
-        //     return new Pose2d(getTwist2dToFollow(timestamp), getTargetHeading());
-        // OdometryPID.x().setOutputRange(-1, 1);
-        // OdometryPID.y().setOutputRange(-1, 1);
-        // Logger.recordOutput("Auto/Desired Pose", Pose2d.fromTranslation(targetFollowTranslation).toWPI());
-        // double xError = OdometryPID.x().calculate(notePose.getTranslation().x() - currentRobotPositionFromStart.x(), dt);
-        // double yError = OdometryPID.y().calculate(notePose.getTranslation().y() - currentRobotPositionFromStart.y(), dt);
+        double dt = timestamp - lastTimestamp;
+        Translation2d currentRobotPositionFromStart = RobotState.getInstance().getLatestKalmanPose()
+                .getTranslation();
+        if(notePose.getTranslation().translateBy(currentRobotPositionFromStart).norm() > .3|| noteTracked)
+            return new Pose2d(getTwist2dToFollow(timestamp).getTranslation(), getTargetHeading());
+        OdometryPID.x().setOutputRange(-1, 1);
+        OdometryPID.y().setOutputRange(-1, 1);
+        Logger.recordOutput("Auto/Desired Pose", Pose2d.fromTranslation(targetFollowTranslation).toWPI());
+        double xError = OdometryPID.x().calculate(notePose.getTranslation().x() - currentRobotPositionFromStart.x(), dt);
+        double yError = OdometryPID.y().calculate(notePose.getTranslation().y() - currentRobotPositionFromStart.y(), dt);
 
-        // Rotation2d targetAngle = notePose.getTranslation().translateBy(currentRobotPositionFromStart.getTranslation().inverse()).getAngle().flip();
-        // lastTimestamp = timestamp;
+        Rotation2d targetAngle = notePose.getTranslation().translateBy(currentRobotPositionFromStart.getTranslation().inverse()).getAngle().flip();
+        lastTimestamp = timestamp;
         
-        // if ((Math.abs(xError) + Math.abs(yError)) / 2 < .05) {
-        //     noteTracked = true;
-        // }
-        // return new Pose2d(xError, yError, targetAngle);
+        if ((Math.abs(xError) + Math.abs(yError)) / 2 < .05) {
+            noteTracked = true;
+        }
         return null;
-    }
+        // return new Pose2d(xError, yError, targetAngle);
+        }
     public void generateAndPrepareTrajectory(Pose2d startPose, Pose2d endPose, ChassisSpeeds currentVelocity,
             boolean useAllianceColor) {
         PathPlannerTrajectory trajectory = mPathGenerator.generatePath(

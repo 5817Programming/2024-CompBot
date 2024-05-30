@@ -117,9 +117,9 @@ public class PathStateGenerator{
   }
   public static State transformStateForAlliance(
     State state, DriverStation.Alliance alliance) {
+    State transformedState = state;
   if (alliance == DriverStation.Alliance.Red) {
     // Create a new state so that we don't overwrite the original
-    State transformedState = new State();
 
     Translation2d transformedTranslation =
         new Translation2d(16.5-state.positionMeters.getX(), state.positionMeters.getY());
@@ -138,7 +138,8 @@ public class PathStateGenerator{
     
     return transformedState;
   } else {
-    return state;
+    transformedState.velocityMps = -state.velocityMps;
+    return transformedState;
   }
 }
 }

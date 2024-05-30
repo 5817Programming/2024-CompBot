@@ -166,6 +166,8 @@ public class Constants {
     public static final double kRearLeftStartingEncoderPosition = isCompbot ? -108.4: -355; // -121.094031
     public static final double kRearRightStartingEncoderPosition =isCompbot ? -155.2: -265; // -355.170825
 
+    public static final boolean tuningMode = true;
+
 
 
     public static final class ShooterConstants {
