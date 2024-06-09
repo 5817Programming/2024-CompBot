@@ -42,7 +42,7 @@ public class Controls {
         Driver.rumble(Indexer.getInstance().hasPiece());
 
 
-        s.setPieceAim(Driver.BButton.isActive());
+        s.setPieceAim(true);
 
         if(Driver.DpadUp.isPressed())
             s.offsetPivot(.25);
@@ -55,7 +55,7 @@ public class Controls {
         // else{
         //     s.intakePercent(0);
         // }
-        s.setManual(CoDriver.BButton.isActive());
+        s.setManual(true);
         if(Driver.XButton.isPressed())
             amp = true;
         if(Driver.BButton.isPressed())
