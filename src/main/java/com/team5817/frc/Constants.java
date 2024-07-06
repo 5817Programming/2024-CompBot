@@ -119,14 +119,6 @@ public class Constants {
 		public static final double kSnapSwerveHeadingKd = 0.6;
 		public static final double kSnapSwerveHeadingKf = 1.0;
 
-		public static final KinematicLimits kUncappedLimits = new KinematicLimits();
-
-		static {
-			kUncappedLimits.kMaxDriveVelocity = maxSpeed;
-			kUncappedLimits.kMaxAccel = Double.MAX_VALUE;
-			kUncappedLimits.kMaxAngularVelocity = maxAngularVelocity;
-			kUncappedLimits.kMaxAngularAccel = Double.MAX_VALUE;
-		}
 
 		/*** MODULE SPECIFIC CONSTANTS ***/
 		/* Front Left Module - Module 0 */
@@ -239,6 +231,8 @@ public class Constants {
 		}
 
 		public static final double kCancoderBootAllowanceSeconds = 10.0;
+
+		public static final double kLongCANTimeoutMs = 0;
 	}
 
 	public static final class IntakeRollerConstants {
@@ -495,7 +489,7 @@ public class Constants {
 			kPivotServoConstants.kNeutralMode = NeutralModeValue.Coast;
 
 			kPivotEncoderConstants.encoder_type = FeedbackSensorSourceValue.FusedCANcoder;
-			kPivotEncoderConstants.remote_encoder_port = Ports.Pivot1;
+			kPivotEncoderConstants.remote_encoder_port = Ports.Pivot;
 			kPivotEncoderConstants.rotor_rotations_per_output = 
 			kPivotEncoderConstants.remote_encoder_offset = 
 		}

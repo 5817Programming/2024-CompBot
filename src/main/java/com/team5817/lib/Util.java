@@ -60,6 +60,13 @@ public class Util {
 		return (a - epsilon <= b) && (a + epsilon >= b);
 	}
 
+    public static double deadband(double deadbandValue, double value) {
+        if(deadbandValue > value)
+            return deadbandValue;
+        else
+            return value;
+    }
+	
 	public static boolean epsilonEquals(double a, double b) {
 		return epsilonEquals(a, b, kEpsilon);
 	}

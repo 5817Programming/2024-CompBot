@@ -57,13 +57,13 @@ public class SwerveModule extends Subsystem {
 		// Angle motor config
 		mAngleMotor = new TalonFX(moduleConstants.angleMotorID, "canivore1");
 		Phoenix6Util.checkErrorAndRetry(() ->
-				mAngleMotor.getConfigurator().apply(SwerveConstants.AzimuthFXConfig(), Constants.kLongCANTimeoutMs));
+				mAngleMotor.getConfigurator().apply(SwerveConstants.AzimuthFXConfig(), SwerveConstants.kLongCANTimeoutMs));
 		mAngleMotor.setInverted(SwerveConstants.angleMotorInvert);
 
 		// Drive motor config
 		mDriveMotor = new TalonFX(moduleConstants.driveMotorID, "canivore1");
 		Phoenix6Util.checkErrorAndRetry(() ->
-				mDriveMotor.getConfigurator().apply(SwerveConstants.DriveFXConfig(), Constants.kLongCANTimeoutMs), moduleNumber);
+				mDriveMotor.getConfigurator().apply(SwerveConstants.DriveFXConfig(), SwerveConstants.kLongCANTimeoutMs), moduleNumber);
 		mDriveMotor.setInverted(SwerveConstants.driveMotorInvert);
 		mDriveMotor.setPosition(0.0);
 
