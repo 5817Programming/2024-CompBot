@@ -6,6 +6,8 @@ package com.uni.frc;
 
 /** Add your docs here. */
 public class Options {
+
+
     /// * REPLACE!!!!! *///
     public static final boolean isCompbot = Constants.isCompbot;
     public static final String encoderType = isCompbot ?  "CANCoder" : "Mag Encoder";
